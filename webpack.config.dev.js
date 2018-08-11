@@ -1,23 +1,15 @@
-const path = require('path');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require('path'), webpack = require('webpack'), HtmlWebpackPlugin = require('html-webpack-plugin'), CleanWebpackPlugin = require('clean-webpack-plugin'), MiniCssExtractPlugin = require('mini-css-extract-plugin'), CopyWebpackPlugin = require('copy-webpack-plugin');
+
 /* DIRS */
-const nm = path.resolve(__dirname, 'node_modules');
-const srcPath = path.resolve(__dirname, 'src');
-const assetsPath = path.resolve(__dirname, 'assets');
-const stylesPath = path.resolve(__dirname, 'assets', 'styles');
-const fontsPath = path.resolve(__dirname, 'assets', 'fonts');
-const imagesPath = path.resolve(__dirname, 'assets', 'images');
-const videosPath = path.resolve(__dirname, 'assets', 'videos');
+const nm = path.join(__dirname, 'node_modules'), srcPath = path.join(__dirname, 'src'), assetsPath = path.join(__dirname, 'assets');
 
 /* Webpack development config */
 module.exports = {
   mode: 'development',
   devtool: 'inline-source-map',
   devServer: {
-    contentBase: '/',
+    contentBase: "build",
+    publicPath: '/',
     progress: true,
     compress: true,
     port: 3000
@@ -27,11 +19,7 @@ module.exports = {
     modules: [
       nm,
       srcPath,
-      assetsPath,
-      stylesPath,
-      fontsPath,
-      imagesPath,
-      videosPath
+      assetsPath
     ]
   },
   entry: {
@@ -51,11 +39,11 @@ module.exports = {
       template: path.resolve(srcPath, 'index.html'),
       title: "Phaser3 Heroku ready"
     }),
-    new CleanWebpackPlugin(['build']),
     new MiniCssExtractPlugin({
       filename: "[name].css",
       chunkFilename: "[id].css"
-    })
+    }),
+    new CleanWebpackPlugin(['build'])
   ],
   module: {
     rules: [
@@ -72,27 +60,23 @@ module.exports = {
       {
         /* css */
         test: /\.css$/,
+        include: assetsPath,
         use: [
           {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              // you can specify a publicPath here
-              // by default it use publicPath in webpackOptions.output
-              publicPath: '/css/'
-            }
+            loader: MiniCssExtractPlugin.loader
           },
           "css-loader"
-
         ]
       },
       {
         /* images */
-        test: /\.(jpe?g|png|gif)$/,
+        test: /\.(jpe?g|png|gif|fnt)$/,
         loader: 'file-loader',
-        include: imagesPath,
+        include: assetsPath,
         exclude: nm,
         options: {
           name: '[path][name].[ext]'
+
         }
       },
       {
@@ -104,15 +88,7 @@ module.exports = {
   optimization: {
     splitChunks: {
       name: 'vendor',
-      chunks: 'all',
-      cacheGroups: {
-        styles: {
-          name: 'styles',
-          test: /\.css$/,
-          chunks: 'all',
-          enforce: true
-        }
-      }
+      chunks: 'all'
     }
   }
 }

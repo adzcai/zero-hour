@@ -2,7 +2,7 @@
   "name": "phaser-spaceshooter",
   "version": "1.0.0",
   "description": "A simple Phaser3 space shooter",
-  "main": "game.js",
+  "private": true,
   "babel": {
     "presets": [
       "env"
@@ -39,6 +39,7 @@
     "babel-loader": "^7.1.5",
     "babel-preset-env": "^1.7.0",
     "clean-webpack-plugin": "^0.1.19",
+    "copy-webpack-plugin": "^4.5.2",
     "css-loader": "^1.0.0",
     "file-loader": "^1.1.11",
     "html-webpack-plugin": "^3.2.0",
