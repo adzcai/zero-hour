@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "webpack-dev-server --config webpack.config.dev.js",
     "devTest": "webpack --config webpack.config.dev.js",
-    "start": "webpack --config webpack.config.prod.js",
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

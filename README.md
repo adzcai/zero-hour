@@ -891,3 +891,90 @@ the game should first load boot loading our logo then it should move on to the p
 
 once complete our main menu will pop up, pushing spacebar allows us to move to level 1 pushing again moves back to main menu for now.
 our image doesnt fill the screen because of the original size of the image and the fact we didnt tell it to scale etc we just told it to put it as is at 400 300 anchored to its origin
+
+now all this is done its time to commit our changes to the branch then merge to master and finally push to github via ssh
+
+check your files in git hub make sure everything pushed ok.
+
+now goto our heroku staging application and check to see if it works.
+
+if we look at our pipeline we see it was just updated along with github if not you need to check your settings for auto update if not manually merge
+
+now open the application and you should receive an error telling you more info is available in the logs so lets go to the logs
+
+2018-08-11T08:53:04.690404+00:00 app[web.1]: npm ERR!
+2018-08-11T08:53:04.690565+00:00 app[web.1]: npm ERR! Failed at the phaser-spaceshooter@1.0.0 start script.
+2018-08-11T08:53:04.690727+00:00 app[web.1]: npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+2018-08-11T08:53:04.732083+00:00 app[web.1]:
+2018-08-11T08:53:04.732596+00:00 app[web.1]: npm ERR! A complete log of this run can be found in:
+2018-08-11T08:53:04.732760+00:00 app[web.1]: npm ERR!     /app/.npm/_logs/2018-08-11T08_53_04_708Z-debug.log
+2018-08-11T08:53:04.816392+00:00 heroku[web.1]: State changed from starting to crashed
+2018-08-11T08:53:04.789960+00:00 heroku[web.1]: Process exited with status 1
+2018-08-11T08:57:52.625902+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=immense-cliffs-44507.herokuapp.com request_id=e956574a-2454-4f6d-aafe-ccf5ce0b385b fwd="161.142.49.105" dyno= connect= service= status=503 bytes= protocol=https
+2018-08-11T08:57:52.924211+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=immense-cliffs-44507.herokuapp.com request_id=c681f24c-ff3e-4c89-b07d-ce4fc1b88211 fwd="161.142.49.105" dyno= connect= service= status=503 bytes= protocol=https
+
+we see a couple of errors here one is serious its why our application didnt run heroku couldnt find a script called start.
+but ill let you in on a spoiler even if we added a start script for webpack to build our application it still wouldn't run thats because we've been using webpack-dev-server to run our application locally but heroku is not a dev server its a working host provider so lets find out through google how we can resolve our build with heroku
+
+just to be sure add
+
+"start": "webpack --config webpack.config.dev.js",
+
+to scripts add commit and push then test heroku again and you should get something like
+
+2018-08-11T14:20:12.529897+00:00 app[web.1]: > webpack --config webpack.config.prod.js
+2018-08-11T14:20:12.529899+00:00 app[web.1]:
+2018-08-11T14:20:14.276077+00:00 app[web.1]: clean-webpack-plugin: /app/build has been removed.
+2018-08-11T14:20:50.244153+00:00 heroku[web.1]: Process running mem=737M(144.0%)
+2018-08-11T14:20:50.244153+00:00 heroku[web.1]: Error R14 (Memory quota exceeded)
+2018-08-11T14:21:10.317607+00:00 app[web.1]: Error waiting for process to terminate: No child processes
+2018-08-11T14:21:10.241523+00:00 heroku[web.1]: Error R10 (Boot timeout) -> Web process failed to bind to $PORT within 60 seconds of launch
+2018-08-11T14:21:10.241775+00:00 heroku[web.1]: Stopping process with SIGKILL
+2018-08-11T14:21:10.442159+00:00 heroku[web.1]: Process exited with status 22
+2018-08-11T14:21:10.466511+00:00 heroku[web.1]: State changed from starting to crashed
+
+This is because we need a server to handle how our application will be build.
+
+if you download the heroku node example we see they use express as their web application framework to display the data so lets go read up on express here
+
+https://expressjs.com/
+
+
+first create a new local branch called herokuprod
+
+this is what we are working on and so far everything is working. we dont want to go and read up on things run some tests then forget to create a branch and edit our master so best to do now it also gives us an idea of where we are in our project also
+
+Create file in our root folder called server.js
+
+var express = require('express');
+var app = express();
+var path = require('path');
+
+const buildPath = path.resolve(__dirname, 'build');
+
+// viewed at http://localhost:8080
+app.get('/', function(req, res) {
+    res.sendFile(path.join(buildPath, 'index.html'));
+});
+
+app.listen(8080);
+
+run our npm run devTest to create our bundled build
+
+then finally npm start
+we get our text but we dont get any of our assets
+looking at the express docs
+
+https://expressjs.com/en/starter/static-files.html
+
+this says we need to tell our application where our assets are and to use them
+
+add this line below your dir path
+
+app.use(express.static('build'));
+
+the path should be where you place all of your static assets
+
+restart npm start and goto localhost and you should now see our application
+
+add commit and push to github
