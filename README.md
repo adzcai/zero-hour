@@ -1176,3 +1176,5 @@ and voila we have our black bg red text our game in the middle and it loaded to 
 but wait we've been testing our branch not our master so lets merge and deploy one last time for testing
 
 Later i'll add compression to make the assets smaller and better for the user but this is too much at the minute so for now we'll leave it there.
+
+Final note about our development production cycle we have developped locally tested in staging and everything is great now we can promote to production. and in reality that would be us making a update to our project.
