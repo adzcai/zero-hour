@@ -23,7 +23,7 @@
 ###########################################################################
 
 
-///// NPM: 6.2.0 ///// node: 10.7.0 /////
+///// NPM: 6.2.0 ///// node: 10.8.0 /////
 
 Were going to create a simple Template for Phaser 3 that can be deployed to Heroku.
 There are many ways to do this. Its really about personal preference and what is best for your skill level and probably most importantly what the end result should be. Different frameworks engines modules and languages all offer pros and cons and its up to you to plan accordingly.
@@ -978,3 +978,114 @@ the path should be where you place all of your static assets
 restart npm start and goto localhost and you should now see our application
 
 add commit and push to github
+
+check github for changes now heres where we will mix it up a little bit.
+
+Remember in heroku we have 2 applications staging and production
+
+goto the stagging application and click the tab for deploy. at the very bottom you will see an option to manually deploy.
+
+Remember earlier i said we want to create a branch before we work so we dont bugger the master branch well now we are going to see another amazing reason why to this.
+
+so we now want to test the application in heroku if you click open app the exact same error will come up again. this is because heroku is only tracking the master branch automatically. but we want to test the branch we have just worked on before we merge our branch with the master branch.
+
+select our branch from the drop down menu and click deploy wait till the output says complete.
+
+now open the app again and see what errors we get this time.
+We see we have further errors in our application.
+
+if we have install heroku cli (which you should have) we can check our logs by simply entering
+
+heroku logs -a name-of-app
+
+there are other options to choose but take a look at herokus docs to see what options we have available.
+
+
+2018-08-12T21:09:42.147942+00:00 heroku[web.1]: State changed from crashed to starting
+2018-08-12T21:09:47.210846+00:00 heroku[web.1]: Starting process with command `npm start`
+2018-08-12T21:09:49.355697+00:00 app[web.1]:
+2018-08-12T21:09:49.355739+00:00 app[web.1]: > phaser-spaceshooter@1.0.0 start /app
+2018-08-12T21:09:49.355741+00:00 app[web.1]: > node server.js
+2018-08-12T21:09:49.355743+00:00 app[web.1]:
+2018-08-12T21:10:47.227298+00:00 heroku[web.1]: Error R10 (Boot timeout) -> Web process failed to bind to $PORT within 60 seconds of launch
+2018-08-12T21:10:47.227543+00:00 heroku[web.1]: Stopping process with SIGKILL
+2018-08-12T21:10:47.336774+00:00 heroku[web.1]: Process exited with status 137
+2018-08-12T21:10:47.374732+00:00 heroku[web.1]: State changed from starting to crashed
+
+2018-08-12T21:12:20.594577+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=immense-cliffs-44507.herokuapp.com request_id=19061201-7adb-4458-8eca-2a56b12f9328 fwd="161.142.49.105" dyno= connect= service= status=503 bytes= protocol=https
+
+2018-08-12T21:12:20.901364+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=immense-cliffs-44507.herokuapp.com request_id=b3bdcb23-1d19-4bdb-9bb5-911d4fe2806c fwd="161.142.49.105" dyno= connect= service= status=503 bytes= protocol=https
+
+
+ok so we have a few errors here, firstly heroku is not building our application befor startin the server.
+Next is an error code 503.
+
+You dont need to remember all of the codes for http instead remember these 5.
+
+100++ is informational
+200++ is Success
+300++ is redirection
+400++ is a client error
+and finally 500++ is a server error.
+
+eventually the important ones or the ones you see the most will stick in your memory like 404 is not found and 502 is a bad gateway.
+
+we got 503 this is actually a server error telling us that the esvice is unavailable
+the next 503 is a favicon but we havent added one so this error we can ignore.
+
+lets check the build logs see what happens when we build our application seeing as though we have a server error.
+
+-----> Node.js app detected
+-----> Creating runtime environment
+
+       NPM_CONFIG_LOGLEVEL=error
+       NODE_VERBOSE=false
+       NODE_ENV=production
+       NODE_MODULES_CACHE=true
+-----> Installing binaries
+       engines.node (package.json):  unspecified
+       engines.npm (package.json):   unspecified (use default)
+
+       Resolving node version 8.x...
+       Downloading and installing node 8.11.3...
+       Using default npm version: 5.6.0
+-----> Restoring cache
+       Loading 2 from cacheDirectories (default):
+       - node_modules
+       - bower_components (not cached - skipping)
+-----> Building dependencies
+       Installing node modules (package.json + package-lock)
+       up to date in 6.471s
+-----> Caching build
+       Clearing previous node cache
+       Saving 2 cacheDirectories (default):
+       - node_modules
+       - bower_components (nothing to cache)
+-----> Pruning devDependencies
+       Skipping because npm 5.6.0 sometimes fails when running 'npm prune' due to a known issue
+       https://github.com/npm/npm/issues/19356
+
+       You can silence this warning by updating to at least npm 5.7.1 in your package.json
+       https://devcenter.heroku.com/articles/nodejs-support#specifying-an-npm-version
+-----> Build succeeded!
+-----> Discovering process types
+       Procfile declares types     -> (none)
+       Default types for buildpack -> web
+-----> Compressing...
+       Done: 35.3M
+-----> Launching...
+       Released v13
+       https://immense-cliffs-44507.herokuapp.com/ deployed to Heroku
+
+
+
+
+well we can already see a lot we need to fix. remember when we created the application we made a list of versions none of them match what heroku is using. This will later be a problem for our dependencies and backward compatability.  we also see that once it installs our application it doesnt run webpack to build our bundles. so there is nothing to display on the page.
+
+https://devcenter.heroku.com/articles/node-best-practices#start-every-new-project-with-npm-init
+
+For the npm and node errors we can see here that we need to specifiy our node version
+
+"engines": {
+  "node": "6.2.0"
+}

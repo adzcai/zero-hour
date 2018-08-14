@@ -2,6 +2,9 @@
   "name": "phaser-spaceshooter",
   "version": "1.0.0",
   "description": "A simple Phaser3 space shooter",
+  "engines": {
+    "node": "10.8.0"
+  },
   "private": true,
   "babel": {
     "presets": [
