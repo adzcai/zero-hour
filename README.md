@@ -1162,3 +1162,11 @@ we want a variable or object that first detects if process.env.PORT herokus glob
 const PORT = process.env.PORT || 5000
 
 now update our listening argument with PORT
+
+lets also add a webpack config for production and strip out the uncessary things
+
+remove our devserver change our mode to production and for now that should do it.
+
+also remove watch true
+
+ 
