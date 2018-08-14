@@ -1089,3 +1089,76 @@ For the npm and node errors we can see here that we need to specifiy our node ve
 "engines": {
   "node": "6.2.0"
 }
+
+that should solve our mis match node versions
+
+now lets see if we can get our application to build. heroku says we can use post install to run webpack on our application
+
+"postinstall": "webpack --config webpack.config.dev.js",
+
+for now we should just have a config for dev so use this save commit your changes and push then build your branch in heroku again
+
+-----> Node.js app detected
+-----> Creating runtime environment
+
+       NPM_CONFIG_LOGLEVEL=error
+       NODE_VERBOSE=false
+       NODE_ENV=production
+       NODE_MODULES_CACHE=true
+-----> Installing binaries
+       engines.node (package.json):  10.8.0
+       engines.npm (package.json):   unspecified (use default)
+
+       Resolving node version 10.8.0...
+       Downloading and installing node 10.8.0...
+       Using default npm version: 6.2.0
+-----> Restoring cache
+       Skipping cache restore (new-signature)
+-----> Building dependencies
+       Installing node modules (package.json + package-lock)
+
+       > phaser@3.11.0 postinstall /tmp/build_8631d6d546f06e2c32bda8e316eed573/node_modules/phaser
+       > node scripts/support.js
+
+       ❤ Please help support Phaser development ❤
+       https://www.patreon.com/photonstorm/
+
+       added 753 packages from 448 contributors and audited 8758 packages in 18.217s
+       found 0 vulnerabilities
+
+-----> Caching build
+       Clearing previous node cache
+       Saving 2 cacheDirectories (default):
+       - node_modules
+       - bower_components (nothing to cache)
+-----> Pruning devDependencies
+       removed 751 packages and audited 2 packages in 8.364s
+       found 0 vulnerabilities
+
+-----> Build succeeded!
+-----> Discovering process types
+       Procfile declares types     -> (none)
+       Default types for buildpack -> web
+-----> Compressing...
+       Done: 25M
+-----> Launching...
+       Released v14
+       https://immense-cliffs-44507.herokuapp.com/ deployed to Heroku
+
+ok we fixed the node mis match but now we have a npm mis match lets fix this
+
+add npm: '6.3.0' to our engines
+
+push then test but we are still getting errors why is this lets check the logs
+
+seems it cant find module express meaning we didnt instlal to our dependices
+
+also we see it keeps failing to bind to the port lets see if we can change that.
+
+inside server.js
+
+we want a variable or object that first detects if process.env.PORT herokus global variable that you can access. if its not there then use our defined port
+
+const PORT = process.env.PORT || 5000
+
+now update our listening argument with PORT

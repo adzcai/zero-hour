@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
 /* DIRS */
 const nm = path.resolve(__dirname, 'node_modules');
 const srcPath = path.resolve(__dirname, 'src');
