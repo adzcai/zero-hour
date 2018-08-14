@@ -1169,4 +1169,10 @@ remove our devserver change our mode to production and for now that should do it
 
 also remove watch true
 
- 
+git add commit push and deploy then test
+
+and voila we have our black bg red text our game in the middle and it loaded to our main menu keep hitting space and it will switch between the two.
+
+but wait we've been testing our branch not our master so lets merge and deploy one last time for testing
+
+Later i'll add compression to make the assets smaller and better for the user but this is too much at the minute so for now we'll leave it there.
