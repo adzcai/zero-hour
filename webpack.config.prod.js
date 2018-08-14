@@ -33,7 +33,7 @@ module.exports = {
     vendor: ['phaser']
   },
   output: {
-    path: path.resolve(__dirname, "../build"),
+    path: path.resolve(__dirname, "build"),
     filename: '[name].[chunckhash].bundle.js'
   },
   plugins: [
