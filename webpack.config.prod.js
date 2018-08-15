@@ -1,17 +1,16 @@
-const path = require('path');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require('path'),
+    webpack = require('webpack'),
+    HtmlWebpackPlugin = require('html-webpack-plugin'),
+    CleanWebpackPlugin = require('clean-webpack-plugin'),
+    MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 /* DIRS */
-const nm = path.resolve(__dirname, 'node_modules');
-const srcPath = path.resolve(__dirname, 'src');
-const assetsPath = path.resolve(__dirname, 'assets');
-const stylesPath = path.resolve(__dirname, 'assets', 'styles');
-const fontsPath = path.resolve(__dirname, 'assets', 'fonts');
-const imagesPath = path.resolve(__dirname, 'assets', 'images');
-const videosPath = path.resolve(__dirname, 'assets', 'videos');
+const nm = path.resolve(__dirname, 'node_modules'), srcPath = path.resolve(__dirname, 'src'),
+    assetsPath = path.resolve(__dirname, 'assets'),
+    stylesPath = path.resolve(__dirname, 'assets', 'styles'),
+    fontsPath = path.resolve(__dirname, 'assets', 'fonts'),
+    imagesPath = path.resolve(__dirname, 'assets', 'images'),
+    videosPath = path.resolve(__dirname, 'assets', 'videos');
 
 /* Webpack development config */
 module.exports = {
@@ -83,7 +82,7 @@ module.exports = {
         /* images */
         test: /\.(jpe?g|png|gif)$/,
         loader: 'file-loader',
-        include: imagesPath,
+        include: [ fontsPath, imagesPath, videosPath ],
         exclude: nm,
         options: {
           name: '[path][name].[ext]'

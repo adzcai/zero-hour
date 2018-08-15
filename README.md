@@ -25,20 +25,33 @@
 
 ///// NPM: 6.2.0 ///// node: 10.8.0 /////
 
-Were going to create a simple Template for Phaser 3 that can be deployed to Heroku.
-There are many ways to do this. Its really about personal preference and what is best for your skill level and probably most importantly what the end result should be. Different frameworks engines modules and languages all offer pros and cons and its up to you to plan accordingly.
-we'll break this up into phases making it easier to track our progress and also giving us some sort of feeling of achievement even though to begin with there wont really be much there.
+Were going to create a simple Template for our Phaser 3 applications that are ready to be deployed on Heroku.
+The final template, could be easily modified to work with many other hosting provider, you would just need to look how the provider deals with node applications.
+
+To store a copy of your application you can use either github or bitbucket.
+
+Whats the difference you might ask, why did i choose github over bitbucket. Simple. Bitbucket offers better options for private work where as github is much better for public and testing new code snippets etc.
+
+Either are great to use it's really up to you, just remember to check the docs but the set up is roughly the same
+
+There are many ways to achieve our final goal. Its really about personal preference and what is best for your skill level and probably most importantly what the end result should be. Different frameworks, engines, modules and languages all offer a variety of options with pros and cons, leaving it up to you to plan accordingly.
+
+we'll break this up into phases making it easier to track our progress and also at the same time giving us some sort of feeling of achievement, even though to begin with there won't really be much there.
+
 
 Phase1
-  For phase 1 i'm going to set some basic configuration tasks for my development environment. What i will need to use to achieve the end result. I'll also need to take into account cross compatability for ease of use among many different systems.
+  For phase 1, I'm going to set some basic configuration tasks for my local  development environment.
+Defining what I will need to use to achieve the end result. I'll also need to take into account cross compatibility, for ease of use among many different systems.
 
-  The ultimate goal is to deploy the final app to heroku so we need to make sure we remember to set up for this.
+  The ultimate goal is to deploy the final app to Heroku so we need to make sure we remember this during our development.
 
-if we look at herokus docs as thats our end goal we can see what we have on offer for us today...
+Its also a really good place to start. As the name suggests this is a Phaser 3 template using node to publish to Heroku. All providers offer different packages and settings but most are very similar. They all offer their own supporting documentation and often come with basic templates to give the user a general idea.
+
+if we look at Heroku's docs, we can see what we have on offer for us today...
 
 https://devcenter.heroku.com/
 
-Looking here we can see we already have some great options to choose from
+We can see we already have some great options to choose from
 
 Node.js
 Ruby
@@ -49,75 +62,82 @@ Go
 Scala
 Clojure
 
-For my skill level and also my own preference i tend to sway towards the Ruby framework. Python is also great as you can really do so much and with the language being designed for kids to learn, its a great place to start and IMO a must have skill for all developers be it basic usage or full blown development. Nodejs is what we will be using today theres more documentation covering phaser and node than any other framework although later on i will show you how to use some other frame works.
+For my skill level and also my own preference I tend to sway towards the Ruby framework. Python is also great as you can really do so much and with the language being designed for kids to learn, it's a great place to start and IMO a must have skill for all developers be it basic usage or full blown development.
+Nodejs is what we will be using today, there is much more documentation covering Phaser and node, although later on I will show you how to use some other frameworks.
 
-For now go and google each of the frameworks find out for your self what they have to offer the pros and cons and limitations of each framework.
+For now go and use your favorite search engine to find out for your self what each of the above is commonly used for, pros and cons along with the limitations of each.
 
-Once you've done that goto nodejs and start looking at the docs.
+Once you've done that go to nodejs and start looking at the docs.
 
-on the homepage we can see that we have two version on display. (There are more but you need to dive deeper into the page for now stick with these)
+https://nodejs.org/en/
+
+The best explanation of node i found was this
+
+Node.js is for creating server-side applications in javascript (see: node.js ).  The client side is expected to be done using another Javascript or web framework. In other words, node.js is not for building websites, it is for building what a website talks to on the back-end. Best wishes!
+Michael Daconta, Software Engineer and Author
+
+On the homepage we can see that we have two versions on display. (There are more but you need to dive deeper into the page, for now stick with these)
 An LTS version and a current version.
 
-This basically means one has long term support and likely to be more stable but lack certain capabilities the other is current its the latest stable version of nodejs
+This basically means one has long term support and is much more stable but lacks certain capabilities. The other is a current build. This is usually the latest stable version of nodejs.
 
 A simple google search will result in this explanation that is pretty self explanatory across the board.
 
 https://stackoverflow.com/questions/33661274/what-are-the-differences-between-long-term-support-lts-and-stable-versions-of
 
-now that we understand more about the two we can make better choice. We need to get used to googling for answers for a start. second this is not going to be a professional project for a company however we are going to adhere to certain practices. This helps us when transitioning from hobbyist/learner to a more professional setting, at the same time helping people help you a lot faster by making things clear from the beginning.
+When choosing between LTS or Current keep in mind that not all browsers or even some hosting providers offer support for newer versions and, because we are designing a game, we have another choice to make.
+Functionality over play-ability, this basically means how many devices do we want to make this compatible with.
+Mobiles all over the world and computers run on different hardware and software with a range of options and configurations for all of them.
+This can quickly become overwhelming and sometimes the workload needed or the loss of certain performance and/or graphics options to get an old machine to run a newer application is just not worth the hassle.    
+This is why is good to evaluate your project before you even begin coding.
 
-with these in mind were going to choose the most current version.
+now that we understand more about the two we can make better choice.
+We need to get used to searching the internet for answers for a start. Second this is not going to be a professional project for a company, however we are going to adhere to certain practices.
+This helps us when transitioning from a hobbyist/learner to a more professional setting, at the same time helping people help you a lot faster by making things clear from the beginning. Dry structured code is much easier to read, manage, and debug.
 
-using nvm (node version manager - check my tutorial on building development environments) we are going to install 10.8.0
-
-and set it to default for now.
-
-how to do this is simple google is your friend haha
+Were going to be using the most current stable version of nodejs.
+As we stated above we may want to use other versions with other projects.
+To do this we make sure we have nvm installed on our system.
 
 https://github.com/creationix/nvm
 
+using nvm (node version manager - check my tutorial on building development environments) we are going to install 10.8.0 and set it to default for now.
+
 check out the page for usage.
 
-the best explanation of node i found was this
-
-Node.js is for creating server-side applications in javascript (see: node.js ).  The client side is expected to be done using another Javascript or web framework. In other words, node.js is not for building websites, it is for building what a website talks to on the back-end. Best wishes!
-Michael Daconta, Software Engineer and Author
-
-
-ok so we've chosen node now we need to choose how were going to build our project with a simple search results in many different routes. we know that our main game code is going to be javascript so that must come first so we need to find a module bundler that will work with nodejs and javascript.
+ok so we've chosen node to handle all of the back-end requests, we now need to choose how were going to build our project. We need to build because we are going to be using javascript imports from many different files which we want to concate into one file.
+A simple search (javascript bundler) results in many different routes.
+To break it down we can search instead (nodejs javascript bundler) giving us more specific results to the task at hand.
 
 https://medium.com/@rukshandangalla/what-is-best-javascript-module-bundler-316b73049660
 
-i like this guys explanation of a lot of different aspects that you will see like AMD, UMD and also his explanations of modules ES5 and further aspects that you should know about.
+This article explains a lot of different aspects that you will see like when developing web applications along with websites using javascript.
 
-and finally http://code.hootsuite.com/an-introduction-to-javascript-modules-and-bundling/
+Finally
 
-now we know about these we can see they all mention webpack so lets use webpack
+http://code.hootsuite.com/an-introduction-to-javascript-modules-and-bundling/
 
-and we also know we need to transpile es6 to es5 so we need babel
+now we know about these we can see they all mention webpack so lets use webpack (it's also what used on the phaser project template).
 
-thats it for the research on our server side now we need to research webpack babel and nodejs to see what we need.
+If you read the articles and did some further research you will know we need to transpile ES6 to ES5. This again, is because of compatibility with different browsers. There is an easy fix for the problem though called babel.
 
-remember still no code yet. were not ready it will become messy and stressful.
-
-we should have open
-
-https://nodejs.org/en/
-https://webpack.js.org/
 https://babeljs.io/
 
-now to get a better understanding of each component we should read the docs and take a look at some videos.
-Nodejs
-https://www.youtube.com/watch?v=pU9Q6oiQNd0
+Nodejs and Webpack can be a little intimidating to start with so before continuing you should really understand more of whats going on especially with Webpack.
 
-for webpack
+These tutorials are all for an older version of Webpack but the core concept and idea is still the same.
+
 https://www.youtube.com/watch?v=JdGnYNtuEtE&list=PLkEZWD8wbltnRp6nRR8kv97RbpcUdNawY
-for babel
-https://www.youtube.com/watch?v=C2PDAGCrk_g
 
-after watching all 15 videos you should have a pretty good idea now what are tasks are so lets write them
+Then a simple Nodejs video to get a basic understanding.
 
-  /################## TASKS ####################/
+https://www.youtube.com/watch?v=pU9Q6oiQNd0
+Babel I wont explain because there really is nothing to it just remember.
+The more you watch and read, the better. When you start coding later, things will be much clearer and easier to understand.
+
+So now we have a better understanding of each component we can start to define the tasks of phase 1
+
+/################## TASKS ####################/
 
     create folder structure
     set up git
@@ -129,158 +149,234 @@ after watching all 15 videos you should have a pretty good idea now what are tas
 
   /#############################################/
 
-Now we can start to do something finally. really that only took a couple of hours though.
+-- Create folder structure. --
 
-  -- Create folder structure.
-      --/Root
-        --/assets
-        --/src
+  --/Root/
+    --/assets
+    --/src
 
-        README.md
+    --/README.md
 
-  Root will be named what ever you like but mine is called Phaser-node-heroku
-  assets will hold all our styles, images, fonts and videos including audio.
-  src will hold our template HTML and all of our game code. along with and otherr pages to the site you want to add.
-  Finally inside the read me you need to include What your using an the versions references and credit where due.
+'Root' will be named what ever you like but mine is called Phaser-node-heroku and I've placed it inside my documents folder.
+'assets' will hold all of our styles, images, fonts, videos and lastly our audio.
+'src' will hold our template HTML and all of our game code. along with and other pages to the site you want to add.
+Finally inside the RAEDME.md you need to include What your using and the versions, references and any credit that should be given.
 
-  For example we are using phaser3 HTML5 game framework so in the top of my readme i want to credit the owner because its well deserved.
+For example, we are using Phaser3 HTML5 game framework, so in the top of my README.md I want to credit the creator. This is the same as playing any game and seeing the game engines name or logo on start up.
 
-  Next is the project name and author. along with date and version also what plugin and modules have been used there versions and site reference.
+Next is the project name and author, along with the date and version also what plugin and modules have been used, there versions and site reference.
 
-  This makes it much faster for you in the future you can just goto your read me click the link and bam you've got the docs to support your code. it also make development a little faster and not so conjested and wish wash.
+This makes it much faster for you in the future. You can just go to your README.md, click the link and bam you've got the docs to support your code.
 
-  because you have already looked over everyting you will use and will have a good idea what you need to do.
+Next is to set up git. Your Editor might come with a built in option for handling git like atom does but I still use CLI.
 
-Next is to set up git.
+https://git-scm.com/book/en/v2
 
-git init inside Root
+git init inside 'Root'
 
-goto github or bitBucket
-Whats the difference you might ask, why did i choose github over bit bucket. simples. I use bitbucket for private work and github for public and testing work.
-
-You can choose its really up to you just remember to check the docs and its basically the same set up
-
-Create a repo
-Name it
-select the option to upload an existing repo
-now you should be able to follow the steps either from here or there
+Create a repo in github or bitbucket
+give it a name and select the option to upload an existing repo.
+You should now be able to follow the steps either from here
 
 https://help.github.com/
+
+or there
+
 https://confluence.atlassian.com/get-started-with-bitbucket/set-up-a-repository-861178557.html
 
-in our root directory we want to follow the step in the links to add the repo remote
+In our root directory we want to follow the steps in the links to add the repo remote
 
-we have a choice to set up our creds either local per repo or global
-i always choose local because of changing dev environments depending what im doing
+we have a choice to set up our credentials either locally on a per repo basis or globally.
+If im using https I'll always choose local so that i can better work with other projects.
 
-i dont log in with passwords i use ssh keys so goto the docs and have a look
+Preferably we don't want to keep logging in with passwords so use ssh keys instead which speeds the process up a bit. Go to the docs and have a look.
 
 https://help.github.com/articles/connecting-to-github-with-ssh/
 
-register new key like so
-ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+Creating keys is very easy, it gets a little more complex when you want to place keys inside of folders for different projects. It's not uncommon to be requested for a public key to be uploaded into someones repo to allow you access. When this occurs you don't want to be deleting and updating all the other sites keys just because a single projects key is no longer needed.
 
-i have many keys that i manage and update frequently so i always name my keys placing them in folders
+I'll walk you through how to set this up initially and how to add to it in the future.
 
-adding the keygen they say to use xclip but if you dont want to install a new piece of soft just for this open the file in nano or vim etc copy then paste to github etc
+First to set this up list any keys you might already have.
 
-you need to copy uour public key not private
+$ ls -al ~/.ssh
 
-now we can push to github with ssh and not pasword username
+Delete them, unless there important then go to the respective places using the keys and make a note of the site. Later when we add further keys, you can add the deleted keys back and then update their sites.
 
-so lets create a .gitinore for node from template.
-now use git add .
-git commit -m "Initial commit"
+cd into /.ssh directory.
 
+$ cd ~/.ssh
+
+now create a folder to hold your key giving it anyname you want but memorable is easier when dealing with many keys.
+
+$ mkdir github
+
+Register new key like so following the instructions from github only place the keys inside our directory.
+
+$ ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
+This will generate a key-pair and ask you for a file to save the key.
+The file should be something like this.
+
+$ Enter file in which to save the key (/home/user/.ssh/id_rsa): ~/.ssh/github/id_rsa
+
+If you even more concerned it security you can move the keys from a local HDD to an external device. This means when ever you wish to log into something you would need this key to be able to log in. This can be effective but always remember if someone gets physical access to your device they have they keys. Unless they further protections are applied but that is a bit OTT for here.
+
+The docs mention using xclip but if you dont want to install a new piece of software just for this you can open the file in nano, vim or similar and copy the contents, pasting to github etc.
+
+You could also use cat and then copy and past from the terminal.
+
+$ cat ~/.ssh/github/id_rsa.pub
+
+You need to copy your public key not the private one to github and add the private key to the agent.
+
+Start in the agent in the background so we still have access to the terminal.
+
+$ eval "$(ssh-agent -s)"
+
+Now add the PRIVATE key to the agent not the public key.
+
+$ ssh-add ~/.ssh/github/id_rsa
+
+If you dont use multiple keys separated in folders you should be good to go as is. but if you have multiple folders and names you need to add a a file called config to ssh folder.
+
+$ touch ~/.ssh/config
+
+edit the file with the following
+
+Host github.com
+  User git
+  Hostname github.com
+  PreferredAuthentications publickey
+  IdentityFile ~/.ssh/github/id_rsa
+
+save and now we can push to github/bitbucket with ssh and not type a password username
+
+check using the following
+$ ssh -T git@github.com
+Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+
+Thats it to add a key for say bitbucket inside config just add the bitbucket details below github.
+
+Create a .gitinore for node from a template available either from github or heroku or the internet. Just open the contents and double check before using.
+
+now use
+$ git add .
+$ git commit -m "Initial commit"
 set the remote to our app
+$ git remote add origin git@github.com:username/project.git
+$ git push -u origin master
 
-git remote add origin git@github.com:username/project.git
+check github make sure your README and folders are there.
 
-git push -u origin master
+Lets now set up everything on Heroku.
+When learning, you should get into the habit of doing things in some sort of professional manor. This is more for the maintenance of any project we start.
+It also means as little down time as possible on the server side, with a way that's both effortless to test locally and in production
 
-check github make sure your readme and folders are there.
+We create two applications in Heroku one for 'staging' and one for 'production'.
 
-now for heroku
+Link these apps using Heroku's pipelines and add further config to the staging application.
+Github is our source and heroku is our hosting but we don't really want to be sending the same app twice, just to different hosts. What we want to do is push one and have that update automatically to the other.
+You can do this on Heroku with the deploy tab
 
-even in learning you should get into the habbit of doing things proffesionally as possible.
-this means as little down time as possible server side with a way thats effortless to test both locally and in production
+https://dashboard.heroku.com/apps/phaser-game-scope2229/deploy/heroku-git    
 
-to do this we create two application in heroku one for staging and one for production
-we link these apps through pipelines
+Connect github/bitbucket to Heroku ticking the automatic deploy option from the master branch.
 
-git hub is our source heroku is our hosting we dont really want to be sending the same app twice its a pain so what we do is only send to git hub link our staging application to our github repo. set to auto update when github updates.
+Now when we send commits to master on Github the master with be pushed to our Heroku staging area ready for live/production testing.
 
-that means when we send commits to master on github the master with be pushed to heroku staging ready for production testing.
+Finally create a manual pipeline between the staging application and the production application.
+We want this as manual so we can test first and when were happy only them do we promote to our production environment.
 
-the next step is to have heroku production app link with pipeline again but to the staging app
-this we want as manual update so we can test first and when were happy promote to production.
+A key note here is you must adhere to the workflow structure and not create a development environment in Heroku. Remember you are developing locally and only using Heroku for staging and production with Github or Bitbucket used to store your repo.
 
-Key note here is you must adhere to the workflow structure and not create a decelopment environment in heroku. Remember you are developing locally  and only using heroku for staging and production and github or bitbucket etc to store your repo.
-this is due to environment variables that are set in each type of application that affect the way our application will do things.
-This will become more clear latter on but for now think of it as this 1 is everything and very big lots of tests extra config 2 is minimal almost prod with testing ability and 3 is production with no testing just your app with optimal performance settings
+It's important due to environment variables that are set in each type of application that affect the way our application will do things.
+This will become more clear later on but for now think of it as;
+        1) Everything is available without much modification or optimization with much larger file sizes along with lots of tests and extra config files, which is really good for development.
+        2) A minimal build almost production ready with testing ability so should it fail at least we get some sort of report.
+        3) The production environment is with no testing just your app configured for optimal performance having compressed and minified files along with a hash or chunckhash value.
 
-your app will look for either 1 2 or 3 and change settings based on the value
+The app will look for either 1, 2, or 3 and change the default settings based on the value. To be more specific the variables for this project that the app will look for are development, staging, and production.
 
-to be more specific the variables for this project that the app will look for are development, staging, production
+Once this is all set up, we can ignore Heroku for some time until we have something to deploy and display.
 
-now thats all set up we can ignore heroku for some time as it wont work yet. we dont have anyting to display.
+The next two tasks are really one task as npm comes with nodeJs but we want to make sure we have the right versions.
+So use nvm to install our node version
 
-use nvm  to install our node version
-nvm install 10.8.0
+$ nvm install 10.8.0
+
 check npm and node version
-if you get something like please install or not found
 
-check nvm ls
-then if your node is there use nvm use 10.8.0 this will now give you node and npm versions
+$ node -v & npm -v
 
-now we need to create our node project with npm init
+If you get something like, please install, not found, or the versions don't match, it could be you haven't set nvm to use that node version.
+check with
+$ nvm ls
+
+Then if the node version you installed is there use
+$ nvm use 10.8.0
+
+running
+$ node -v & npm -v
+again should now give you the right versions
+
+Lets now create our node project with
+$ npm init  (or) $ npm init -y
+The first runs you through the following options below and a prompt for you to fill out the details. The other creates a simple barebone package.json for you to configure later.
+
+For now enter the details like so.
 
 package name: ProjectName
 version: (1.0.0)
 description: "what it is what is does and maybe what it uses briefly"
-entry point: (index.js) ours will be index.js
-test command:
-git repository: link to your git repo
-keywords: relevant to your app
-author: Scope2229
-license: MIT for lisensing its really to long to explain so please read this book Understanding Open Source and Free Software Licensing
-by Andrew M. St. Laurent here
+entry point: (index.js) ours will be server.js
+test command: "This is for any test you wish to run like eslint"
+git repository: the link to your git repo
+keywords: any relevant words that describe your app
+author: "Your name/nickname or company you work for along with your name."
+license: MIT for licensing, it's really to long to explain so please read this book 'Understanding Open Source and Free Software Licensing
+by Andrew M. St. Laurent' here
+
 https://www.safaribooksonline.com/library/view/understanding-open-source/0596005814/
 
-it explains most of what you need to know about the different lisenses and how to use them.
+It explains most of what you need to know about the different licenses and how to apply them.
 
-now we install phaser as a dependency (https://docs.npmjs.com/files/package.json check these docs to find out the options and why you use what you do etc )
+Install Phaser as a dependency
+(https://docs.npmjs.com/files/package.json check these docs to find out the options and why you use what you do etc ) but generally anything that is needed for our application to run must be in dependencies, When Heroku prunes your application after the build it removes the dev-dependencies.
 
-next is webpack and its dep
+So we only need babel during build but after we dont really need it at all hence the pruning.
 
-npm i -D webpack webpack-cli
+$ npm i -s phaser
 
-we want to use css images videos and audio
+Next is Webpack and its dependencies. For this it is best to go to the website and look at the docs for the version you are using. This will tell you all the dependencies you need to make it work.
 
-to do that following the video and docs we install
+For the current version of Webpack4
 
-npm i -D css-loader file-loader raw-loader
+$ npm i -D webpack webpack-cli
 
-to separate our css into its own file we'll use mini-css-extract-plugin
-The docs also mention about cleaning our build which is a good idea so add that along with the html-webpack-plugin to add our bundled code automatically to a template.
+We'll want to use css, images, videos, and audio and to do that we follow the earlier videos and tutorials along with the up-to-date docs
 
-npm i -D clean-webpack-plugin html-webpack-plugin mini-css-extract-plugin
+$ npm i -D css-loader file-loader raw-loader
+
+To separate our css into its own file the videos showed us extract-text-plugin but this doesnt work well with webpack4 so we'll use the mini-css-extract-plugin instead.
+The docs also mention about cleaning our 'build', which is a good idea. This helps remove old files updating with our new ones minimizing errors. So add that along with the html-webpack-plugin which handles adding our bundled code automatically to a template.
+
+$ npm i -D clean-webpack-plugin html-webpack-plugin mini-css-extract-plugin
 
 now if you read the docs fully and watched the videos you should know about  a section on the webpack-dev-server this allows to watch and reload the browser when a file changes that we are watching.
 
 https://webpack.js.org/guides/development/#using-webpack-dev-server
 
-npm i -D webpack-dev-server
+$ npm i -D webpack-dev-server
 
 finally we add babel
-npm i -D babel-loader babel-core babel-preset-env
+$ npm i -D babel-loader babel-core babel-preset-env
 
+Ok thats about it for now with the dependencies. lets get to some coding and configuration
 
-ok we done for the dependcies. lets get to some coding and configuration
+This phase is just for development however we still want to remember about the future plan.
 
-remember this phase is just for development however we still want to remember about the future plan.
-
-under main in the package.json
+Under main in the package.json
 
 add the following
 
@@ -290,9 +386,9 @@ add the following
   ]
 },
 
-the config in babel tells us to create a babelrc file but it also says if it isnt there it will look inside package.json. i like less files especially when the file just contains 5 lines
+The config in babel tells us to create a babelrc file but it also says if it isn't there it will look inside package.json. I like less files especially when the file just contains a few lines
 
-next we want a development script and a way to test the development build without the webpack dev server so we can see what is being built etc clearly. without needing to change anything other than what runs the config file.
+Next we want a development script and a way to test the development build without the webpack-dev-server, this way we can see what is being built clearly and where. The webpack dev server stores its files in memory and doesn't build anything that we can physically see in our Editor.
 
 "scripts": {
   "dev": "webpack-dev-server --config webpack.config.dev.js",
@@ -300,26 +396,21 @@ next we want a development script and a way to test the development build withou
   "test": "echo \"Error: no test specified\" && exit 1"
 },
 
-so when we use npm run dev it will use the webpack dev server with a config file specified.
+so when we use npm run dev it will use the webpack-dev-server with a config file as specified, storing everything in memory updating on the fly. Where as when we use webpack and the same config for dev it will actually build our application locally.
 
-next is to test the build so webpack dev server stores its files in memory and doesnt build anything that we can physically see in out ide
-we might want this just to have a reference about whats going on whats being created and where.
+next is test but we will come to that later on. for now we need a basic dev setup but basically testing would be things like eslint to check our javascript. you could also use other testing frameworks that suit your applications needs. If your unsure read up on TDD or Test-Driven Development.
 
-we just use webpack and the same config for dev
+Create a file called webpack.config.dev.js
 
-next is test but we will come to that later on. for now we need a basic dev setup.
+Following the information from the docs and the videos, while bearing in mind we are using the latest version of webpack so we should refer to the docs for changes.
 
-create file webpack.config.dev.js
-
-follow the information from the docs and the videos bearing in mind we are using the latest version of webpack so videos as reference but the docs take priority.
-
-so we want to use fixed variables to hold our requires as shown in the docs. but they use var but we are using es6 which allows access to let and const
+We need to use fixed variables or objects to hold our requires as shown in the docs. They use var but we are using es6 which allows access to let and const.
 
 https://blog.mariusschulz.com/2015/12/31/constant-variables-in-javascript-or-when-const-isnt-constant
 
-we have two options that i like to use to access files fs or path i stick to path with basic sites but have a look at fs and get used to it as you will need it in the future.
+We have two options that I like to use to access files, fs or path. I stick to path with basic sites but have a look at fs and get used to it as you will need it in the future.
 
-we need to initalise  our plugins we need for our development environment
+We need to initialize our plugins that we are going to need for our development environment
 
 const path = require('path'),st webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -336,59 +427,43 @@ this is much better and most importantly DRY.
 
 if your typing the same thing ten times there is normally a better way for you to achieve the end result.
 
-now we will declare some DIRs you dont have to but look at it this way if i right my code and everything is fine but later change directories i need only change then next few lines. Makes sense. Makes code more manageable.
+Now we will declare some directories, you don't have to but look at it this way if i right my code and everything is fine but later change directories i need only change then next few lines. Makes sense. Makes code more manageable.
 
-so we have assets src and we also want to include node_modules. if your ide hides files from the gitignore then you may not see node_modules but its there trust me. if its not you got problems.
+so we have assets src and we also want to include node_modules. if your Editor hides files from the .gitignore then you may not see node_modules but its there trust me, if its not you've got problems.
 
-const nm = path.join(__dirname, 'node_modules'), srcPath = path.join(__dirname, 'src'), assetsPath = path.join(__dirname, 'assets');
+const nm = path.join(__dirname, 'node_modules'),
+    srcPath = path.join(__dirname, 'src'),
+    assetsPath = path.join(__dirname, 'assets');
 
-so we use path.join but wee could use resolve
+Here we use path.join thats fine for development but in production its best practice to use absolute paths.
 
 https://stackoverflow.com/questions/35048686/difference-between-path-resolve-and-path-join-invocation
 
-we'll use join.
+When using __dirname with webpack you need to know it returns the root directory or '/'
 
-then __dirname is different depending how its used but for webpack you need to know it returns the root directory or '/' if you were using webpack you could still use __dirname but it would have a different output all together. rather than '/' you'd get something like
-
-/home/User/Documents/ProjectFolder/
-
-varies from system to system and also on your own personal organization
-
-and finally the folder you want inthis case node_modules if nested it would be __dirname, 'folder1', 'folder2' etc
-
-now for the webpack dev config
-
-we set mode to development devtool to inline-source-map but check out the others here
+For the Webpack config we set mode to development and the devtool to inline-source-map. but check out the others here each have there own unique abilities.
 
 https://webpack.js.org/configuration/devtool/#devtool
 
-use them all have a look at how they perform later on when the end project is finished now you dont have anything to play with so stick with inline-source-map till you do.
+The best way to get your self familiar with what they do is to finish a small project. Building and overlooking the code created. Changing each time to have a look at how they perform. Currently you don't have anything to play with so stick with inline-source-map un-till you do.
 
-spiffy
-now the dev server
-  contentBase https://webpack.js.org/configuration/dev-server/#devserver-contentbase
-  so this is what the public will be able to see when they visit your site. so we'll set this to our output which will be build
-  for this example our game is going to be our root page nice and simple
+Spiffy, now for the webpack-dev-server. Here we tell our dev-server where to serve our content from. Webpack4's default location is dist but you can change that to anything you wish.
+Next is the public path for our application. This will be the home page of the web application or '/'.
+We have a few more options we can choose from like compress progress and port among others.
 
-  so set publicPath to /
-  if we want to see the progress of the build we set that to true
-  we can also compress our assets to make them smaller by setting compress to true finally define our port.
+Thats it for the devServer options but we still want a way to auto update our build directory when we change rather than rebuild the whole application. To do this we use 'watch'. By default this is set to false but while developing as mentioned its time saving to not keep restarting the server unless we make any changes to the server config.
+Add watch: true,
 
-  https://webpack.js.org/configuration/watch/#watch
+Now to make things a bit quicker we are going to resolve all of our paths/directories for our files including node modules. This is because node modules contains the phaser framework code.
 
-  watch is set to default false but while developing it would be good to not keep restarting the server unless we change the server config.
+With all this set it's time to set our entry file. That is the initial JavaScript file that start's the whole application.
 
-  set watch to true
+In this example game.js is our only initializing JS file but you could have one for each page.
 
-  now to make things a bit quicker we are going to resolve all of our absalute path for our files including node modules. This is because node modules contains our phaser code.
+Create game.js inside 'src' and home.css in 'assets/styles/'
 
-now its time to set our entry file this is the initial javascript file that will start the whole application
-
-in this example game.js is our only initialising js file but you could have one for each page.
-
-create game.js inside src and home.css in assets/styles/
-
-inside home.css
+Inside home.css we want to add some basic content just to check that everything is working the way it should.
+Every page has a body element so we can select that and give it a background color of black. We'll make sure there is a header or h1 in our html template also just for testing sake. Setting the text color to red.
 
 body {
   background-color: black;
@@ -397,31 +472,33 @@ h1 {
   color: red;
 }
 
-This is just to test that the import of css actually works.
+Inside of game.js we can import our css finally adding a JS alert again for quick testing.
 
-now inside game.js
 import '../assets/styles/home.css'
 alert('hi')
 
-this tells the bundle to make sure the css file is bundled with the application as webpack works by looking for all the files associated with game.js. A note to make you dont need to import everything here. i called this an initialising js file because thats how i treat it. i use this to initiate any other modules i have created games or not.
+This tells the bundler to make sure the css file is handled with the rest of the used assets in the application, as Webpack works by looking for all the files associated with game.js.
+A note to make you dont need to import everything here. I called this an initializing JS file because, that's how I treat it. This file is used to initiate any other modules/styles/etc that I have created; games or not. When Webpack looks through it will find everything along the tree.
 
-in our config set the entry we also want to specifiy the entry but we want to remember about maybe in the future adding extra pages etc.
+In our config we're setting the entry but, we also want to remember about future expansion of either
+    a) Adding further games or extra pages etc.
+    b) Separating different functions from the main bundle into their own specific bundles.
 
-so we will name our entry game as were making a game and we dont really need an absolute path but because we needed it for our modules its best to use it again only this time we dont need to use __dirname we can use our defined const dir for src
+Keeping this in mind we will name our entry game. Short simple and descriptive is always the best option. We want to give the directory or path of our game.js file
 
-because we have installed phaser with npm and not using a downloaded src file we can set a vendor: setting to phaser
+Because we have installed Phaser with npm and not using a downloaded src file we can set a vendor: setting to include the phaser module.
+
 https://webpack.js.org/concepts/entry-points/#separate-app-and-vendor-entries
-
 
 entry: {
   game: path.resolve(srcPath, 'game.js'),
   vendor: ['phaser']
 },
 
-now its the output this is where webpack will put the final build.
-by default webpack uses dist but we are learning so were going to change it.
-outputpaths want to be absolute and our public path needs to be the same.
-because we can see we have at least 2 files to build already we'll use a name array to give our bundle a unique name automatically.
+Lets define our output. This is where Webpack will put the final build.
+By default Webpack uses 'dist', but we are learning so were going to change it.
+Output paths want to always be absolute and our path needs to be the same for what we used in contentBase.
+We can see we have at least 2 files to build already so to keep things neat and organized we'll use a name array to give our bundle a unique name automatically.
 
 output: {
   path: path.resolve(__dirname, "build"),
@@ -431,27 +508,21 @@ output: {
 
 now for the plugins.
 
-looking at previous examples of phaser they all have some things in common but one is
+Looking at previous examples of phaser they all have some things in common but one is
+
 'CANVAS_RENDERER': JSON.stringify(true),
 'WEBGL_RENDERER': JSON.stringify(true)
 
-to better understand why we need this have a look at the chat below
+To better understand why we need this have a look at the chat below
 this explains the need and why youd use it.
 
 Scope [1:08 AM]
 what is this actually doing 'CANVAS_RENDERER': JSON.stringify(true),
      'WEBGL_RENDERER': JSON.stringify(true)
-i know it uses json to stringify the canvas_renderer but what is it actually stringing
+I know it uses json to stringify the canvas_renderer but what is it actually stringing
 
 rich [1:09 AM]
 https://webpack.js.org/plugins/define-plugin/
-
-Scope [1:10 AM]
-that explains all the development asking but why only development
-is there something servers do that local servers dont ?? (thats actually really broad as there as lot either do and do not do lol but i mean specifically for this instance) (edited)
-
-rich [1:11 AM]
-you what?
 
 Scope [1:12 AM]
 why would i only need the global variable during development and not production
@@ -479,9 +550,11 @@ not the browser, phaser. you can turn off webgl globally, so like a global varia
 rich [2:47 AM]
 think of it as an ‘include’ switch - if you disable WebGL in the config it won’t include any of the WebGL classes into the build
 
-with this in mind and the link provided we can set a two global constants that phaser actually needs to run.
+--------------------------------------------------------------------
 
-thats because phaser uses html5 canvas or it can use webgl technology
+With this in mind and the link provided we can set a two global constants that Phaser actually needs to run.
+
+That's because Phaser uses html5 canvas or it can use webgl technology
 its important to note that When you send data to a web server, the data has to be a string. for this we can use json and convert our object to a string like so
 
 new webpack.DefinePlugin({
@@ -495,7 +568,7 @@ our main html template is inside src and its called index.html
 so create that file.
 
 then reference it using template: path.resolve(srcPath, 'index.html'),
-title: "Name your template" the title will be used in the tab bar of your browser so dont just leave it blank
+title: "Name your template" the title will be used in the tab bar of your browser so try not to just leave it blank.
 
 next is the plugin for our separate css files
 
@@ -506,57 +579,81 @@ new MiniCssExtractPlugin({
 
 we dont need to use path here we can just type the location that we wish to place the bundled files.
 
-now to clean our bundle so we dont have to as the docs state
+Now to clean our bundle so we don't have to. The docs state
 new CleanWebpackPlugin(['build'])
 
-if your using the default location not a custom one then it would be dist not build
+If your using the default location not a custom one then it would be dist not build
 
-thats great for our plugins but it still doesnt do anything we have set any rules for the modules no assets are being rendered etc
+That's great for our plugins but it still doesn't do anything. We haven't set any rules for the modules and our assets aren't being rendered etc
 
-so next we do this with module rules
-  we set an array and inside the array goes each object which will eb a rule
+Let's do that now this is basically used for any plugin/module you installed that requires configuration beyond the defaults.
+First we set module to equal an object inside the object we nest another object called rules that has an array.  Inside the array goes each object which will be a rule for our modules.
 
-first we need babel
+Lets define a rule for our JS using the babel-loader
+
+{
+  /* babel */
+  test: /\.js$/,
+  loader: 'babel-loader',
+  include: srcPath,
+  exclude: nm,
+  options: {
+    compact: true
+  }
+},
+
+We want Webpack to test for files ending in .js, using the babel-loader. Next includes a single path as our js files currently are only inside of the srcPath. If you have a JS folder inside assets for things like page speciific JS. Then you would instead use an array and pass in the JS path also. A basic config would be this but if we look further into the docs we can see we have a lot more option to play with.
 
 https://babeljs.io/setup#installation
 
-a basic config would be this but if we look further into the docs we can see we have a lot more option to play with
-
 https://babeljs.io/docs/en/babel-preset-env
 
-so using the two links we should be able to set our plugin to test for any file ending in .js
-the loader obvously is babel-loader
-but we only want to include our game as that is our es6 code which is located in source
-so include: srcPath
-we dont want to include node_modules
-so exclude: nm
-and we want to compact the results with options compact: true
+We don't want to include node_modules as none of our project is inside, apart from Phaser which has already been dealt with.
+We can compact the results with options compact: true, giving us smaller assets to work with.
 
 check out these docs for more options
 https://babeljs.io/docs/en/babel-core.htm
 
-next is our css for this we used out MiniCssExtractPlugin
-so set the test for css
-and use the MiniCssExtractPlugin.loader
-for the options we can set the publicPath to assets/styles/
-but its not really needed and for basic config it can be left out all toether as we have defined most of what we need already
+The rest of the rules are pretty much the same. Refering to the modules docs along with Webpack will be a great help to you. Knowing this we see on the site that we have a plugin called https://webpack.js.org/plugins/mini-css-extract-plugin/ used to extract our css and place into separate files
 
-and the next use or loader is the css-loader
+This time our rule uses the same structure but its slightly different. We still tell Webpack to test for .css files included in our assetsPath. Here though we use 'use:' then pass an array with a loader:  MiniCssExtractPlugin.loader and then our css-loader. This is because first we need to do something with our code and then we need to be able  to understand the css.
+css-loader is the understanding part, while MiniCssExtractPlugin is actually doing something with the css code.
 
-when chaining loaders webpack works in a set order if we were to place css-loader first it would fail as the MiniCssExtractPlugin hasnt done anything with the files yet.
+{
+  /* css */
+  test: /\.css$/,
+  include: assetsPath,
+  use: [
+    {
+      loader: MiniCssExtractPlugin.loader
+    },
+    "css-loader"
+  ]
+},
 
-for images its the same process
-search the docs find file-loader check out the info and start you rules
+when chaining loaders Webpack works in a set order. If you place the css-loader first now. It will fail as the MiniCssExtractPlugin hasn't done anything with the files yet.
 
-test jpeg jpg png gif
-loader file-loader
-include our assets path
-exclude node
-give it a path and name with ext
+Lets add our images again following the same process, search the docs find file-loader check out the information you need to configure it and start to write your rules.
 
-its worth noting that file-loader can handle a lot more files with phaser you can use bitmap fonts aswell as other standard fonts in your game code. we'll keep this in mind for later.
+{
+  /* images & fonts */
+  test: /\.(jpe?g|png|gif|fnt)$/,
+  loader: 'file-loader',
+  include: assetsPath,
+  exclude: nm,
+  options: {
+    name: '[path][name].[ext]'
 
-last but not least its the raw loader
+  }
+},
+
+It's worth noting that file-loader can handle a lot more files than just images. Later on when we add audio video and fonts, we can update this rule with the path and file ext.
+
+Last but not least we need to use the raw loader becuase of how Phaser has been built. It uses files with the .vert ext and also .frag. An example of a Phaser 3 .vert file is the bitmapmask module. 
+
+https://fileinfo.com/extension/vert
+
+
 A loader for webpack that allows importing files as a String.
 thats what the docs say but why we need it is something completely different.
 

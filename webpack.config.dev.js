@@ -1,7 +1,14 @@
-const path = require('path'), webpack = require('webpack'), HtmlWebpackPlugin = require('html-webpack-plugin'), CleanWebpackPlugin = require('clean-webpack-plugin'), MiniCssExtractPlugin = require('mini-css-extract-plugin'), CopyWebpackPlugin = require('copy-webpack-plugin');
+const path = require('path'),
+    webpack = require('webpack'),
+    HtmlWebpackPlugin = require('html-webpack-plugin'),
+    CleanWebpackPlugin = require('clean-webpack-plugin'),
+    MiniCssExtractPlugin = require('mini-css-extract-plugin'),
+    CopyWebpackPlugin = require('copy-webpack-plugin');
 
 /* DIRS */
-const nm = path.join(__dirname, 'node_modules'), srcPath = path.join(__dirname, 'src'), assetsPath = path.join(__dirname, 'assets');
+const nm = path.join(__dirname, 'node_modules'),
+    srcPath = path.join(__dirname, 'src'),
+    assetsPath = path.join(__dirname, 'assets');
 
 /* Webpack development config */
 module.exports = {
@@ -23,7 +30,7 @@ module.exports = {
     ]
   },
   entry: {
-    game: path.resolve(srcPath, 'game.js'),
+    game: path.join(srcPath, 'game.js'),
     vendor: ['phaser']
   },
   output: {
@@ -69,7 +76,7 @@ module.exports = {
         ]
       },
       {
-        /* images */
+        /* images & fonts */
         test: /\.(jpe?g|png|gif|fnt)$/,
         loader: 'file-loader',
         include: assetsPath,
