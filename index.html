@@ -2,8 +2,40 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <meta name="author" content="Alexander Cai" />
+
+        <title>Zero Hour by Alex Cai</title>
+        <meta name="description" content="A shoot 'em up game I designed for a school project." />
+
+        <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script>
+
+        <style>
+            html,
+            body,
+            #game-container {
+                margin: 0;
+                padding: 0;
+            }
+
+            #game-container {
+                min-width: 100vw;
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            #game-container > canvas {
+                border-radius: 5px;
+            }
+        </style>
     </head>
     <body>
-        <script src="build/project.bundle.js" charset="utf-8"></script>
+        <div id="game-container"></div>
+        <script src="./src/index.js" charset="utf-8" type="module"></script>
+        <noscript>How do you expect to play my game without Javascript? Go turn it on!</noscript>
+        <script nomodule>
+            alert("Sorry, looks like your browser doesn't support modules! Try using the latest version of Chrome, Firefox, or Safari.");
+        </script>
     </body>
 </html>
