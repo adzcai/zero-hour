@@ -1,81 +1,41 @@
-export default class PreloaderScene extends Phaser.Scene {
-  constructor () {
-    super("Preloader");
-  }
+import Button from "../Objects/Button.js";
 
-  init() {
-    this.readyCount = 0;
+const style = {
+  font: "18px monospace",
+  fill: "#ffffff"
+};
+
+/**
+ * This scene loads all of the necessary assets into our game.
+ */
+export default class PreloaderScene extends Phaser.Scene {
+  constructor() {
+    super("Preloader");
   }
 
   preload() {
     const { width, height } = this.cameras.main;
 
     // add logo image
-    this.add.image(width / 2, height / 2, "logo");
+    this.logo = this.add.image(width / 2, height / 2, "logo");
 
     // display progress bar
-    const progressBar = this.add.graphics();
-    const progressBox = this.add.graphics()
-      .fillStyle(0x222222, 0.8)
-      .fillRect(width / 2, height / 2, width / 2.5, height / 12);
+    this.progressBar = this.add.graphics().fillStyle(0xffffff, 1);
+    this.progressBox = this.add.rectangle(width / 2, height / 2, width / 2.5, height / 12, 0x222222, 0.8);
 
-    const loadingText = this.make.text({
-      x: width / 2,
-      y: height / 2 - 50,
-      text: "Loading...",
-      style: {
-        font: "20px monospace",
-        fill: "#ffffff"
-      }
-    });
-    loadingText.setOrigin(0.5, 0.5);
-
-    const percentText = this.make.text({
-      x: width / 2,
-      y: height / 2 - 5,
-      text: "0%",
-      style: {
-        font: "18px monospace",
-        fill: "#ffffff"
-      }
-    });
-    percentText.setOrigin(0.5, 0.5);
-
-    const assetText = this.make.text({
-      x: width / 2,
-      y: height / 2 + 50,
-      text: "",
-      style: {
-        font: "18px monospace",
-        fill: "#ffffff"
-      }
-    });
-    assetText.setOrigin(0.5, 0.5);
+    this.loadingText = this.add.text(width / 2, height / 2 - 50, "Loading...", style).setOrigin(0.5);
+    this.percentText = this.add.text(width / 2, height / 2 - 5, "0%", style).setOrigin(0.5);
+    this.assetText = this.add.text(width / 2, height / 2 + 50, "", style).setOrigin(0.5);
 
     // update progress bar
-    this.load.on("progress", function (value) {
-      percentText.setText(parseInt(value * 100) + "%");
-      progressBar.clear();
-      progressBar.fillStyle(0xffffff, 1);
-      progressBar.fillRect(250, 280, 300 * value, 30);
+    this.load.on("progress", value => {
+      this.percentText.setText(parseInt(value * 100) + "%");
+      const { x, y } = this.progressBox.getTopLeft();
+      this.progressBar.fillRect(x + 10, y + 5, (this.progressBox.width - 20) * value, this.progressBox.height - 10);
     });
 
     // update file progress text
-    this.load.on("fileprogress", function (file) {
-      assetText.setText("Loading asset: " + file.key);
-    });
-
-    // remove progress bar when complete
-    this.load.on("complete", function () {
-      progressBar.destroy();
-      progressBox.destroy();
-      loadingText.destroy();
-      percentText.destroy();
-      assetText.destroy();
-      this.ready();
-    }.bind(this));
-
-    this.timedEvent = this.time.delayedCall(3000, this.ready, [], this);
+    this.load.on("fileprogress", file => this.assetText.setText("Loading asset: " + file.key));
 
     // load assets needed in our game
     this.load.setBaseURL("assets/")
@@ -89,19 +49,43 @@ export default class PreloaderScene extends Phaser.Scene {
 
     .setPath("backgrounds/")
     .image("black").image("blue").image("darkPurple").image("purple")
+
+    .setPath("sounds/")
+    .audio("laser", "Laser_Shoot.wav")
+
+    .setPath("explosions");
+
+    for (let i = 0; i < 9; i++) {
+      this.load
+      .image(`regularExplosion0${i}`)
+      .image(`sonicExplosion0${i}`);
+    }
   }
 
-  ready() {
+  create() {
+    for (let explType of ["regular", "sonic"]) { // Create explosion animations
+      this.anims.create({
+        key: `${explType}Explosion`,
+        frames: [...Array(9).keys()].map(i => ({key: `${explType}Explosion0${i}`})),
+        frameRate: 8
+      });
+    }
 
     this.registry.set({
       soundOn: true,
       musicOn: true,
       bgMusicPlaying: false
-    })
-    this.scene.start("Title");
-    this.readyCount++;
-    if (this.readyCount === 2) {
-      this.scene.start("Title");
-    }
+    });
+
+    this.time.delayedCall(500, () => {
+      this.logo.destroy();
+      this.progressBar.destroy();
+      this.progressBox.destroy();
+      this.loadingText.destroy();
+      this.percentText.destroy();
+      this.assetText.destroy();
+
+      this.scene.start("ChooseShip");
+    });
   }
 };

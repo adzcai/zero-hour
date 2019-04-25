@@ -1,9 +1,9 @@
 export default class CreditsScene extends Phaser.Scene {
-  constructor () {
+  constructor() {
     super("Credits");
   }
 
-  create () {
+  create() {
     const { width, height } = this.cameras.main;
     this.creditsText = this.add.text(0, 0, "Credits", { fontSize: "32px", fill: "#fff" });
     this.madeByText = this.add.text(0, 0, "Created By: Placeholder", { fontSize: "26px", fill: "#fff" });
@@ -27,7 +27,7 @@ export default class CreditsScene extends Phaser.Scene {
       ease: "Power1",
       duration: 3000,
       delay: 1000,
-      onComplete: function () {
+      onComplete: function() {
         this.destroy;
       }
     });
@@ -38,7 +38,7 @@ export default class CreditsScene extends Phaser.Scene {
       ease: "Power1",
       duration: 8000,
       delay: 1000,
-      onComplete: function () {
+      onComplete: function() {
         this.madeByTween.destroy;
         this.scene.start("Title");
       }.bind(this)

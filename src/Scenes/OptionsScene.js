@@ -1,32 +1,31 @@
 import Button from "../Objects/Button.js";
 
 export default class OptionsScene extends Phaser.Scene {
-  constructor () {
+  constructor() {
     super("Options");
   }
 
-  create () {
-    this.text = this.add.text(300, 100, "Options", { fontSize: 40 });
-    this.musicButton = this.add.image(200, 200, "checkedBox");
-    this.musicText = this.add.text(250, 190, "Music Enabled", { fontSize: 24 });
+  create() {
+    const { width, height } = this.cameras.main;
+    this.text = this.add.text(width / 2, height / 4, "Options", { fontSize: 40 }).setOrigin(0.5);
+    
+    this.musicButton = this.add.image(width / 4, height / 2, "checkedBox").setOrigin(0.5);
+    this.musicText = this.add.text(width * 3 / 4, height / 2, "Music Enabled", { fontSize: 24 }).setOrigin(0.5);
 
-    this.soundButton = this.add.image(200, 300, "checkedBox");
-    this.soundText = this.add.text(250, 290, "Sound Enabled", { fontSize: 24 });
+    this.soundButton = this.add.image(width / 4, height * 5 / 8, "checkedBox").setOrigin(0.5);
+    this.soundText = this.add.text(width * 3 / 4, height * 5 / 8, "Sound Enabled", { fontSize: 24 }).setOrigin(0.5);
 
-    this.musicButton.setInteractive();
-    this.soundButton.setInteractive();
-
-    this.musicButton.on("pointerdown", function () {
+    this.musicButton.setInteractive().on("pointerdown", () => {
       this.registry.values.musicOn = !this.registry.values.musicOn;
       this.updateAudio();
-    }.bind(this));
+    });
 
-    this.soundButton.on("pointerdown", function () {
+    this.soundButton.setInteractive().on("pointerdown", () => {
       this.registry.values.soundOn = !this.registry.values.soundOn;
       this.updateAudio();
-    }.bind(this));
+    });
 
-    this.menuButton = new Button(this, 400, 500, "blueButton1", "blueButton2", "Menu", "Title");
+    this.menuButton = new Button(this, width - 100, 500, "buttonBlue", "buttonBlue", "Menu", "Title");
 
     this.updateAudio();
   }
@@ -44,10 +43,6 @@ export default class OptionsScene extends Phaser.Scene {
       }
     }
 
-    if (!this.registry.values.soundOn) {
-      this.soundButton.setTexture("box");
-    } else {
-      this.soundButton.setTexture("checkedBox");
-    }
+    this.soundButton.setTexture(this.registry.values.soundOn ? "checkedBox" : "box");
   }
 };
