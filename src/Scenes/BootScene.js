@@ -1,15 +1,15 @@
 export default class BootScene extends Phaser.Scene {
   constructor() {
-    super("Boot");
+    super('Boot');
   }
 
   preload() {
-    this.load.setBaseURL("assets")
-    .image("logo")
-    .atlasXML("spaceshooter", "sheet.png", "sheet.xml");
+    this.load.setBaseURL('assets')
+      .image('logo')
+      .atlasXML('spaceshooter', 'sheet.png', 'sheet.xml');
   }
 
   create() {
-    this.scene.start("Preloader");
+    this.scene.start('Preloader');
   }
-};
+}
