@@ -112,16 +112,16 @@ export default class PreloaderScene extends Phaser.Scene {
       });
     }
 
-    const rockets = {
-      rocketGreen: ['14', '15', '16', '01'],
-      rocketRed: ['08', '09', '10', '11'],
-      rocketBlue: ['08', '09', '10', '11'],
+    const missiles = {
+      missileGreen: ['14', '15', '16', '01'],
+      missileRed: ['08', '09', '10', '11'],
+      missileBlue: ['08', '09', '10', '11'],
     };
 
-    for (const key of Object.keys(rockets)) {
+    for (const key of Object.keys(missiles)) {
       this.anims.create({
         key,
-        frames: rockets[key].map(num => ({ key: 'spaceshooter', frame: `laser${key.slice(6)}${num}` })),
+        frames: missiles[key].map(num => ({ key: 'spaceshooter', frame: `laser${key.slice(7)}${num}` })),
         frameRate: 8,
         repeat: -1,
       });

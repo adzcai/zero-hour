@@ -14,10 +14,10 @@ export default class GameScene extends Phaser.Scene {
     const { width, height } = this.cameras.main;
 
     this.hpBox = this.add.rectangle(5, 5, width / 3, height / 12, 0xfff, 0.8).setOrigin(0);
-    this.hpBar = this.add.rectangle(10, 15, width / 3 - 10, height / 12 - 20, 0x0f0, 1).setOrigin(0);
+    this.hpBar = this.add.rectangle(10, 15, width / 3 - 10, height / 12 - 20, 0x00ff00, 1).setOrigin(0);
 
     this.progressBox = this.add.rectangle(width - 5, 5, width / 12, height / 2, 0xffffff, 0.6).setOrigin(1, 0);
-    this.progressBar = this.add.rectangle(width - 10, 10, this.progressBox.displayWidth - 10, this.progressBox.displayHeight - 10, 0x00bbbb, 1).setOrigin(1, 0);
+    this.progressBar = this.add.rectangle(width - 10, 10, this.progressBox.displayWidth - 10, this.progressBox.displayHeight - 10, 0x00ff00, 1).setOrigin(1, 0);
 
     this.physics.world.setBounds(0, 0, width, height).setBoundsCollision(false, false, true, true);
 
@@ -70,17 +70,18 @@ export default class GameScene extends Phaser.Scene {
 
     this.scene.get('Background').changeColor('purple').changeSpeed(5);
 
-    this.startTime = this.time.now;
-    this.duration = 30 * 1000;
+    this.tweens.add({
+      targets: this.progressBar,
+      height: 0,
+      duration: 30 * 1000,
+      onComplete: () => this.gameOver()
+    });
   }
 
   update(time, delta) {
     if (!this.running) return;
     this.player.update(time, delta);
     this.physics.world.wrap(this.player, 10);
-
-    this.progressBar.displayHeight = Phaser.Math.Percent(this.time.now - this.startTime, 0, this.duration) * (this.progressBox.displayHeight - 10);
-    if (this.time.now > this.startTime + this.duration) this.gameOver();
   }
 
   createAsteroid() {
@@ -106,6 +107,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.enemies.children.each(child => child.end());
     this.time.removeAllEvents();
+    this.tweens.killAll();
 
     this.flashTimer = this.time.addEvent({
       callback: () => {

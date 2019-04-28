@@ -19,6 +19,8 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
 
     this.nextShot = 0;
     this.defaultShootDelay = 200;
+    this.nextMissile = 0;
+    this.missileDelay = 500;
 
     this.attack = {
       delay: this.defaultShootDelay,
@@ -62,7 +64,7 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
     if (this.body.speed > 0.5) this.thrust.emitParticle(8, this.x, this.y);
 
     if (this.keys.SPACE.isDown && this.scene.time.now > this.nextShot) this.shoot();
-    if (this.keys.ENTER.isDown && this.scene.time.now > this.missile) this.shoot();
+    if (this.keys.ENTER.isDown && this.scene.time.now > this.nextMissile) this.shootMissile();
 
     if (this.keys.LEFT.isDown || this.keys.A.isDown) this.body.setAccelerationX(-this.accel);
     else if (this.keys.RIGHT.isDown || this.keys.D.isDown) this.body.setAccelerationX(this.accel);
@@ -119,9 +121,20 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
     }
   }
 
+  shootMissile() {
+    this.nextMissile = this.scene.time.now + (this.attack.spedUp ? this.missileDelay / 2 : this.missileDelay);
+    this.scene.bullets.get().init(this.missileColor).fire(this.x, this.y);
+  }
+
   get laserColor() {
-    if (this.scene.registry.get('konami')) return `laser${Phaser.Math.RND.pick(['Red', 'Green', 'Blue'])}0${Phaser.Math.RND.pick([0, 1])}`;
+    if (this.scene.registry.get('konami')) return `laser${Phaser.Math.RND.pick(['Red', 'Green', 'Blue'])}0${Phaser.Math.RND.pick([1, 2])}`;
     const color = this.scene.registry.get('playerTexture').split('_')[1];
     return `laser${color === 'orange' ? 'Red' : color.charAt(0).toUpperCase() + color.slice(1)}01`;
+  }
+
+  get missileColor() {
+    if (this.scene.registry.get('konami')) return `missile${Phaser.Math.RND.pick(['Red', 'Green', 'Blue'])}`;
+    const color = this.scene.registry.get('playerTexture').split('_')[1];
+    return `missile${color === 'orange' ? 'Red' : color.charAt(0).toUpperCase() + color.slice(1)}`;
   }
 }

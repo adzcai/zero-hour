@@ -3,7 +3,14 @@ export default class Button extends Phaser.GameObjects.Container {
     super(scene, x, y);
 
     this.button = this.scene.add.sprite(0, 0, 'spaceshooter', key1).setInteractive();
-    this.text = this.scene.add.text(0, 0, text, { fontSize: '32px', fill: '#000', padding: { x: 20, y: 10 } });
+    this.text = this.scene.add.text(0, 0, text, {
+      align: "center",
+      fontFamily: 'future',
+      fontSize: '32px',
+      fill: '#000',
+      padding: { x: 20, y: 10 },
+      wordWrap: { width: this.scene.cameras.main.width, useAdvancedWrap: true }
+    });
     this.setText(text);
 
     this.add([this.button, this.text]); // We add both of the objects to the container

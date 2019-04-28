@@ -7,6 +7,7 @@ import CreditsScene from './Scenes/CreditsScene.js';
 import ChooseShipScene from './Scenes/ChooseShipScene.js';
 import PowerupInfoScene from './Scenes/PowerupInfoScene.js';
 import BackgroundScene from './Scenes/BackgroundScene.js';
+import UpgradesScene from './Scenes/UpgradesScene.js';
 
 const config = {
   type: Phaser.AUTO,
@@ -27,6 +28,7 @@ const config = {
     TitleScene,
     GameScene,
     OptionsScene,
+    UpgradesScene,
     PowerupInfoScene,
     CreditsScene,
   ],
