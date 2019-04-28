@@ -44,10 +44,10 @@ export default class Mob extends Phaser.GameObjects.Sprite {
   }
 
   end() {
-    this.body.destroy();
     this.hpBar.destroy();
     if (this.tween) this.tween.stop();
-    this.scene.add.sprite(this.x, this.y).play('sonicExplosion');
+    const expl = this.scene.add.sprite(this.x, this.y).play('sonicExplosion');
+    expl.on('animationcomplete', expl.destroy);
     this.destroy();
   }
 }

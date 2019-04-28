@@ -5,6 +5,8 @@ import TitleScene from './Scenes/TitleScene.js';
 import OptionsScene from './Scenes/OptionsScene.js';
 import CreditsScene from './Scenes/CreditsScene.js';
 import ChooseShipScene from './Scenes/ChooseShipScene.js';
+import PowerupInfoScene from './Scenes/PowerupInfoScene.js';
+import BackgroundScene from './Scenes/BackgroundScene.js';
 
 const config = {
   type: Phaser.AUTO,
@@ -14,16 +16,18 @@ const config = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: true,
+      // debug: true,
     },
   },
   scene: [
     BootScene,
     PreloaderScene,
+    BackgroundScene,
     ChooseShipScene,
     TitleScene,
     GameScene,
     OptionsScene,
+    PowerupInfoScene,
     CreditsScene,
   ],
 };

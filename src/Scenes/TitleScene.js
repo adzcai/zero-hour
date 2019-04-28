@@ -7,7 +7,6 @@ export default class TitleScene extends Phaser.Scene {
 
   create() {
     const { width, height } = this.cameras.main;
-    this.background = this.add.tileSprite(0, 0, width, height, 'blue').setOrigin(0);
 
     this.gameButton = new Button(this, width / 2, height / 2 - 100, 'buttonBlue', 'buttonBlue', 'Play', 'Game');
     this.optionsButton = new Button(this, width / 2, height / 2, 'buttonBlue', 'buttonBlue', 'Options', 'Options');
@@ -19,9 +18,14 @@ export default class TitleScene extends Phaser.Scene {
       this.registry.values.bgMusicPlaying = true;
       this.registry.values.bgMusic = this.bgMusic;
     }
-  }
 
-  update() {
-    this.background.tilePositionY -= 1;
+    this.input.keyboard.createCombo([38, 38, 40, 40, 37, 39, 37, 39, 66, 65, 13], { resetOnMatch: true });
+
+    this.input.keyboard.on('keycombomatch', () => {
+      this.registry.set('konami', true);
+    })
+      .on('keyup_ENTER', () => {
+        this.scene.get('Background').changeColor('purple');
+      });
   }
 }

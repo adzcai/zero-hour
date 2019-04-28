@@ -29,17 +29,18 @@ export default class OptionsScene extends Phaser.Scene {
       this.updateAudio();
     });
 
-    if (this.prevScene) {
+    this.howToPlay = new Button(this, width / 2, height * 3 / 4, 'buttonBlue', 'buttonBlue', 'How to Play', 'PowerupInfo');
+
+    if (this.scene.isSleeping('Game')) {
       this.resume = new Button(this, width * 4 / 5, height / 8, 'buttonBlue', 'buttonBlue', 'Resume', () => {
-        this.scene.wake(this.prevScene);
+        this.scene.wake('Game');
         this.scene.stop();
       });
     }
 
     this.menuButton = new Button(this, width - 100, 500, 'buttonBlue', 'buttonBlue', 'Menu', () => {
-      if (this.prevScene) {
-        console.log(this.prevScene);
-        this.scene.get(this.prevScene).scene.start('Title');
+      if (this.scene.isSleeping('Game')) {
+        this.scene.get('Game').scene.start('Title');
         this.scene.stop();
       } else {
         this.scene.start('Title');

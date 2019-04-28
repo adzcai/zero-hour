@@ -1,11 +1,10 @@
 export default class Button extends Phaser.GameObjects.Container {
-  constructor(scene, x, y, key1 = 'buttonBlue', key2 = 'buttonBlue', text, targetScene, originX, originY) {
+  constructor(scene, x, y, key1 = 'buttonBlue', key2 = 'buttonBlue', text, targetScene) {
     super(scene, x, y);
 
-    this.button = this.scene.add.sprite(0, 0, 'spaceshooter', key1).setInteractive().setOrigin(originX, originY);
-    this.text = this.scene.add.text(0, 0, text, { fontSize: '32px', fill: '#000', padding: { x: 20, y: 10 } }).setOrigin(originX, originY);
-    this.button.setDisplaySize(this.text.displayWidth, this.text.displayHeight);
-    Phaser.Display.Align.In.Center(this.text, this.button);
+    this.button = this.scene.add.sprite(0, 0, 'spaceshooter', key1).setInteractive();
+    this.text = this.scene.add.text(0, 0, text, { fontSize: '32px', fill: '#000', padding: { x: 20, y: 10 } });
+    this.setText(text);
 
     this.add([this.button, this.text]); // We add both of the objects to the container
 
@@ -25,5 +24,7 @@ export default class Button extends Phaser.GameObjects.Container {
 
   setText(val) {
     this.text.setText(val);
+    this.button.setDisplaySize(this.text.displayWidth, this.text.displayHeight);
+    Phaser.Display.Align.In.Center(this.text, this.button);
   }
 }

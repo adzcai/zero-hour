@@ -63,6 +63,8 @@ export default class PreloaderScene extends Phaser.Scene {
 
       .setPath('sounds/')
       .audio('laser', 'Laser_Shoot.wav')
+      .audio('laser1', 'sfx_laser1.ogg')
+      .audio('laser2', 'sfx_laser2.ogg')
 
       .setPath('particles')
       .image('trace', 'trace_01.png')
@@ -87,18 +89,43 @@ export default class PreloaderScene extends Phaser.Scene {
     }
 
     this.anims.create({
-      key: 'laserBlue',
-      frames: ['03', '02', '13', '12'].map(num => ({ key: 'spaceshooter', frame: `laserBlue${num}` })),
-      frameRate: 8,
-      repeat: -1,
+      key: 'sonicExplosionSlow',
+      frames: [...Array(9).keys()].map(i => ({ key: `sonicExplosion0${i}` })),
+      frameRate: 4,
     });
 
-    // this.anims.create({
-    //   key: 'metaleyes',
-    //   frames: this.anims.generateFrameNumbers('face', { start: 0, end: 4 }),
-    //   frameRate: 20,
-    //   repeat: -1
-    // });
+    const anims = {
+      laserBlue01: ['03', '02', '13', '12'],
+      laserBlue02: ['05', '04', '15', '14'],
+      laserRed01: ['03', '02', '13', '12'],
+      laserRed02: ['05', '04', '15', '14'],
+      laserGreen01: ['05', '04', '03', '02'],
+      laserGreen02: ['09', '08', '07', '06'],
+    };
+
+    for (const key of Object.keys(anims)) {
+      this.anims.create({
+        key,
+        frames: anims[key].map(num => ({ key: 'spaceshooter', frame: `${key.slice(0, -2)}${num}` })),
+        frameRate: 8,
+        repeat: -1,
+      });
+    }
+
+    const rockets = {
+      rocketGreen: ['14', '15', '16', '01'],
+      rocketRed: ['08', '09', '10', '11'],
+      rocketBlue: ['08', '09', '10', '11'],
+    };
+
+    for (const key of Object.keys(rockets)) {
+      this.anims.create({
+        key,
+        frames: rockets[key].map(num => ({ key: 'spaceshooter', frame: `laser${key.slice(6)}${num}` })),
+        frameRate: 8,
+        repeat: -1,
+      });
+    }
 
     this.registry.set({
       soundOn: true,
@@ -106,7 +133,15 @@ export default class PreloaderScene extends Phaser.Scene {
       bgMusicPlaying: false,
 
       ENEMYTYPES: this.textures.get('spaceshooter').getFrameNames().filter(name => name.startsWith('ufo') || name.startsWith('meteor')),
-      POWERUPTYPES: this.textures.get('spaceshooter').getFrameNames().filter(name => name.startsWith('powerup'))
+      POWERUPTYPES: {
+        bolt_gold: 'Increase your firing speed!',
+        powerupBlue_shield: 'Regain your health!',
+        powerupRed_star: 'Scatter your shots!',
+        star_bronze: 'Increase your number of shots!',
+        pill_green: 'Fire all around you!',
+        things_gold: 'Spread your shots in front of you!',
+      },
+      // this.textures.get('spaceshooter').getFrameNames().filter(name => name.startsWith('powerup')),
     });
 
     this.time.delayedCall(500, () => {
@@ -117,6 +152,7 @@ export default class PreloaderScene extends Phaser.Scene {
       this.percentText.destroy();
       this.assetText.destroy();
 
+      this.scene.launch('Background');
       this.scene.start('ChooseShip');
     });
   }

@@ -28,9 +28,16 @@
             #game-container > canvas {
                 border-radius: 5px;
             }
+
+            @font-face {
+                font-family: future;
+                src: url('assets/kenvector_future.ttf');
+                font-weight: normal;
+            }
         </style>
     </head>
     <body>
+        <div style="font-family:future; position:absolute; left:-1000px; visibility:hidden;">.</div>
         <div id="game-container"></div>
         <script src="./src/index.js" charset="utf-8" type="module"></script>
         <noscript>How do you expect to play my game without Javascript? Go turn it on!</noscript>

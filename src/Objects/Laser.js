@@ -1,31 +1,31 @@
 export default class Laser extends Phaser.GameObjects.Sprite {
-  constructor(scene, x, y, texture, key) {
-    super(scene, x, y, texture, key);
+  constructor(scene, x, y) {
+    super(scene, x, y);
 
-    this.play('laserBlue');
     this.scene.add.existing(this);
     this.scene.physics.add.existing(this);
-
-    this.body.setCollideWorldBounds(true);
 
     this.damage = 400;
     this.speed = 750;
   }
 
-  fire(player) {
-    this
-      .setActive(true)
-      .setVisible(true)
-      .setAngle(player.body.rotation)
-      .setPosition(player.x, player.y);
+  init(type) {
+    this.setName(type);
+    this.play(type);
+    return this;
+  }
 
-    this.body.reset(player.x, player.y);
+  preUpdate() {
+    if (!Phaser.Geom.Rectangle.ContainsPoint(this.scene.physics.world.bounds, this)) this.destroy();
+  }
 
-    const angle = Phaser.Math.DegToRad(player.body.rotation - 90);
-    this.scene.physics.velocityFromRotation(angle, this.speed, this.body.velocity);
+  fire(x, y, angle) {
+    this.setRotation(angle);
 
+    this.body.reset(x, y);
+    this.scene.physics.velocityFromRotation(angle - Math.PI / 2, this.speed, this.body.velocity);
     this.body.velocity.scale(2);
 
-    if (this.scene.registry.get("soundOn")) this.scene.sound.play('laser');
+    if (this.scene.registry.get('soundOn')) this.scene.sound.play(Phaser.Math.RND.pick(['laser', 'laser1', 'laser2']));
   }
 }

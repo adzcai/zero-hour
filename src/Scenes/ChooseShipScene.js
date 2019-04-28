@@ -8,8 +8,6 @@ export default class ChooseShipScene extends Phaser.Scene {
   create() {
     const { width, height } = this.cameras.main;
 
-    this.background = this.add.tileSprite(0, 0, width, height, 'blue').setOrigin(0);
-
     const colors = ['blue', 'green', 'orange', 'red'];
     for (let i = 1; i <= 3; i += 1) {
       for (const j of Object.keys(colors)) {
@@ -20,7 +18,7 @@ export default class ChooseShipScene extends Phaser.Scene {
       }
     }
 
-    const button = new Button(this, width / 2, height / 2, 'buttonBlue', 'buttonBlue', 'Click any ship to begin');
+    this.title = new Button(this, width / 2, height / 2, 'buttonBlue', 'buttonBlue', 'Click any ship to begin');
 
     this.input.on('gameobjectup', (pointer, obj) => {
       if (obj.frame.name !== 'buttonBlue') {
@@ -28,9 +26,5 @@ export default class ChooseShipScene extends Phaser.Scene {
         this.scene.start('Title');
       }
     });
-  }
-
-  update() {
-    this.background.tilePositionY -= 1;
   }
 }
