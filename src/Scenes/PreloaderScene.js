@@ -1,4 +1,4 @@
-import { defaultFont, resolve, deepSet } from '../Objects/Font.js';
+import { defaultFont, resolve, deepSet } from '../Objects/Util.js';
 
 /**
  * This scene loads all of the necessary assets into our game.
@@ -223,16 +223,10 @@ export default class PreloaderScene extends Phaser.Scene {
 
     for (const key of Object.keys(this.registry.values.upgrades)) {
       Object.defineProperty(this.registry.values.upgrades[key], 'value', {
-        get: (() => resolve(this.registry.values, this.registry.values.upgrades[key].variable)),
-        set: ((val) => {
-          console.log(resolve(this.registry.values, this.registry.values.upgrades[key].variable));
-          deepSet(this.registry.values, this.registry.values.upgrades[key].variable, val);
-          console.log(resolve(this.registry.values, this.registry.values.upgrades[key].variable));
-        }),
+        get: () => resolve(this.registry.values, this.registry.values.upgrades[key].variable),
+        set: val => deepSet(this.registry.values, this.registry.values.upgrades[key].variable, val),
       });
     }
-
-    console.log(this.registry.values.upgrades);
 
     this.time.delayedCall(500, () => {
       this.logo.destroy();

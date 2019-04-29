@@ -2,7 +2,7 @@ import PlayerShip from '../Objects/PlayerShip.js';
 import Mob from '../Objects/Mob.js';
 import Laser from '../Objects/Laser.js';
 import Powerup from '../Objects/Powerup.js';
-import { defaultFont } from '../Objects/Font.js';
+import { defaultFont } from '../Objects/Util.js';
 import Button from '../Objects/Button.js';
 
 export default class GameScene extends Phaser.Scene {
@@ -76,7 +76,7 @@ export default class GameScene extends Phaser.Scene {
     this.progressTween = this.tweens.addCounter({
       from: 0,
       to: 1,
-      duration: 5 * 1000,
+      duration: Math.sqrt(this.level) * 25 * 1000,
       onUpdate: (t) => {
         this.progressBar.displayHeight = (1 - t.getValue()) * (this.progressBox.height - 10);
         const { x, y } = this.progressBar.getBottomLeft();
@@ -174,7 +174,7 @@ export default class GameScene extends Phaser.Scene {
       this.tweens.add({
         targets: this.platform,
         x: width / 2,
-        height: height - this.platform.displayHeight,
+        y: height - this.platform.displayHeight,
         duration: 1000,
         onComplete: () => this.platform.body.setImmovable(),
       });

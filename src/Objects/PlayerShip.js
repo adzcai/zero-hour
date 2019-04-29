@@ -53,6 +53,7 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
   }
 
   update(time, delta) {
+    if (!this.body) return;
     if (this.body.speed > 5) this.thrust.emitParticle(8, this.x, this.y);
 
     if (this.scene.state === 'running') {

@@ -1,5 +1,5 @@
 import Button from '../Objects/Button.js';
-import { defaultFont } from '../Objects/Font.js';
+import { defaultFont } from '../Objects/Util.js';
 
 export default class OptionsScene extends Phaser.Scene {
   constructor() {

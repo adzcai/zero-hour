@@ -1,5 +1,5 @@
 import Button from '../Objects/Button.js';
-import { defaultFont } from '../Objects/Font.js';
+import { defaultFont } from '../Objects/Util.js';
 import Upgrade from '../Objects/Upgrade.js';
 
 export default class UpgradesScene extends Phaser.Scene {
@@ -22,7 +22,7 @@ export default class UpgradesScene extends Phaser.Scene {
 
     this.input.on('gameobjectup', (pointer, obj) => {
       if (upgradeButtons.includes(obj)) {
-        if (this.registry.values.money >= obj.data.cost) obj.purchase();
+        if (this.registry.values.money >= obj.registryValue().cost) obj.purchase();
         else obj.flashCost('red');
       }
     });

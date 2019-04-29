@@ -10,7 +10,9 @@ export default class PowerupInfoScene extends Phaser.Scene {
 
     const types = Object.keys(this.registry.get('POWERUPTYPES'));
 
-    this.title = new Button(this, width / 2, height / (types.length + 2), 'buttonBlue', 'buttonBlue', 'PowerupInfo');
+    const numPerRow = Math.ceil(types.length / 2);
+
+    this.title = new Button(this, width / 2, height / 5, 'Powerup Info');
 
     this.infoText = this.add.text(width / 2, height / 2, 'Hover over an icon to see its description', {
       font: '24px monospace',
@@ -21,8 +23,8 @@ export default class PowerupInfoScene extends Phaser.Scene {
 
     for (let i = 0; i < types.length; i += 1) {
       this.add.image(
-        width / 2,
-        height * (parseInt(i, 10) + 2) / (types.length + 2),
+        width * ((i % numPerRow) + 1) / (numPerRow + 1),
+        height * Math.floor((parseInt(i, 10) / numPerRow) + 2) / 5,
         'spaceshooter',
         types[i],
       ).setInteractive();
