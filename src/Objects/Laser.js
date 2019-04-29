@@ -5,8 +5,8 @@ export default class Laser extends Phaser.GameObjects.Sprite {
     this.scene.add.existing(this);
     this.scene.physics.add.existing(this);
 
-    this.damage = 400;
-    this.speed = 750;
+    this.speed = this.scene.registry.values.playerAttack.laser.speed;
+    this.damage = this.scene.registry.values.playerAttack.laser.damage;
   }
 
   init(type) {
@@ -14,20 +14,17 @@ export default class Laser extends Phaser.GameObjects.Sprite {
     this.play(type);
 
     if (this.name.startsWith('missile')) {
-      this.speed = 500;
-      this.damage = 600;
+      this.speed = this.scene.registry.values.playerAttack.missile.speed;
+      this.damage = this.scene.registry.values.playerAttack.missile.damage;
     }
     return this;
   }
 
   preUpdate() {
     if (this.name.startsWith('missile')) {
-      if (this.target === null)
-        this.findTarget();
-      else {
-        if (!this.target.body) this.target = null;
-        else this.scene.physics.moveToObject(this, this.target, this.speed);
-      }
+      if (this.target === null) this.findTarget();
+      else if (!this.target.body) this.target = null;
+      else this.scene.physics.moveToObject(this, this.target, this.speed);
     }
 
     if (!Phaser.Geom.Rectangle.ContainsPoint(this.scene.physics.world.bounds, this)) this.destroy();
@@ -52,8 +49,8 @@ export default class Laser extends Phaser.GameObjects.Sprite {
     this.target = null;
     let min = Phaser.Math.Distance.Between(0, 0, width, height);
 
-    this.scene.enemies.children.each(child => {
-      let dist = Phaser.Math.Distance.Between(this.x, this.y, child.x, child.y);
+    this.scene.enemies.children.each((child) => {
+      const dist = Phaser.Math.Distance.Between(this.x, this.y, child.x, child.y);
       if (dist < min) {
         min = dist;
         this.target = child;

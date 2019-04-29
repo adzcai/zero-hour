@@ -1,15 +1,15 @@
 export default class Button extends Phaser.GameObjects.Container {
-  constructor(scene, x, y, key1 = 'buttonBlue', key2 = 'buttonBlue', text, targetScene) {
+  constructor(scene, x, y, text, targetScene, key1 = 'buttonBlue', key2 = 'buttonBlue') {
     super(scene, x, y);
 
     this.button = this.scene.add.sprite(0, 0, 'spaceshooter', key1).setInteractive();
     this.text = this.scene.add.text(0, 0, text, {
-      align: "center",
+      align: 'center',
       fontFamily: 'future',
       fontSize: '32px',
       fill: '#000',
       padding: { x: 20, y: 10 },
-      wordWrap: { width: this.scene.cameras.main.width, useAdvancedWrap: true }
+      wordWrap: { width: this.scene.cameras.main.width, useAdvancedWrap: true },
     });
     this.setText(text);
 
@@ -20,7 +20,7 @@ export default class Button extends Phaser.GameObjects.Container {
       .on('pointerout', () => this.button.setTexture('spaceshooter', key1));
 
     if (targetScene) {
-      this.button.once('pointerup', () => {
+      this.button.on('pointerup', () => {
         if (typeof targetScene === 'string') this.scene.scene.start(targetScene);
         else if (typeof targetScene === 'function') targetScene();
       });

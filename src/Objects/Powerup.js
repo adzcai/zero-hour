@@ -15,17 +15,17 @@ export default class Powerup extends Phaser.GameObjects.Image {
     const type = this.frame.name;
 
     if (type === 'bolt_gold') {
-      player.attack.spedUp = this.scene.time.now + 3000;
+      player.powerups.spedUp = this.scene.time.now + 3000;
     } else if (type.endsWith('shield')) {
-      player.hp = Math.min(player.hp + 50, player.maxHP);
+      player.hp = Math.min(player.hp + 50, this.scene.registry.values.playerBody.maxHP);
     } else if (type.endsWith('star')) {
-      player.attack.scatter = this.scene.time.now + 3000;
+      player.powerups.scatter = this.scene.time.now + 3000;
     } else if (type.endsWith('star_bronze')) {
-      player.attack.numShots += 1;
+      player.powerups.numShots += 1;
     } else if (type.startsWith('pill')) {
-      player.attack.type = 'allAround';
+      this.scene.registry.values.playerAttack.type = 'All Around';
     } else if (type.startsWith('things')) {
-      player.attack.type = 'spread';
+      this.scene.registry.values.playerAttack.type = 'Spread';
     }
   }
 }

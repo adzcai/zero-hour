@@ -1,7 +1,4 @@
-const style = {
-  font: '18px monospace',
-  fill: '#ffffff',
-};
+import { defaultFont, resolve, deepSet } from '../Objects/Font.js';
 
 /**
  * This scene loads all of the necessary assets into our game.
@@ -25,11 +22,11 @@ export default class PreloaderScene extends Phaser.Scene {
       0x222222, 0.8,
     );
 
-    this.loadingText = this.add.text(width / 2, height / 2 - 50, 'Loading...', style)
+    this.loadingText = this.add.text(width / 2, height / 2 - 50, 'Loading...', defaultFont())
       .setOrigin(0.5);
-    this.percentText = this.add.text(width / 2, height / 2 - 5, '0%', style)
+    this.percentText = this.add.text(width / 2, height / 2 - 5, '0%', defaultFont())
       .setOrigin(0.5);
-    this.assetText = this.add.text(width / 2, height / 2 + 50, '', style)
+    this.assetText = this.add.text(width / 2, height / 2 + 50, '', defaultFont())
       .setOrigin(0.5);
 
     // update progress bar
@@ -48,27 +45,32 @@ export default class PreloaderScene extends Phaser.Scene {
     // load assets needed in our game
     this.load.setBaseURL('assets/')
 
-      .audio('bgMusic', ['TownTheme.mp3'])
       .image('phaserLogo', 'logo.png')
+      .image('spaceStation', 'spaceStation_026.png')
 
-      .setPath('ui/')
+      .setPath('ui')
       .image('box', 'grey_box.png')
       .image('checkedBox', 'blue_boxCheckmark.png')
 
-      .setPath('backgrounds/')
+      .setPath('backgrounds')
       .image('black')
       .image('blue')
       .image('darkPurple')
       .image('purple')
 
-      .setPath('sounds/')
+      .setPath('sounds')
       .audio('laser', 'Laser_Shoot.wav')
       .audio('laser1', 'sfx_laser1.ogg')
       .audio('laser2', 'sfx_laser2.ogg')
+      .audio('bgMusic', ['TownTheme.mp3'])
 
       .setPath('particles')
       .image('trace', 'trace_01.png')
       .image('flare', 'spark_05.png')
+
+      .setPath('spritesheets')
+      .atlasXML('spaceshooter')
+      .atlasXML('coins')
 
       .setPath('explosions');
 
@@ -121,11 +123,25 @@ export default class PreloaderScene extends Phaser.Scene {
     for (const key of Object.keys(missiles)) {
       this.anims.create({
         key,
-        frames: missiles[key].map(num => ({ key: 'spaceshooter', frame: `laser${key.slice(7)}${num}` })),
+        frames: this.anims.generateFrameNames('spaceshooter', {
+          prefix: `laser${key.slice(7)}`,
+          frames: missiles[key],
+        }),
         frameRate: 8,
         repeat: -1,
       });
     }
+
+    this.anims.create({
+      key: 'goldCoin',
+      frames: this.anims.generateFrameNames('coins', {
+        prefix: 'coin_',
+        frames: [6, 26, 16, 26, 36, 26],
+        zeroPad: 2,
+      }),
+      frameRate: 4,
+      repeat: -1,
+    });
 
     this.registry.set({
       soundOn: true,
@@ -142,7 +158,81 @@ export default class PreloaderScene extends Phaser.Scene {
         things_gold: 'Spread your shots in front of you!',
       },
       // this.textures.get('spaceshooter').getFrameNames().filter(name => name.startsWith('powerup')),
+
+      playerAttack: {
+        laser: {
+          delay: 200,
+          damage: 400,
+          speed: 750,
+          numShots: 1,
+        },
+
+        missile: {
+          delay: 500,
+          damage: 600,
+          speed: 500,
+        },
+
+        type: 'Forward',
+      },
+      playerBody: {
+        accel: 1000,
+        maxHP: 1000,
+      },
+
+      upgrades: {
+        'Attack Speed': {
+          cost: 100,
+          variable: 'playerAttack.laser.delay',
+          inc: -25,
+        },
+        'Attack Damage': {
+          cost: 100,
+          variable: 'playerAttack.laser.damage',
+          inc: 100,
+        },
+        'Number of Attacks': {
+          cost: 300,
+          variable: 'playerAttack.laser.numShots',
+          inc: 1,
+        },
+        'Missile Speed': {
+          cost: 100,
+          variable: 'playerAttack.missile.delay',
+          inc: -25,
+        },
+        'Missile Damage': {
+          cost: 100,
+          variable: 'playerAttack.missile.damage',
+          inc: 300,
+        },
+        'Ship Speed': {
+          cost: 100,
+          variable: 'playerBody.accel',
+          inc: 250,
+        },
+        'Ship HP': {
+          cost: 100,
+          variable: 'playerBody.maxHP',
+          inc: 500,
+        },
+      },
+
+      money: 0,
     });
+
+    for (const key of Object.keys(this.registry.values.upgrades)) {
+      Object.defineProperty(this.registry.values.upgrades[key], 'value', {
+        get: (() => resolve(this.registry.values, this.registry.values.upgrades[key].variable)),
+        set: ((val) => {
+          console.log(resolve(this.registry.values, this.registry.values.upgrades[key].variable));
+          deepSet(this.registry.values, this.registry.values.upgrades[key].variable, val);
+          console.log(resolve(this.registry.values, this.registry.values.upgrades[key].variable));
+        }),
+      });
+    }
+
+    console.log(this.registry.values.upgrades);
 
     this.time.delayedCall(500, () => {
       this.logo.destroy();

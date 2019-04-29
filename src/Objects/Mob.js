@@ -7,6 +7,14 @@ export default class Mob extends Phaser.GameObjects.Sprite {
 
     this.maxHP = 1000;
     this.hp = this.maxHP;
+    this.value = this.maxHP;
+
+    if (Math.random() < 0.1) {
+      this.setTint(0xff0000);
+      this.value *= 4;
+    }
+
+    this.numCoins = Math.floor(Phaser.Math.FloatBetween(0.5, 1) * this.value / 100);
   }
 
   preUpdate(time, delta) {
@@ -16,9 +24,7 @@ export default class Mob extends Phaser.GameObjects.Sprite {
 
   init() {
     const { width } = this.scene.cameras.main;
-
     this.setRandomPosition(0, -320, width, 320);
-
     this.hpBar = this.scene.add.rectangle(this.x, this.y, this.width, 10, 0xff00, 1);
 
     if (this.frame.name.startsWith('meteor')) {
@@ -44,6 +50,9 @@ export default class Mob extends Phaser.GameObjects.Sprite {
   }
 
   end() {
+    this.scene.score += this.value;
+    this.scene.coins.emitParticleAt(this.x, this.y, this.numCoins);
+
     this.hpBar.destroy();
     if (this.tween) this.tween.stop();
     const expl = this.scene.add.sprite(this.x, this.y).play('sonicExplosion');

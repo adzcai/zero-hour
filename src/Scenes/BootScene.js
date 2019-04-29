@@ -4,9 +4,7 @@ export default class BootScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.setBaseURL('assets')
-      .image('logo')
-      .atlasXML('spaceshooter', 'sheet.png', 'sheet.xml');
+    this.load.image('logo', 'assets/logo.png');
   }
 
   create() {

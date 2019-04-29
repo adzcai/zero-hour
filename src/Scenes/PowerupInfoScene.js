@@ -17,7 +17,7 @@ export default class PowerupInfoScene extends Phaser.Scene {
       fill: '#ffffff',
       wordWrap: { width, useAdvancedWrap: true },
       align: 'center',
-    }).setOrigin(0.5);
+    }).setOrigin(0.5).setDepth(10);
 
     for (let i = 0; i < types.length; i += 1) {
       this.add.image(
@@ -32,6 +32,6 @@ export default class PowerupInfoScene extends Phaser.Scene {
       if (types.includes(obj.frame.name)) this.infoText.setText(this.registry.get('POWERUPTYPES')[obj.frame.name]);
     });
 
-    this.back = new Button(this, width / 2, height * 4 / 5, 'buttonBlue', 'buttonBlue', 'Back', 'Options');
+    this.back = new Button(this, width / 2, height * 4 / 5, 'Back', 'Options');
   }
 }
