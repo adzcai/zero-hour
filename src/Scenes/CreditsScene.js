@@ -7,27 +7,34 @@ export default class CreditsScene extends Phaser.Scene {
 
   create() {
     const { width, height } = this.cameras.main;
+
+    this.scene.get('Background').changeColor('black');
+
     this.creditsText = this.add.text(width / 2, height / 2, 'Credits', defaultFont(32)).setOrigin(0.5);
-    this.madeByText = this.add.text(width / 2, height * 1.5, 'Created By: Placeholder', defaultFont(26)).setOrigin(0.5);
-    this.zone = this.add.zone(width / 2, height / 2, width, height);
+
+    const texts = ['Created By: Alexander Cai', 'Assets by: Kenney Vleugels (www.kenney.nl)', 'Audio by: Jonathan So (https://jonathan-so.itch.io/creatorpack)', 'Thank you for playing!'];
+
+    for (let i = 0; i < texts.length; i += 1) {
+      const message = this.add.text(width / 2, height * 1.5, texts[i], defaultFont(26, width)).setOrigin(0.5);
+      const config = {
+        targets: message,
+        y: -100,
+        ease: 'Linear',
+        duration: 5000,
+        delay: (i + 1) * 1500,
+      };
+
+      if (i === texts.length - 1) config.onComplete = () => this.scene.start('Title');
+
+      this.tweens.add(config);
+    }
 
     this.tweens.add({
       targets: this.creditsText,
       y: -100,
-      ease: 'Power1',
+      ease: 'Linear',
       duration: 1500,
       delay: 1000,
-    });
-
-    this.madeByTween = this.tweens.add({
-      targets: this.madeByText,
-      y: -100,
-      ease: 'Power1',
-      duration: 3000,
-      delay: 3000,
-      onComplete: () => {
-        this.scene.start('Title');
-      },
     });
   }
 }

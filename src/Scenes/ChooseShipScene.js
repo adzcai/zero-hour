@@ -26,18 +26,5 @@ export default class ChooseShipScene extends Phaser.Scene {
         this.scene.start('Title');
       }
     });
-
-    // let x = width / 12;
-    // let y = height / 12;
-    // for (let frame of Object.keys(this.textures.get('coins').frames)) {
-    //   console.log(frame)
-    //   this.add.image(x, y, 'coins', frame);
-    //   this.add.text(x, y, frame, {fontFamily: 'future', fontSize: 18, fill: '#ff0000'}).setDepth(100);
-    //   x += width / 5;
-    //   if (x >= width) {
-    //     x = width / 12;
-    //     y += height / 10;
-    //   }
-    // }
   }
 }

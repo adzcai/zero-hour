@@ -9,10 +9,13 @@ export default class BackgroundScene extends Phaser.Scene {
   create() {
     const { width, height } = this.cameras.main;
     this.background = this.add.tileSprite(0, 0, width, height, 'black').setOrigin(0);
+    this.bgMusic = this.sound.add('titleMusic', { volume: 0.5, loop: true });
+    this.bgMusic.play();
   }
 
   update() {
     this.background.tilePositionY -= this.speed;
+    if (this.newBackground) this.newBackground.tilePositionY -= this.speed;
   }
 
   changeColor(newColor) {
@@ -52,5 +55,11 @@ export default class BackgroundScene extends Phaser.Scene {
     });
 
     return this;
+  }
+
+  playBgMusic(key) {
+    this.bgMusic.destroy();
+    this.bgMusic = this.sound.add(key, { volume: 0.5, loop: true });
+    this.bgMusic.play();
   }
 }

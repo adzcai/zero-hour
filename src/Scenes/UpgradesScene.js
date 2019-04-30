@@ -23,7 +23,7 @@ export default class UpgradesScene extends Phaser.Scene {
     this.input.on('gameobjectup', (pointer, obj) => {
       if (upgradeButtons.includes(obj)) {
         if (this.registry.values.money >= obj.registryValue().cost) obj.purchase();
-        else obj.flashCost('red');
+        else obj.flashCost(0xff0000);
       }
     });
 

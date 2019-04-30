@@ -8,7 +8,7 @@ export default class TitleScene extends Phaser.Scene {
   create() {
     const { width, height } = this.cameras.main;
 
-    this.scene.get('Background').changeColor('blue').changeSpeed(1);
+    this.scene.get('Background').changeColor('blue').changeSpeed(1).playBgMusic('titleMusic');
 
     const inc = height / 5;
 
@@ -16,13 +16,6 @@ export default class TitleScene extends Phaser.Scene {
     this.optionsButton = new Button(this, width / 2, inc * 2, 'Options', 'Options');
     this.upgradesButton = new Button(this, width / 2, inc * 3, 'Upgrades', 'Upgrades');
     this.creditsButton = new Button(this, width / 2, inc * 4, 'Credits', 'Credits');
-
-    if (this.registry.values.musicOn && !this.registry.values.bgMusicPlaying) {
-      this.bgMusic = this.sound.add('bgMusic', { volume: 0.5, loop: true });
-      this.bgMusic.play();
-      this.registry.values.bgMusicPlaying = true;
-      this.registry.values.bgMusic = this.bgMusic;
-    }
 
     this.input.keyboard.createCombo([38, 38, 40, 40, 37, 39, 37, 39, 66, 65, 13], { resetOnMatch: true });
 

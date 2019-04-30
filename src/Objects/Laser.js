@@ -7,6 +7,8 @@ export default class Laser extends Phaser.GameObjects.Sprite {
 
     this.speed = this.scene.registry.values.playerAttack.laser.speed;
     this.damage = this.scene.registry.values.playerAttack.laser.damage;
+
+    this.lifespan = this.name.startsWith('missile') ? 5000 : 1000;
   }
 
   init(type) {
@@ -20,14 +22,15 @@ export default class Laser extends Phaser.GameObjects.Sprite {
     return this;
   }
 
-  preUpdate() {
+  preUpdate(time, delta) {
+    super.preUpdate(time, delta);
     if (this.name.startsWith('missile')) {
       if (this.target === null) this.findTarget();
       else if (!this.target.body) this.target = null;
       else this.scene.physics.moveToObject(this, this.target, this.speed);
     }
-
-    if (!Phaser.Geom.Rectangle.ContainsPoint(this.scene.physics.world.bounds, this)) this.destroy();
+    this.lifespan -= delta;
+    if (this.lifespan <= 0) this.destroy();
   }
 
   fire(x, y, angle) {

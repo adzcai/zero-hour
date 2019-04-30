@@ -62,7 +62,16 @@ export default class PreloaderScene extends Phaser.Scene {
       .audio('laser', 'Laser_Shoot.wav')
       .audio('laser1', 'sfx_laser1.ogg')
       .audio('laser2', 'sfx_laser2.ogg')
-      .audio('bgMusic', ['TownTheme.mp3'])
+      .audio('lose', 'sfx_lose.ogg')
+      .audio('shieldDown', 'sfx_shieldDown.ogg')
+      .audio('shieldUp', 'sfx_shieldUp.ogg')
+      .audio('powerup', 'sfx_twoTone.ogg')
+      .audio('select', 'Blip_Select.wav')
+      .audio('explosion', 'Explosion.wav')
+
+      .audio('titleMusic', 'Title Theme.mp3')
+      .audio('gameMusic', 'Sunstrider.mp3')
+      .audio('victoryMusic', 'Victory! All Clear.mp3')
 
       .setPath('particles')
       .image('trace', 'trace_01.png')
@@ -143,10 +152,12 @@ export default class PreloaderScene extends Phaser.Scene {
       repeat: -1,
     });
 
-    this.registry.set({
+    this.registry.set(JSON.parse(window.localStorage.getItem('playerSave')) || {
       soundOn: true,
       musicOn: true,
-      bgMusicPlaying: false,
+
+      money: 0,
+      level: 1,
 
       ENEMYTYPES: this.textures.get('spaceshooter').getFrameNames().filter(name => name.startsWith('ufo') || name.startsWith('meteor')),
       POWERUPTYPES: {
@@ -175,6 +186,7 @@ export default class PreloaderScene extends Phaser.Scene {
 
         type: 'Forward',
       },
+
       playerBody: {
         accel: 1000,
         maxHP: 1000,
@@ -217,8 +229,6 @@ export default class PreloaderScene extends Phaser.Scene {
           inc: 500,
         },
       },
-
-      money: 0,
     });
 
     for (const key of Object.keys(this.registry.values.upgrades)) {
@@ -227,6 +237,10 @@ export default class PreloaderScene extends Phaser.Scene {
         set: val => deepSet(this.registry.values, this.registry.values.upgrades[key].variable, val),
       });
     }
+
+    window.onbeforeunload = () => {
+      window.localStorage.setItem('playerSave', JSON.stringify(this.registry.values));
+    };
 
     this.time.delayedCall(500, () => {
       this.logo.destroy();
