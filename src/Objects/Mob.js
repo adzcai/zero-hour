@@ -5,16 +5,16 @@ export default class Mob extends Phaser.GameObjects.Sprite {
     this.scene.add.existing(this);
     this.scene.physics.add.existing(this);
 
-    this.maxHP = 1000;
+    this.maxHP = Math.pow(this.displayWidth, 1.5) * Math.pow(this.scene.registry.values.level, 2);
     this.hp = this.maxHP;
-    this.value = this.maxHP;
+    this.value = Math.floor(Math.sqrt(this.maxHP));
 
     if (Math.random() < 0.1) {
       this.setTint(0xff0000);
       this.value *= 4;
     }
 
-    this.numCoins = Math.floor(Phaser.Math.FloatBetween(0.5, 1) * this.value / 100);
+    this.numCoins = Math.floor(Phaser.Math.FloatBetween(0.5, 1) * Math.sqrt(this.value) / 2);
   }
 
   preUpdate(time, delta) {
@@ -33,7 +33,7 @@ export default class Mob extends Phaser.GameObjects.Sprite {
     } else if (this.frame.name.startsWith('ufo')) {
       this.tween = this.scene.tweens.add({
         targets: this,
-        x: Phaser.Math.Between(-200, 200),
+        x: `+=${Phaser.Math.Between(-200, 200)}`,
         duration: 2000,
         ease: 'Sine.easeInOut',
         repeat: -1,
@@ -52,6 +52,8 @@ export default class Mob extends Phaser.GameObjects.Sprite {
   end() {
     this.scene.score += this.value;
     this.scene.coins.emitParticleAt(this.x, this.y, this.numCoins);
+
+    if (this.scene.registry.values.soundOn) this.scene.sound.play('explosion');
 
     this.hpBar.destroy();
     if (this.tween) this.tween.stop();

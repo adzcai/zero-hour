@@ -8,8 +8,6 @@ import Button from '../Objects/Button.js';
 export default class GameScene extends Phaser.Scene {
   constructor() {
     super('Game');
-
-    this.level = 1;
   }
 
   create() {
@@ -18,7 +16,7 @@ export default class GameScene extends Phaser.Scene {
 
     const { width, height } = this.cameras.main;
 
-    this.scene.get('Background').changeColor('purple').changeSpeed(5);
+    this.scene.get('Background').changeColor('purple').changeSpeed(5).playBgMusic('gameMusic');
 
     this.hpBox = this.add.rectangle(5, 5, width / 3, height / 12, 0xfff, 0.8).setOrigin(0);
     this.hpBar = this.add.rectangle(10, 15, width / 3 - 10, height / 12 - 20, 0x00ff00, 1).setOrigin(0);
@@ -46,7 +44,10 @@ export default class GameScene extends Phaser.Scene {
 
     this.physics.add.collider(this.player, this.enemies, (player, enemy) => {
       enemy.end();
-      this.player.hp -= enemy.hp / 5;
+
+      if (this.registry.values.soundOn) this.sound.play('shieldDown');
+
+      this.player.hp -= Math.sqrt(enemy.hp);
       this.hpBar.displayWidth = Phaser.Math.Percent(this.player.hp, 0, this.registry.values.playerBody.maxHP) * (this.hpBox.displayWidth - 10);
       if (this.player.hp <= 0 && this.state === 'running') this.gameOver('died');
     });
@@ -61,7 +62,7 @@ export default class GameScene extends Phaser.Scene {
       powerup.destroy();
     });
 
-    this.title = new Button(this, width / 2, height / 3, `Level ${this.level}`);
+    this.title = new Button(this, width / 2, height / 3, `Level ${this.registry.values.level}`);
     this.tweens.add({
       targets: this.title,
       alpha: 0,
@@ -76,7 +77,7 @@ export default class GameScene extends Phaser.Scene {
     this.progressTween = this.tweens.addCounter({
       from: 0,
       to: 1,
-      duration: Math.sqrt(this.level) * 25 * 1000,
+      duration: Math.sqrt(this.registry.values.level) * 25 * 1000,
       onUpdate: (t) => {
         this.progressBar.displayHeight = (1 - t.getValue()) * (this.progressBox.height - 10);
         const { x, y } = this.progressBar.getBottomLeft();
@@ -124,7 +125,7 @@ export default class GameScene extends Phaser.Scene {
         const frame = Phaser.Math.RND.pick(this.registry.get('ENEMYTYPES'));
         this.enemies.get(0, 0, 'spaceshooter', frame).init();
       },
-      delay: 1000 / this.level,
+      delay: 1000 / this.registry.values.level,
       loop: true,
     });
 
@@ -141,7 +142,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   gameOver(type) {
-    this.state = 'landing';
+    this.state = 'ending';
 
     const { width, height } = this.cameras.main;
 
@@ -151,6 +152,7 @@ export default class GameScene extends Phaser.Scene {
     this.coins.destroy();
 
     if (type === 'died') {
+      if (this.registry.values.soundOn) this.sound.play('lose');
       this.player.play('sonicExplosionSlow').once('animationcomplete', () => this.player.destroy());
       this.showGameOverMessage('Game Over\n\nYou Died');
     } else if (type === 'won') {
@@ -165,6 +167,7 @@ export default class GameScene extends Phaser.Scene {
         onComplete: () => {
           this.player.body.reset(this.player.x, this.player.y);
           this.player.body.setVelocityY(100);
+          this.state = 'landing';
         },
       });
 
@@ -184,12 +187,13 @@ export default class GameScene extends Phaser.Scene {
         if (this.platform.body.touching.up) {
           this.score += 5000;
           this.showGameOverMessage('Game Over\n\nYou Won');
+          if (this.registry.values.musicOn) this.scene.get('Background').playBgMusic('victoryMusic');
         }
       });
 
       // If he misses the platform, it's handled in update()
 
-      this.level += 1;
+      this.registry.values.level += 1;
     }
   }
 
@@ -201,7 +205,7 @@ export default class GameScene extends Phaser.Scene {
     // Stop the player's current movement
     this.player.body.reset(this.player.x, this.player.y);
 
-    this.gameOverText = this.add.text(width / 2, height * 3 / 8, message, defaultFont(24)).setOrigin(0.5);
+    this.gameOverText = this.add.text(width / 2, height * 3 / 8, message, defaultFont(24)).setOrigin(0.5).setDepth(50);
 
     // Flashes the gameOverText a few times
     this.flashTimer = this.time.addEvent({
@@ -209,13 +213,13 @@ export default class GameScene extends Phaser.Scene {
         this.gameOverText.setVisible(!this.gameOverText.visible);
 
         if (this.flashTimer.getOverallProgress() === 1) { // When it's finished, show the player's score and prompt restart
-          this.add.text(width / 2, height / 2, `Your score: ${this.score}`, defaultFont(18)).setOrigin(0.5);
+          this.add.text(width / 2, height / 2, `Your score: ${this.score}`, defaultFont(18)).setOrigin(0.5).setDepth(50);
 
-          this.add.text(width / 2, height * 2 / 3, 'Press any key to restart', defaultFont(18)).setOrigin(0.5);
+          this.add.text(width / 2, height * 2 / 3, 'Press any key to restart', defaultFont(18)).setOrigin(0.5).setDepth(50);
           this.input.keyboard.on('keyup', () => this.scene.start('Title'));
         }
       },
-      delay: 1000,
+      delay: 750,
       repeat: 3,
     });
   }

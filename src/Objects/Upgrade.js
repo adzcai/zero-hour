@@ -41,11 +41,11 @@ export default class Upgrade extends Phaser.GameObjects.Text {
     this.registryValue().value += this.registryValue().inc;
     this.costText.setText(`$${this.registryValue().cost}`);
 
-    this.flashCost('green');
+    this.flashCost(0x00ff00);
   }
 
   flashCost(color) {
-    this.costText.setTint(0xff0000);
+    this.costText.setTint(color);
     this.scene.time.delayedCall(1000, () => this.costText.setTint());
   }
 
