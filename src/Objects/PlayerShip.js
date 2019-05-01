@@ -85,13 +85,16 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
 
   shoot() {
     this.nextShot = this.scene.time.now + (this.powerups.spedUp ? this.attack.laser.delay / 2 : this.attack.laser.delay);
+    this.fireLaser(this.numLaserShots === 1 ? 'Forward' : this.attack.type);
+  }
 
+  fireLaser(type) {
     let angle = this.rotation;
     const { x, y } = new Phaser.Math.Vector2().setToPolar(angle, this.displayWidth / 2);
 
     if (this.powerups.scatter) angle += Phaser.Math.FloatBetween(-Math.PI / 16, Math.PI / 16);
 
-    if (this.attack.type === 'Forward') {
+    if (type === 'Forward') {
       for (let i = 0; i < this.numLaserShots; i += 1) {
         this.scene.bullets.get().init(this.laserColor).fire(
           this.x + x - 2 * x * (i + 1) / (this.numLaserShots + 1),
@@ -99,17 +102,18 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
           angle,
         );
       }
-    } else if (this.attack.type === 'Spread') {
-      const total = (this.numLaserShots - 1) * Math.PI / 4;
+    } else if (type === 'Spread') {
+      const total = Math.PI * 1.5 * (-4 / (this.numLaserShots + 3) + 1);
+      const inc = total / (this.numLaserShots - 1);
       const base = angle - total / 2;
       for (let i = 0; i < this.numLaserShots; i += 1) {
         this.scene.bullets.get().init(this.laserColor).fire(
           this.x,
           this.y,
-          base + i * Math.PI / 4,
+          base + i * inc,
         );
       }
-    } else if (this.attack.type === 'All Around') {
+    } else if (type === 'All Around') {
       for (let i = 0; i < this.numLaserShots; i += 1) {
         this.scene.bullets.get().init(this.laserColor).fire(
           this.x,
