@@ -25,10 +25,6 @@ export default class Powerup extends Phaser.GameObjects.Image {
       player.powerups.scatter = this.scene.time.now + 3000;
     } else if (type.endsWith('star_bronze')) {
       player.powerups.numShots += 1;
-    } else if (type.startsWith('pill')) {
-      this.scene.registry.values.playerAttack.type = 'All Around';
-    } else if (type.startsWith('things')) {
-      this.scene.registry.values.playerAttack.type = 'Spread';
     }
   }
 }

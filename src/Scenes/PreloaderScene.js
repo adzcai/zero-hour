@@ -165,8 +165,6 @@ export default class PreloaderScene extends Phaser.Scene {
         powerupBlue_shield: 'Regain your health!',
         powerupRed_star: 'Scatter your shots!',
         star_bronze: 'Increase your number of shots!',
-        pill_green: 'Fire all around you!',
-        things_gold: 'Spread your shots in front of you!',
       },
       // this.textures.get('spaceshooter').getFrameNames().filter(name => name.startsWith('powerup')),
 
@@ -184,7 +182,15 @@ export default class PreloaderScene extends Phaser.Scene {
           speed: 500,
         },
 
-        type: 'Forward',
+        TYPES: ['Forward', 'Spread', 'All Around'],
+        index: 0,
+        get type() {
+          return this.TYPES[this.index];
+        },
+        set type(val) {
+          this.index = Math.max(this.TYPES.indexOf(val), 0);
+        },
+
       },
 
       playerBody: {

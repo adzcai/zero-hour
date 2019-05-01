@@ -5,7 +5,7 @@ export default class Mob extends Phaser.GameObjects.Sprite {
     this.scene.add.existing(this);
     this.scene.physics.add.existing(this);
 
-    this.maxHP = Math.pow(this.displayWidth, 1.5) * Math.pow(this.scene.registry.values.level, 2);
+    this.maxHP = Math.pow(this.displayWidth, 1.5) * this.scene.registry.values.level;
     this.hp = this.maxHP;
     this.value = Math.floor(Math.sqrt(this.maxHP));
 
