@@ -1,4 +1,13 @@
-import { defaultFont, resolve, deepSet } from '../Objects/Util.js';
+import { defaultFont, resolve, deepSet } from '../objects/Util.js';
+
+const context = require.context('../../assets', true, /\.(jpe?g|png|gif|mp3|wav|ogg|xml)$/);
+const files = {};
+
+context.keys().forEach((filename) => {
+  console.log(filename);
+  files[filename] = context(filename);
+});
+console.log(files); // you have file contents in the 'files' object, with filenames as keys
 
 /**
  * This scene loads all of the necessary assets into our game.
@@ -45,20 +54,21 @@ export default class PreloaderScene extends Phaser.Scene {
     // load assets needed in our game
     this.load.setBaseURL('assets/')
 
-      .image('phaserLogo', 'logo.png')
-      .image('spaceStation', 'spaceStation_026.png')
-
-      .setPath('ui')
+      .setPath('images/ui')
       .image('box', 'grey_box.png')
       .image('checkedBox', 'blue_boxCheckmark.png')
 
-      .setPath('backgrounds')
+      .setPath('images/backgrounds')
       .image('black')
       .image('blue')
       .image('darkPurple')
       .image('purple')
 
-      .setPath('sounds')
+      .setPath('images/particles')
+      .image('trace', 'trace_01.png')
+      .image('flare', 'spark_05.png')
+
+      .setPath('audio')
       .audio('laser', 'Laser_Shoot.wav')
       .audio('laser1', 'sfx_laser1.ogg')
       .audio('laser2', 'sfx_laser2.ogg')
@@ -71,17 +81,14 @@ export default class PreloaderScene extends Phaser.Scene {
 
       .audio('titleMusic', 'Title Theme.mp3')
       .audio('gameMusic', 'Sunstrider.mp3')
-      .audio('victoryMusic', 'Victory! All Clear.mp3')
-
-      .setPath('particles')
-      .image('trace', 'trace_01.png')
-      .image('flare', 'spark_05.png')
+      .audio('victoryMusic', 'All Clear.mp3')
 
       .setPath('spritesheets')
       .atlasXML('spaceshooter')
+      .atlasXML('spaceshooter2')
       .atlasXML('coins')
 
-      .setPath('explosions');
+      .setPath('images/explosions');
 
     for (let i = 0; i < 9; i += 1) {
       this.load
@@ -95,7 +102,7 @@ export default class PreloaderScene extends Phaser.Scene {
       this.anims.create({
         key: `${explType}Explosion`,
         frames: [...Array(9).keys()].map(i => ({ key: `${explType}Explosion0${i}` })),
-        frameRate: 8,
+        frameRate: 12,
       });
     }
 
@@ -184,13 +191,6 @@ export default class PreloaderScene extends Phaser.Scene {
 
         TYPES: ['Forward', 'Spread', 'All Around'],
         index: 0,
-        get type() {
-          return this.TYPES[this.index];
-        },
-        set type(val) {
-          this.index = Math.max(this.TYPES.indexOf(val), 0);
-        },
-
       },
 
       playerBody: {
@@ -234,6 +234,15 @@ export default class PreloaderScene extends Phaser.Scene {
           variable: 'playerBody.maxHP',
           inc: 500,
         },
+      },
+    });
+
+    Object.defineProperty(this.registry.values.playerAttack, 'type', {
+      get() {
+        return this.TYPES[this.index];
+      },
+      set(val) {
+        this.index = Math.max(this.TYPES.indexOf(val), 0);
       },
     });
 

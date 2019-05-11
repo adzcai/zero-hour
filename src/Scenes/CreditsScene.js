@@ -1,4 +1,4 @@
-import { defaultFont } from '../Objects/Util.js';
+import { defaultFont } from '../objects/Util.js';
 
 export default class CreditsScene extends Phaser.Scene {
   constructor() {

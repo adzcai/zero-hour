@@ -1,6 +1,6 @@
-import Button from '../Objects/Button.js';
-import { defaultFont } from '../Objects/Util.js';
-import Upgrade from '../Objects/Upgrade.js';
+import Button from '../objects/Button.js';
+import { defaultFont } from '../objects/Util.js';
+import Upgrade from '../objects/Upgrade.js';
 
 export default class UpgradesScene extends Phaser.Scene {
   constructor() {

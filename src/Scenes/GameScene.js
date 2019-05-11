@@ -1,9 +1,9 @@
-import PlayerShip from '../Objects/PlayerShip.js';
-import Mob from '../Objects/Mob.js';
-import Laser from '../Objects/Laser.js';
-import Powerup from '../Objects/Powerup.js';
-import { defaultFont } from '../Objects/Util.js';
-import Button from '../Objects/Button.js';
+import PlayerShip from '../objects/PlayerShip.js';
+import Mob from '../objects/Mob.js';
+import Laser from '../objects/Laser.js';
+import Powerup from '../objects/Powerup.js';
+import { defaultFont } from '../objects/Util.js';
+import Button from '../objects/Button.js';
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -115,7 +115,7 @@ export default class GameScene extends Phaser.Scene {
 
   update(time, delta) {
     this.player.update(time, delta);
-    this.physics.world.wrap(this.player, this.player.displayWidth);
+    this.physics.world.wrap(this.player, 5);
     if (this.state === 'landing' && this.player.getBottomLeft().y > this.cameras.main.height) this.showGameOverMessage('Game Over');
   }
 
@@ -166,13 +166,13 @@ export default class GameScene extends Phaser.Scene {
         duration: 1000,
         onComplete: () => {
           this.player.body.reset(this.player.x, this.player.y);
-          this.player.body.setVelocityY(100);
+          this.player.body.setVelocityY(150);
           this.state = 'landing';
         },
       });
 
       // We spawn a platform below the screen and move it to the bottom of the screen
-      this.platform = this.physics.add.image(width / 2, height * 1.5, 'spaceStation');
+      this.platform = this.physics.add.image(width / 2, height * 1.5, 'spaceshooter2', 'spaceStation_024');
       this.platform.setScale((width / 3) / this.platform.displayWidth).setOrigin(0.5, 0);
       this.tweens.add({
         targets: this.platform,
