@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-# Zero Hour
-
-A space shmup game I made for a school project using the HTML5 game framework [Phaser 3](https://phaser.io/phaser3).
-
-## How to use
-
-Simply go to the site https://piguyinthesky.github.io/zero-hour/ to view the game. The source code is located under the js/ repository.
-=======
-
      ______     ______     ______     _____     __    __     _______
     /\  == \   /\  ___\   /\  __ \   /\  __-.  /\ "-./  \   /\  ____\
     \ \  __<   \ \  __\_  \ \  __ \  \ \ \/\ \ \ \ \-./\ \  \ \  __\__
@@ -30,6 +20,15 @@ Simply go to the site https://piguyinthesky.github.io/zero-hour/ to view the gam
 ###########################################################################
 ###########################################################################
 ###########################################################################
+
+
+# Zero Hour
+
+A space shmup game I made for a school project using the HTML5 game framework [Phaser 3](https://phaser.io/phaser3).
+
+## How to use
+
+Simply go to the site https://piguyinthesky.github.io/zero-hour/ to view the game. The source code is located under the js/ repository.
 
 
 ///// NPM: 6.2.0 ///// node: 10.8.0 /////
@@ -1284,4 +1283,3 @@ but wait we've been testing our branch not our master so lets merge and deploy o
 Later i'll add compression to make the assets smaller and better for the user but this is too much at the minute so for now we'll leave it there.
 
 Final note about our development production cycle we have developped locally tested in staging and everything is great now we can promote to production. and in reality that would be us making a update to our project.
->>>>>>> master
