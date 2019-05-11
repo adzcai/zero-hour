@@ -1,4 +1,5 @@
 import '../assets/styles/home.css';
+import '../assets/fonts/kenvector_future.ttf';
 
 import Phaser from 'phaser';
 
