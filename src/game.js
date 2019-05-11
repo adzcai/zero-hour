@@ -14,22 +14,17 @@ import PowerupInfoScene from './scenes/PowerupInfoScene.js';
 import BackgroundScene from './scenes/BackgroundScene.js';
 import UpgradesScene from './scenes/UpgradesScene.js';
 
-alert('hi');
+// const deviceH = window.screen.availHeight;
+// const deviceW = window.screen.availWidth;
+const DEFAULT_WIDTH = 480;
+const DEFAULT_HEIGHT = 640;
 
-const deviceH = window.screen.availHeight;
-const deviceW = window.screen.availWidth;
 
-const deviceRW = window.screen.width * window.devicePixelRatio;
-const deviceRH = window.screen.height * window.devicePixelRatio;
-
-console.log(deviceRW);
-console.log(`${deviceW} ${deviceH}`);
-
-const gameConfig = {
+const config = {
   type: Phaser.AUTO,
   parent: 'canvas',
-  width: deviceW,
-  height: deviceH,
+  width: DEFAULT_WIDTH,
+  height: DEFAULT_HEIGHT,
   physics: {
     default: 'arcade',
     arcade: {
@@ -52,26 +47,25 @@ const gameConfig = {
   resize,
 };
 
-const config = gameConfig;
-
 const game = new Phaser.Game(config);
 
 function resize() {
   const w = window.innerWidth;
   const h = window.innerHeight;
-  const scale = Math.min(w / Config.DEFAULT_WIDTH, h / Config.DEFAULT_HEIGHT);
+  const scale = Math.min(w / DEFAULT_WIDTH, h / DEFAULT_HEIGHT);
 
   game.canvas.setAttribute('style',
     ` -ms-transform: scale(${scale}); -webkit-transform: scale3d(${scale}, 1);`
 			+ ` -moz-transform: scale(${scale}); -o-transform: scale(${scale}); transform: scale(${scale});`
 			+ ' transform-origin: top left;');
 
-  width = w / scale;
-  height = h / scale;
-  game.resize(width, height);
-  game.scene.scenes.forEach((scene) => {
-    scene.cameras.main.setViewport(0, 0, width, height);
-  });
+  const width = w / scale;
+  const height = h / scale;
+  console.log(width);
+  console.log(height);
+  // game.scene.scenes.forEach((scene) => {
+  //   scene.cameras.main.setViewport(0, 0, width, height);
+  // });
 }
 
 window.addEventListener('resize', (event) => {
