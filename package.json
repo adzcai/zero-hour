@@ -1,10 +1,10 @@
 {
-  "name": "phaser-spaceshooter",
+  "name": "zero-hour",
   "version": "1.0.0",
-  "description": "A simple Phaser3 space shooter",
+  "description": "A simple space shmup game I originally made for a school project using the HTML5 game framework Phaser 3, bundled with Webpack and Babel. Enjoy!",
   "engines": {
-    "node": "10.8.0",
-    "npm": "6.3.0"
+    "node": "10.15.3",
+    "npm": "6.4.1"
   },
   "private": true,
   "babel": {
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/scope2229/Phaser-node-heroku.git"
+    "url": "git+https://github.com/piguyinthesky/zero-hour.git"
   },
   "keywords": [
     "Phaser3",
@@ -30,12 +30,12 @@
     "Babel",
     "Webpack4"
   ],
-  "author": "Scope2229",
+  "author": "Alexander Cai <alexandercai@outlook.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/scope2229/Phaser-node-heroku/issues"
+    "url": "https://github.com/piguyinthesky/zero-hour/issues"
   },
-  "homepage": "https://github.com/scope2229/Phaser-node-heroku#readme",
+  "homepage": "https://github.com/piguyinthesky/zero-hour#readme",
   "dependencies": {
     "express": "^4.16.3",
     "phaser": "^3.11.0"
