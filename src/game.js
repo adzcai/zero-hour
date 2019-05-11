@@ -3,16 +3,16 @@ import '../assets/fonts/kenvector_future.ttf';
 
 import Phaser from 'phaser';
 
-import GameScene from './Scenes/GameScene.js';
-import BootScene from './Scenes/BootScene.js';
-import PreloaderScene from './Scenes/PreloaderScene.js';
-import TitleScene from './Scenes/TitleScene.js';
-import OptionsScene from './Scenes/OptionsScene.js';
-import CreditsScene from './Scenes/CreditsScene.js';
-import ChooseShipScene from './Scenes/ChooseShipScene.js';
-import PowerupInfoScene from './Scenes/PowerupInfoScene.js';
-import BackgroundScene from './Scenes/BackgroundScene.js';
-import UpgradesScene from './Scenes/UpgradesScene.js';
+import GameScene from './scenes/GameScene.js';
+import BootScene from './scenes/BootScene.js';
+import PreloaderScene from './scenes/PreloaderScene.js';
+import TitleScene from './scenes/TitleScene.js';
+import OptionsScene from './scenes/OptionsScene.js';
+import CreditsScene from './scenes/CreditsScene.js';
+import ChooseShipScene from './scenes/ChooseShipScene.js';
+import PowerupInfoScene from './scenes/PowerupInfoScene.js';
+import BackgroundScene from './scenes/BackgroundScene.js';
+import UpgradesScene from './scenes/UpgradesScene.js';
 
 alert('hi');
 
