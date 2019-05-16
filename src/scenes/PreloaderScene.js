@@ -1,4 +1,4 @@
-import { defaultFont, resolve, deepSet } from '../objects/Util.js';
+import { defaultFont, resolve, deepSet } from '../objects/Util';
 
 const context = require.context('../../assets', true, /\.(jpe?g|png|gif|mp3|wav|ogg|xml)$/);
 const files = {};

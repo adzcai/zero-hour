@@ -1,9 +1,9 @@
-import PlayerShip from '../objects/PlayerShip.js';
-import Mob from '../objects/Mob.js';
-import Laser from '../objects/Laser.js';
-import Powerup from '../objects/Powerup.js';
-import { defaultFont } from '../objects/Util.js';
-import Button from '../objects/Button.js';
+import PlayerShip from '../objects/PlayerShip';
+import Mob from '../objects/Mob';
+import Laser from '../objects/Laser';
+import Powerup from '../objects/Powerup';
+import { defaultFont } from '../objects/Util';
+import Button from '../objects/Button';
 
 export default class GameScene extends Phaser.Scene {
   constructor() {

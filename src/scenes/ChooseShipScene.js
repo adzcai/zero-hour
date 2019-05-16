@@ -1,4 +1,4 @@
-import Button from '../objects/Button.js';
+import Button from '../objects/Button';
 
 export default class ChooseShipScene extends Phaser.Scene {
   constructor() {
