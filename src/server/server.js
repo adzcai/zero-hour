@@ -4,34 +4,52 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
+const passport = require('passport');
+const path = require('path');
 
 const routes = require('./routes/main');
 const secureRoutes = require('./routes/secure');
+const passwordRoutes = require('./routes/password');
 
 // setup mongo connection
 const uri = process.env.MONGODB_URI;
-mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true });
+mongoose.connect(uri, { useNewUrlParser : true, useCreateIndex: true });
 mongoose.connection
   .on('error', (error) => {
-    console.log(error);
-    process.exit(1);
-  })
-  .on('connected', () => {
-    console.log('connected to mongo');
-  });
+  console.log(error);
+  process.exit(1);
+})
+.on('connected', function () {
+  console.log('connected to mongo');
+});
+mongoose.set('useFindAndModify', false);
 
 // create an instance of an express app
 const app = express();
 
-app.use(express.static(`${__dirname}/build`));
-
 // update express settings
 app.use(bodyParser.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
 app.use(bodyParser.json()); // parse application/json
+app.use(cookieParser());
+
+// require passport auth
+require('./auth/auth');
+
+app.get('/game.html', passport.authenticate('jwt', { session : false }), function (req, res) {
+  res.sendFile(path.join(__dirname, '../../build/game.html'));
+});
+
+app.use(express.static(path.join(__dirname, '../../build')));
+
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, '../../build/index.html'));
+});
 
 // main routes
 app.use('/', routes);
-app.use('/', secureRoutes);
+app.use('/', passwordRoutes);
+app.use('/', passport.authenticate('jwt', { session : false }), secureRoutes);
 
 // catch all other routes
 app.use((req, res, next) => {
@@ -40,8 +58,8 @@ app.use((req, res, next) => {
 
 // handle errors
 app.use((err, req, res, next) => {
-  console.log(err);
-  res.status(err.status || 500).json({ error: err });
+  console.log(err.message);
+  res.status(err.status || 500).json({ error: err.message });
 });
 
 // have the server start listening on the provided port

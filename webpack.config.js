@@ -35,15 +35,15 @@ module.exports = {
       CANVAS_RENDERER: JSON.stringify(true),
       WEBGL_RENDERER: JSON.stringify(true),
     }),
-    new HtmlWebpackPlugin({
-      template: path.resolve(srcPath, 'index.html'),
-      title: 'Phaser3 Heroku ready',
-    }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css',
-    }),
-  ],
+    })
+  ].concat(['index', 'signup', 'game'].map(name => new HtmlWebpackPlugin({
+    template: path.resolve(srcPath, `${name}.html`),
+    filename: `${name}.html`,
+    inject: name === 'game' // We only inject the javascript into game.html
+  }))),
   module: {
     rules: [
       {
