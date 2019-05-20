@@ -27,8 +27,8 @@ router.post('/login', async (req, res, next) => {
           email: user.email
         };
 
-        const token = jwt.sign({ user: body }, 'top_secret', { expiresIn: 300 });
-        const refreshToken = jwt.sign({ user: body }, 'top_secret_refresh', { expiresIn: 86400 });
+        const token = jwt.sign({ user: body }, process.env.JWT_SECRET, { expiresIn: 300 });
+        const refreshToken = jwt.sign({ user: body }, process.env.JWT_REFRESH, { expiresIn: 86400 });
 
         // store tokens in cookie
         res.cookie('jwt', token);
@@ -55,7 +55,7 @@ router.post('/token', (req, res) => {
   const { refreshToken } = req.body;
   if (refreshToken in tokenList) {
     const body = { email: tokenList[refreshToken].email, _id: tokenList[refreshToken]._id };
-    const token = jwt.sign({ user: body }, 'top_secret', { expiresIn: 300 });
+    const token = jwt.sign({ user: body }, process.env.JWT_SECRET, { expiresIn: 300 });
 
     // update jwt
     res.cookie('jwt', token);

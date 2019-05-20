@@ -41,7 +41,7 @@ passport.use('login', new localStrategy({
 
 // verify token is valid
 passport.use(new JWTstrategy({
-  secretOrKey: 'top_secret',
+  secretOrKey: process.env.JWT_SECRET,
   jwtFromRequest: function (req) {
     let token = null;
     if (req && req.cookies) token = req.cookies['jwt'];

@@ -7,8 +7,42 @@
   
   <title>Zero Hour by Alex Cai</title>
   <meta name="description" content="A shoot 'em up game I designed for a school project." />
-  
-  <meta charset="utf-8">
+
+  <style>
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #111;
+      color: #eee;
+      font: caption;
+    }
+
+    #game-container {
+      margin: 0%;
+      padding: 0%;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      position: relative;
+    }
+
+    #game-container > canvas {
+      position: absolute;
+      top: 0%; bottom: 0%; left: 0%; right: 0%;
+      margin: auto;
+    }
+
+    @font-face {
+      font-family: future;
+      src: url('/assets/fonts/kenvector_future.ttf');
+      font-weight: normal;
+    }
+  </style>
 </head>
 <body>
   <noscript>How do you expect to play my game without Javascript? Go turn it on!</noscript>
