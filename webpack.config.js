@@ -35,15 +35,21 @@ module.exports = {
       CANVAS_RENDERER: JSON.stringify(true),
       WEBGL_RENDERER: JSON.stringify(true),
     }),
-    new HtmlWebpackPlugin({
-      template: path.resolve(srcPath, 'index.html'),
-      title: 'Phaser3 Heroku ready',
-    }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css',
     }),
-  ],
+    new HtmlWebpackPlugin({
+      hash: true,
+      template: path.resolve(srcPath, 'game.html'),
+      filename: 'game.html',
+    }),
+  ].concat(['index', 'signup', 'forgot-password', 'reset-password'].map(name => new HtmlWebpackPlugin({
+    hash: true,
+    template: path.resolve(srcPath, `${name}.html`),
+    filename: `${name}.html`,
+    excludeChunks: ['game'],
+  }))),
   module: {
     rules: [
       {

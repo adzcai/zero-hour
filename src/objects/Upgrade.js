@@ -1,4 +1,4 @@
-import { defaultFont } from './Util.js';
+import { defaultFont } from './Util';
 
 export default class Upgrade extends Phaser.GameObjects.Text {
   constructor(scene, index, text) {
