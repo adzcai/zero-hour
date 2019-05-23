@@ -2,10 +2,12 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 /* DIRS */
 const nm = path.resolve(__dirname, 'node_modules');
 const srcPath = path.resolve(__dirname, 'src');
+const pagesPath = path.resolve(__dirname, 'src', 'pages');
 const assetsPath = path.resolve(__dirname, 'assets');
 const stylesPath = path.resolve(__dirname, 'assets', 'styles');
 const fontsPath = path.resolve(__dirname, 'assets', 'fonts');
@@ -18,6 +20,7 @@ module.exports = {
     modules: [
       nm,
       srcPath,
+      pagesPath,
       assetsPath,
       stylesPath,
       fontsPath,
@@ -41,12 +44,13 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       hash: true,
-      template: path.resolve(srcPath, 'game.html'),
+      template: path.resolve(pagesPath, 'game.html'),
       filename: 'game.html',
     }),
+    new FaviconsWebpackPlugin(path.join(imagesPath, 'favicon.ico')),
   ].concat(['index', 'signup', 'forgot-password', 'reset-password'].map(name => new HtmlWebpackPlugin({
     hash: true,
-    template: path.resolve(srcPath, `${name}.html`),
+    template: path.resolve(pagesPath, `${name}.html`),
     filename: `${name}.html`,
     excludeChunks: ['game'],
   }))),

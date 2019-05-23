@@ -1,3 +1,7 @@
+/**
+ * These routes are authenticated using passport and ensure that scores can be securely uploaded.
+ */
+
 const express = require('express');
 const asyncMiddleware = require('../middleware/asyncMiddleware');
 const UserModel = require('../models/userModel');
@@ -11,7 +15,9 @@ router.post('/submit-score', asyncMiddleware(async (req, res, next) => {
 }));
 
 router.get('/scores', asyncMiddleware(async (req, res, next) => {
-  const users = await UserModel.find({}, 'name highScore -_id').sort({ highScore: -1 }).limit(10);
+  const users = await UserModel.find({}, 'name highScore -_id')
+    .sort({ highScore: -1 })
+    .limit(10);
   res.status(200).json(users);
 }));
 

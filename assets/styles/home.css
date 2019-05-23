@@ -5,8 +5,8 @@ html, body {
 
 body {
   margin: 0;
-  padding: 40px;
-  background: #111;
+  padding: 0;
+  background: rgb(195, 26, 26);
   color: #eee;
   font: caption;
 

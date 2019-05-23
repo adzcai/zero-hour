@@ -14,7 +14,9 @@ export default class UpgradesScene extends Phaser.Scene {
     const upgradeButtons = [];
 
     const upgrades = Object.keys(this.registry.values.upgrades);
-    for (let i = 0; i < upgrades.length; i += 1) upgradeButtons.push(new Upgrade(this, i, upgrades[i]));
+    for (let i = 0; i < upgrades.length; i += 1) {
+      upgradeButtons.push(new Upgrade(this, i, upgrades[i]));
+    }
 
     this.moneyText = this.add.text(5, 5, `Money: ${this.registry.values.money}`, defaultFont());
 

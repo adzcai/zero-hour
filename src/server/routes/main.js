@@ -9,33 +9,35 @@ router.get('/status', (req, res, next) => {
   res.status(200).json({ status: 'ok' });
 });
 
+// We authenticate the user through passport -- see the signup authenticator in auth.js
 router.post('/signup', passport.authenticate('signup', { session: false }), async (req, res, next) => {
   res.status(200).json({ message: 'signup successful' });
 });
 
+// Ditto
 router.post('/login', async (req, res, next) => {
   passport.authenticate('login', async (err, user, info) => {
     try {
       if (err || !user) {
-        const error = new Error(user ? 'An Error occured' : 'User not found');
-        return next(error);
+        return next(user ? err : new Error('User not found'));
       }
 
       req.login(user, { session: false }, async (error) => {
         if (error) return next(error);
+        
         const body = {
           _id: user._id,
           email: user.email,
         };
 
-        const token = jwt.sign({ user: body }, process.env.JWT_SECRET, { expiresIn: 300 });
-        const refreshToken = jwt.sign({ user: body }, process.env.JWT_REFRESH, { expiresIn: 86400 });
+        const token = jwt.sign({ user: body }, process.env.JWT_SECRET, { expiresIn: '5m' });
+        const refreshToken = jwt.sign({ user: body }, process.env.JWT_REFRESH, { expiresIn: '1d' });
 
         // store tokens in cookie
         res.cookie('jwt', token);
         res.cookie('refreshJwt', refreshToken);
 
-        // store tokens in memory
+        // store tokens in server memory
         tokenList[refreshToken] = {
           token,
           refreshToken,

@@ -1,24 +1,27 @@
+import Phaser from 'phaser';
+
+// Load files through webpack
 import '../assets/styles/home.css';
 import '../assets/fonts/kenvector_future.ttf';
-
-import Phaser from 'phaser';
 
 import GameScene from './scenes/GameScene';
 import BootScene from './scenes/BootScene';
 import PreloaderScene from './scenes/PreloaderScene';
 import TitleScene from './scenes/TitleScene';
 import OptionsScene from './scenes/OptionsScene';
-import CreditsScene from './scenes/CreditsScene';
 import ChooseShipScene from './scenes/ChooseShipScene';
 import PowerupInfoScene from './scenes/PowerupInfoScene';
 import BackgroundScene from './scenes/BackgroundScene';
 import UpgradesScene from './scenes/UpgradesScene';
+import LeaderboardScene from './scenes/LeaderboardScene';
+import CreditsScene from './scenes/CreditsScene';
+
+import './server/refreshToken';
 
 // const deviceH = window.screen.availHeight;
 // const deviceW = window.screen.availWidth;
 const DEFAULT_WIDTH = 480;
 const DEFAULT_HEIGHT = 640;
-
 
 const config = {
   type: Phaser.AUTO,
@@ -42,6 +45,7 @@ const config = {
     OptionsScene,
     UpgradesScene,
     PowerupInfoScene,
+    LeaderboardScene,
     CreditsScene,
   ],
 };

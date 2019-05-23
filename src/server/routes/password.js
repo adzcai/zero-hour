@@ -1,3 +1,8 @@
+/**
+ * The routes in this file manage the situations when the user forgets their password and we
+ * resend it to them using nodemailer.
+ */
+
 const express = require('express');
 const hbs = require('nodemailer-express-handlebars');
 const nodemailer = require('nodemailer');
@@ -41,7 +46,10 @@ router.post('/forgot-password', asyncMiddleware(async (req, res, next) => {
   const token = buffer.toString('hex');
 
   // update user reset password token and exp
-  await UserModel.findByIdAndUpdate({ _id: user._id }, { resetToken: token, resetTokenExp: Date.now() + 600000 });
+  await UserModel.findByIdAndUpdate({ _id: user._id }, {
+    resetToken: token,
+    resetTokenExp: Date.now() + 600000,
+  });
 
   // send user password reset email
   const data = {
@@ -50,7 +58,7 @@ router.post('/forgot-password', asyncMiddleware(async (req, res, next) => {
     template: 'forgot-password',
     subject: 'Phaser Leaderboard Password Reset',
     context: {
-      url: `http://localhost:${process.env.PORT || 3000}/reset-password.html?token=${token}`,
+      url: `http://localhost:${process.env.PORT || 8080}/reset-password.html?token=${token}`,
       name: user.name,
     },
   };
@@ -60,7 +68,11 @@ router.post('/forgot-password', asyncMiddleware(async (req, res, next) => {
 }));
 
 router.post('/reset-password', asyncMiddleware(async (req, res, next) => {
-  const user = await UserModel.findOne({ resetToken: req.body.token, resetTokenExp: { $gt: Date.now() } });
+  const user = await UserModel.findOne({
+    resetToken: req.body.token,
+    resetTokenExp: { $gt: Date.now() },
+  });
+
   if (!user) {
     res.status(400).json({ message: 'invalid token' });
     return;

@@ -37,13 +37,13 @@ app.use(cookieParser());
 require('./auth/auth');
 
 app.get('/game.html', passport.authenticate('jwt', { session: false }), (req, res) => {
-  res.sendFile(path.join(__dirname, '../../build/game.html'));
+  res.sendFile(path.resolve(__dirname, '../../build/game.html'));
 });
 
-app.use(express.static(path.join(__dirname, '../../build')));
+app.use(express.static(path.resolve(__dirname, '../../build')));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../build/index.html'));
+  res.sendFile(path.resolve(__dirname, '../../build/index.html'));
 });
 
 // main routes
@@ -58,11 +58,11 @@ app.use((req, res, next) => {
 
 // handle errors
 app.use((err, req, res, next) => {
-  console.error(err.message);
+  console.log(err.message);
   res.status(err.status || 500).json({ error: err.message });
 });
 
 // have the server start listening on the provided port
-app.listen(process.env.PORT || 3000, () => {
-  console.log(`Server started on port ${process.env.PORT || 3000}`);
+app.listen(process.env.PORT || 8080, () => {
+  console.log(`Server started on port ${process.env.PORT || 8080}`);
 });
