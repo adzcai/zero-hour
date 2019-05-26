@@ -1,37 +1,21 @@
+function Upgrade(cost, variable, inc, baseValue) {
+  return {
+    cost, variable, inc, baseValue,
+    getCost: (count) => cost * Math.pow(2, count),
+    getValue: (count) => baseValue + inc * count
+  };
+}
+
 module.exports.UPGRADES = {
-  'Attack Speed': {
-    cost: 100,
-    variable: 'playerAttack.laser.delay',
-    inc: -25,
-  },
-  'Attack Damage': {
-    cost: 100,
-    variable: 'playerAttack.laser.damage',
-    inc: 100,
-  },
-  'Number of Attacks': {
-    cost: 300,
-    variable: 'playerAttack.laser.numShots',
-    inc: 1,
-  },
-  'Missile Speed': {
-    cost: 100,
-    variable: 'playerAttack.missile.delay',
-    inc: -25,
-  },
-  'Missile Damage': {
-    cost: 100,
-    variable: 'playerAttack.missile.damage',
-    inc: 300,
-  },
-  'Ship Speed': {
-    cost: 100,
-    variable: 'playerBody.accel',
-    inc: 250,
-  },
-  'Ship HP': {
-    cost: 100,
-    variable: 'playerBody.maxHP',
-    inc: 500,
-  },
+  'Attack Speed': Upgrade(100, 'playerAttack.laser.delay', -25, 200),
+  'Attack Damage': Upgrade(100, 'playerAttack.laser.damage', 100, 400),
+  'Laser Speed': Upgrade(50, 'playerAttack.laser.speed', 50, 750),
+  'Number of Attacks': Upgrade(300, 'playerAttack.laser.numShots', 1, 1),
+
+  'Missile Fire Speed': Upgrade(100, 'playerAttack.missile.delay', -25, 500),
+  'Missile Damage': Upgrade(100, 'playerAttack.missile.damage', 300, 800),
+  'Missile Speed': Upgrade(50, 'playerAttack.missile.speed', 50, 500),
+
+  'Ship Speed': Upgrade(100, 'playerBody.accel', 250, 1000),
+  'Ship HP': Upgrade(100, 'playerBody.maxHP', 500, 1000),
 };

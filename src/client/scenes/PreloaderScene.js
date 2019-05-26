@@ -1,7 +1,9 @@
-import defaultFont from '../shared/defaultFont';
-import { resolve, deepSet } from '../shared/util';
+import defaultFont from '../../shared/defaultFont';
+import { UPGRADES } from '../../shared/constants';
+import getCookie from '../../shared/getCookie';
+import deepSet from '../../shared/deepSet';
 
-const context = require.context('../../assets', true, /\.(jpe?g|png|gif|mp3|wav|ogg|xml)$/);
+const context = require.context('../../../assets', true, /\.(jpe?g|png|gif|mp3|wav|ogg|xml)$/);
 const files = {};
 
 context.keys().forEach((filename) => {
@@ -162,7 +164,7 @@ export default class PreloaderScene extends Phaser.Scene {
       soundOn: true,
       musicOn: true,
 
-      money: 0,
+      money: 10000,
       level: 1,
 
       ENEMYTYPES: this.textures.get('spaceshooter').getFrameNames().filter(name => name.startsWith('ufo') || name.startsWith('meteor')),
@@ -194,6 +196,22 @@ export default class PreloaderScene extends Phaser.Scene {
       playerBody: {
         accel: 1000,
         maxHP: 1000,
+      },
+    });
+    $.ajax({
+      type: 'GET',
+      url: '/upgrades',
+      data: {
+        refreshToken: getCookie('refreshJwt'),
+      },
+      success: (data) => {
+        Object.keys(data.upgrades).forEach((key) => {
+          console.log(key, UPGRADES[key].getValue(data.upgrades[key]));
+          deepSet(this.registry.values, UPGRADES[key].variable, UPGRADES[key].getValue(data.upgrades[key]));
+        });
+      },
+      error(xhr) {
+        console.error(xhr);
       },
     });
 

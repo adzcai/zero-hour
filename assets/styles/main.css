@@ -1,16 +1,9 @@
 html,
 body {
-  margin: 0%;
-  padding: 0%;
   height: 100%;
-  width: 100%;
 }
 
 body {
-  background: rgb(11, 14, 17);
-  color: #eee;
-  font: caption;
-
   display: -ms-flexbox;
   display: -webkit-box;
   display: flex;
@@ -20,27 +13,9 @@ body {
   align-items: center;
   -webkit-box-pack: center;
   justify-content: center;
-}
-
-#game-container {
-  margin: 0%;
-  padding: 0%;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  position: relative;
-}
-
-#game-container > canvas {
-  position: absolute;
-  top: 0%; bottom: 0%; left: 0%; right: 0%;
-  margin: auto;
-}
-
-@font-face {
-  font-family: future;
-  src: url('/assets/fonts/kenvector_future.ttf');
-  font-weight: normal;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
 }
 
 .form-signin {

@@ -4,7 +4,7 @@ const { UPGRADES } = require('../../shared/constants');
 
 const { Schema } = mongoose;
 
-const upgrades = {};
+const upgrades = { };
 Object.keys(UPGRADES).forEach((key) => {
   upgrades[key] = {
     type: Number,
@@ -39,13 +39,7 @@ const UserSchema = new Schema({
   upgrades,
 });
 
-// Object.defineProperty(this.registry.values.upgrades[key], 'value', {
-//   get: () => resolve(this.registry.values, this.registry.values.upgrades[key].variable),
-//   set: val => deepSet(this.registry.values, this.registry.values.upgrades[key].variable, val),
-// });
-
 UserSchema.pre('save', async function (next) {
-  const user = this;
   const hash = await bcrypt.hash(this.password, 10);
   this.password = hash;
   next();

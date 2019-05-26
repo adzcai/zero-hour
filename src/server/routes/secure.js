@@ -22,11 +22,10 @@ router.get('/scores', asyncMiddleware(async (req, res, next) => {
 }));
 
 router.post('/update-upgrade', asyncMiddleware(async (req, res, next) => {
-  const { upgrade, cost } = req.body;
+  const { upgrade, count } = req.body;
   const { email } = req.user;
   const set = {};
-  set[`upgrades.${upgrade}`] = { cost };
-  console.log(set);
+  set[`upgrades.${upgrade}`] = count;
   await UserModel.updateOne({ email }, set);
   res.status(200).json({ status: 'ok' });
 }));

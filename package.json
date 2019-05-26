@@ -2,15 +2,29 @@
   "name": "zero-hour",
   "version": "1.0.0",
   "description": "A simple space shmup game I originally made for a school project using the HTML5 game framework Phaser 3, bundled with Webpack and Babel. Enjoy!",
-  "engines": {
-    "node": "10.15.3",
-    "npm": "6.4.1"
-  },
-  "private": true,
-  "babel": {
-    "presets": [
-      "env"
-    ]
+  "keywords": [
+    "Phaser3",
+    "Heroku",
+    "HTML5",
+    "CSS",
+    "ES6",
+    "Javascript",
+    "js",
+    "Babel",
+    "Webpack4",
+    "Express",
+    "Socket.IO",
+    "multiplayer",
+    "game",
+    "networking"
+  ],
+  "homepage": "https://github.com/piguyinthesky/zero-hour#readme",
+  "bugs": "https://github.com/piguyinthesky/zero-hour/issues",
+  "license": "MIT",
+  "author": "Alexander Cai <alexandercai@outlook.com> (https://github.com/piguyinthesky)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/piguyinthesky/zero-hour.git"
   },
   "scripts": {
     "dev": "webpack-dev-server --config webpack.config.dev.js",
@@ -19,25 +33,8 @@
     "heroku-postbuild": "webpack --config webpack.config.prod.js",
     "start": "node src/server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint . --fix"
+    "lint": "eslint --ignore-path .gitignore . --fix"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/piguyinthesky/zero-hour.git"
-  },
-  "keywords": [
-    "Phaser3",
-    "Heroku",
-    "ES6",
-    "Babel",
-    "Webpack4"
-  ],
-  "author": "Alexander Cai <alexandercai@outlook.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/piguyinthesky/zero-hour/issues"
-  },
-  "homepage": "https://github.com/piguyinthesky/zero-hour#readme",
   "dependencies": {
     "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
@@ -75,5 +72,15 @@
     "webpack-cli": "^3.1.0",
     "webpack-dev-server": "^3.4.1",
     "webpack-merge": "^4.1.4"
+  },
+  "engines": {
+    "node": ">=10.15.3",
+    "npm": "~6.4.1"
+  },
+  "private": true,
+  "babel": {
+    "presets": [
+      "env"
+    ]
   }
 }

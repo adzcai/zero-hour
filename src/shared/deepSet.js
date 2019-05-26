@@ -1,9 +1,4 @@
-export function resolve(obj, path, separator = '.') {
-  const properties = Array.isArray(path) ? path : path.split(separator);
-  return properties.reduce((prev, curr) => prev && prev[curr], obj);
-}
-
-export function deepSet(obj, path, value) {
+export default function deepSet(obj, path, value) {
   let schema = obj; // a moving reference to internal objects within obj
   const pList = path.split('.');
   const len = pList.length;

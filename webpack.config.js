@@ -30,8 +30,8 @@ module.exports = {
     ],
   },
   entry: {
-    game: path.join(srcPath, 'game.js'),
-    styles: path.join(stylesPath, 'main.css'),
+    mainStyles: path.join(stylesPath, 'main.css'),
+    game: path.join(srcPath, 'client/game.js'),
     vendor: ['phaser'],
   },
   plugins: [
@@ -47,9 +47,9 @@ module.exports = {
       hash: true,
       template: path.resolve(pagesPath, 'game.html'),
       filename: 'game.html',
-      excludeChunks: ['styles'],
+      favicon: path.join(imagesPath, 'favicon.ico')
     }),
-    new FaviconsWebpackPlugin(path.join(imagesPath, 'favicon.ico')),
+    // new FaviconsWebpackPlugin(path.join(imagesPath, 'favicon.ico')),
   ].concat(['index', 'signup', 'forgot-password', 'reset-password'].map(name => new HtmlWebpackPlugin({
     hash: true,
     template: path.resolve(pagesPath, `${name}.html`),

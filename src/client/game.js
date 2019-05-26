@@ -2,8 +2,8 @@ import Phaser from 'phaser';
 import getCookie from '../shared/getCookie';
 
 // Load files through webpack
-import '../assets/styles/game.css';
-import '../assets/fonts/kenvector_future.ttf';
+import '../../assets/styles/game.css';
+import '../../assets/fonts/kenvector_future.ttf';
 
 import BootScene from './scenes/BootScene';
 import PreloaderScene from './scenes/PreloaderScene';
@@ -100,7 +100,7 @@ function sendMessage() {
       },
       success(data) {},
       error(xhr) {
-        console.log(xhr);
+        console.error(xhr);
       },
     });
   }
@@ -112,7 +112,6 @@ function addMessageElement(el) {
 }
 
 socket.on('newMessage', (data) => {
-  console.log(data);
   const usernameSpan = document.createElement('span');
   const usernameText = document.createTextNode(data.username);
   usernameSpan.className = 'username';

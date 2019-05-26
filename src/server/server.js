@@ -66,7 +66,7 @@ const uri = process.env.MONGODB_URI;
 mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true });
 mongoose.connection
   .on('error', (error) => {
-    console.log(error);
+    console.error(error);
     process.exit(1);
   })
   .on('connected', () => {
@@ -116,7 +116,7 @@ app.use((req, res, next) => {
 
 // handle errors
 app.use((err, req, res, next) => {
-  console.log(err.message);
+  console.error(err.message);
   res.status(err.status || 500).json({ error: err.message });
 });
 

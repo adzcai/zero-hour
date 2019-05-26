@@ -2,8 +2,8 @@ import PlayerShip from '../objects/PlayerShip';
 import Mob from '../objects/Mob';
 import Laser from '../objects/Laser';
 import Powerup from '../objects/Powerup';
-import defaultFont from '../shared/defaultFont';
 import Button from '../objects/Button';
+import defaultFont from '../../shared/defaultFont';
 
 export default class GameScene extends Phaser.Scene {
   constructor() {

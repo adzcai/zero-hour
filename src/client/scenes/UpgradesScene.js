@@ -1,8 +1,8 @@
 import Button from '../objects/Button';
-import defaultFont from '../shared/defaultFont';
 import Upgrade from '../objects/Upgrade';
-import { UPGRADES } from '../shared/CONSTANTS';
-import getCookie from '../shared/getCookie';
+import defaultFont from '../../shared/defaultFont';
+import { UPGRADES } from '../../shared/constants';
+import getCookie from '../../shared/getCookie';
 
 export default class UpgradesScene extends Phaser.Scene {
   constructor() {
@@ -25,7 +25,7 @@ export default class UpgradesScene extends Phaser.Scene {
         const upgradeButtons = [];
 
         Object.keys(UPGRADES).forEach((key, i) => {
-          upgradeButtons.push(new Upgrade(this, i, key, this.upgrades[key].cost));
+          upgradeButtons.push(new Upgrade(this, i, key, this.upgrades[key] || 0))
         });
 
         this.moneyText = this.add.text(5, 5, `Money: ${this.registry.values.money}`, defaultFont());
@@ -42,7 +42,7 @@ export default class UpgradesScene extends Phaser.Scene {
         this.back = new Button(this, width / 2, height * (numUpgrades + 2) / (numUpgrades + 3), 'Back', 'Title');
       },
       error(xhr) {
-        console.log(xhr);
+        console.error(xhr);
       },
     });
   }

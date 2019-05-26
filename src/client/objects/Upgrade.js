@@ -1,5 +1,6 @@
 import defaultFont from '../../shared/defaultFont';
-import { UPGRADES } from '../../shared/CONSTANTS';
+import deepSet from '../../shared/deepSet';
+import { UPGRADES } from '../../shared/constants';
 import getCookie from '../../shared/getCookie';
 
 export default class Upgrade extends Phaser.GameObjects.Text {
@@ -9,21 +10,17 @@ export default class Upgrade extends Phaser.GameObjects.Text {
     const { width, height } = this.scene.cameras.main;
 
     this.index = index; // Used to track the y coordinate
-    this.count = count;
-    this.cost = UPGRADES[text].cost * Math.pow(2, UPGRADES[text].inc);
 
-    this.setPosition(width / 2, height * (parseInt(index, 10) + 2) / (Object.keys(UPGRADES).length + 3))
+    this.setPosition(width / 16, height * (parseInt(index, 10) + 2) / (Object.keys(UPGRADES).length + 3))
       .setInteractive()
-      .setOrigin(1, 0.5);
+      .setOrigin(0, 0.5);
 
     this.scene.add.existing(this);
+    
+    this.costText = this.scene.add.text(width * 5 / 8, this.y, '', defaultFont()).setOrigin(0, 0.5);
+    this.valueText = this.scene.add.text(width * 15 / 16,this.y,this.value,defaultFont()).setOrigin(1, 0.5);
 
-    this.costText = this.scene.add.text(
-      width * 3 / 4,
-      height * (parseInt(index, 10) + 2) / (Object.keys(UPGRADES).length + 3),
-      `$${cost}`,
-      defaultFont(),
-    ).setOrigin(0.5);
+    this.count = count; // Use the setter to update the text
 
     this.colorPlaceValues = {
       red: 0x10000,
@@ -40,15 +37,12 @@ export default class Upgrade extends Phaser.GameObjects.Text {
     // Increase the counter for the number of times the user has bought this upgrade
     this.count += 1;
 
-    // Update the cost of this upgrade
-    this.cost *= 2;
-    this.costText.setText(`$${this.cost}`);
-
     // Send a post request to update the count
     $.ajax({
       type: 'POST',
       url: '/update-upgrade',
       data: {
+        upgrade: this.text,
         count: this.count,
         refreshToken: getCookie('refreshJwt'),
       },
@@ -65,4 +59,17 @@ export default class Upgrade extends Phaser.GameObjects.Text {
     this.costText.setTint(color);
     this.scene.time.delayedCall(1000, () => this.costText.setTint());
   }
+
+  set count(val) {
+    this._count = val;
+    this.cost = UPGRADES[this.text].getCost(val);
+    this.value = UPGRADES[this.text].getValue(val);
+
+    this.costText.setText(`$${this.cost}`);
+    this.valueText.setText(this.value);
+
+    deepSet(this.scene.registry.values, UPGRADES[this.text].variable, this.value);
+  }
+
+  get count() { return this._count; }
 }

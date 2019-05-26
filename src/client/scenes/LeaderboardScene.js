@@ -1,5 +1,5 @@
 import Button from '../objects/Button';
-import defaultFont from '../shared/defaultFont';
+import defaultFont from '../../shared/defaultFont';
 
 export default class LeaderboardScene extends Phaser.Scene {
   constructor() {
@@ -33,7 +33,7 @@ export default class LeaderboardScene extends Phaser.Scene {
         this.back = new Button(this, width / 2, inc * 7, 'Back', 'Title');
       },
       error: (xhr) => {
-        console.log(xhr);
+        console.error(xhr);
         this.scene.start('Title');
       },
     });
