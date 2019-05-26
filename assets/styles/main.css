@@ -1,12 +1,13 @@
-html, body {
+html,
+body {
+  margin: 0%;
+  padding: 0%;
   height: 100%;
   width: 100%;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  background: rgb(195, 26, 26);
+  background: rgb(11, 14, 17);
   color: #eee;
   font: caption;
 

@@ -1,4 +1,4 @@
-import { defaultFont } from '../objects/Util';
+import defaultFont from '../shared/defaultFont';
 
 export default class CreditsScene extends Phaser.Scene {
   constructor() {

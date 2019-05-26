@@ -33,16 +33,16 @@ export default class Laser extends Phaser.GameObjects.Sprite {
     if (this.lifespan <= 0) this.destroy();
   }
 
-  fire(x, y, angle) {
+  fire(x, y, radians) {
     this.body.reset(x, y);
     if (this.scene.registry.get('soundOn')) this.scene.sound.play(Phaser.Math.RND.pick(['laser', 'laser1', 'laser2']));
 
     if (this.name.startsWith('missile')) {
       this.findTarget();
     } else {
-      this.setRotation(angle);
+      this.setRotation(radians);
 
-      this.scene.physics.velocityFromRotation(angle - Math.PI / 2, this.speed, this.body.velocity);
+      this.scene.physics.velocityFromRotation(radians - Math.PI / 2, this.speed, this.body.velocity);
       this.body.velocity.scale(2);
     }
   }

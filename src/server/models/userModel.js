@@ -1,7 +1,16 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const { UPGRADES } = require('../../shared/constants');
 
 const { Schema } = mongoose;
+
+const upgrades = {};
+Object.keys(UPGRADES).forEach((key) => {
+  upgrades[key] = {
+    type: Number,
+    default: 0,
+  };
+});
 
 const UserSchema = new Schema({
   email: {
@@ -27,7 +36,13 @@ const UserSchema = new Schema({
   resetTokenExp: {
     type: Date,
   },
+  upgrades,
 });
+
+// Object.defineProperty(this.registry.values.upgrades[key], 'value', {
+//   get: () => resolve(this.registry.values, this.registry.values.upgrades[key].variable),
+//   set: val => deepSet(this.registry.values, this.registry.values.upgrades[key].variable, val),
+// });
 
 UserSchema.pre('save', async function (next) {
   const user = this;

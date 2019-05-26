@@ -2,7 +2,7 @@ import PlayerShip from '../objects/PlayerShip';
 import Mob from '../objects/Mob';
 import Laser from '../objects/Laser';
 import Powerup from '../objects/Powerup';
-import { defaultFont } from '../objects/Util';
+import defaultFont from '../shared/defaultFont';
 import Button from '../objects/Button';
 
 export default class GameScene extends Phaser.Scene {
@@ -33,7 +33,7 @@ export default class GameScene extends Phaser.Scene {
 
     this.input.keyboard.on('keyup_ESC', () => {
       this.scene.sleep();
-      this.scene.launch('Options', { prevScene: 'Game' });
+      this.scene.launch('Options');
     });
 
     // ========== INITIALIZING ENTITIES ==========

@@ -1,5 +1,5 @@
 import Button from '../objects/Button';
-import { defaultFont } from '../objects/Util';
+import defaultFont from '../shared/defaultFont';
 
 export default class PowerupInfoScene extends Phaser.Scene {
   constructor() {

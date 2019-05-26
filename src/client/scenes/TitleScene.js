@@ -13,24 +13,14 @@ export default class TitleScene extends Phaser.Scene {
       .changeSpeed(1)
       .playBgMusic('titleMusic');
 
-    const inc = height / 6;
+    const inc = height / 7;
 
     this.gameButton = new Button(this, width / 2, inc, 'Play', 'Game');
-    this.optionsButton = new Button(this, width / 2, inc * 2, 'Options', 'Options');
-    this.upgradesButton = new Button(this, width / 2, inc * 3, 'Upgrades', 'Upgrades');
-    this.leaderboardButton = new Button(this, width / 2, inc * 4, 'Leaderboard', () => {
-      $.ajax({
-        type: 'GET',
-        url: '/scores',
-        success: (scores) => {
-          this.scene.start('Leaderboard', { scores });
-        },
-        error(xhr) {
-          console.log(xhr);
-        },
-      });
-    });
-    this.creditsButton = new Button(this, width / 2, inc * 5, 'Credits', 'Credits');
+    this.arenaButton = new Button(this, width / 2, inc * 2, 'Arena', 'Arena');
+    this.optionsButton = new Button(this, width / 2, inc * 3, 'Options', 'Options');
+    this.upgradesButton = new Button(this, width / 2, inc * 4, 'Upgrades', 'Upgrades');
+    this.leaderboardButton = new Button(this, width / 2, inc * 5, 'Leaderboard', 'Leaderboard');
+    this.creditsButton = new Button(this, width / 2, inc * 6, 'Credits', 'Credits');
 
     this.input.keyboard.createCombo(
       [38, 38, 40, 40, 37, 39, 37, 39, 66, 65, 13],

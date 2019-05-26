@@ -24,10 +24,11 @@ router.post('/login', async (req, res, next) => {
 
       req.login(user, { session: false }, async (error) => {
         if (error) return next(error);
-        
+
         const body = {
           _id: user._id,
           email: user.email,
+          name: user.name,
         };
 
         const token = jwt.sign({ user: body }, process.env.JWT_SECRET, { expiresIn: '5m' });
@@ -43,6 +44,7 @@ router.post('/login', async (req, res, next) => {
           refreshToken,
           email: user.email,
           _id: user._id,
+          name: user.name,
         };
 
         // Send back the token to the user
@@ -57,7 +59,8 @@ router.post('/login', async (req, res, next) => {
 router.post('/token', (req, res) => {
   const { refreshToken } = req.body;
   if (refreshToken in tokenList) {
-    const body = { email: tokenList[refreshToken].email, _id: tokenList[refreshToken]._id };
+    const { email, _id, name } = tokenList[refreshToken];
+    const body = { email, _id, name };
     const token = jwt.sign({ user: body }, process.env.JWT_SECRET, { expiresIn: 300 });
 
     // update jwt

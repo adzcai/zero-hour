@@ -8,7 +8,8 @@ module.exports = {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
     Phaser: 'readonly',
-    $: 'readonly'
+    $: 'readonly',
+    socket: 'readonly',
   },
   parserOptions: {
     ecmaVersion: 2018,

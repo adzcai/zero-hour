@@ -1,4 +1,5 @@
-import { defaultFont, resolve, deepSet } from '../objects/Util';
+import defaultFont from '../shared/defaultFont';
+import { resolve, deepSet } from '../shared/util';
 
 const context = require.context('../../assets', true, /\.(jpe?g|png|gif|mp3|wav|ogg|xml)$/);
 const files = {};
@@ -157,7 +158,7 @@ export default class PreloaderScene extends Phaser.Scene {
       repeat: -1,
     });
 
-    this.registry.set(JSON.parse(window.localStorage.getItem('playerSave')) || {
+    this.registry.set({
       soundOn: true,
       musicOn: true,
 
@@ -171,7 +172,6 @@ export default class PreloaderScene extends Phaser.Scene {
         powerupRed_star: 'Scatter your shots!',
         star_bronze: 'Increase your number of shots!',
       },
-      // this.textures.get('spaceshooter').getFrameNames().filter(name => name.startsWith('powerup')),
 
       playerAttack: {
         laser: {
@@ -195,44 +195,6 @@ export default class PreloaderScene extends Phaser.Scene {
         accel: 1000,
         maxHP: 1000,
       },
-
-      upgrades: {
-        'Attack Speed': {
-          cost: 100,
-          variable: 'playerAttack.laser.delay',
-          inc: -25,
-        },
-        'Attack Damage': {
-          cost: 100,
-          variable: 'playerAttack.laser.damage',
-          inc: 100,
-        },
-        'Number of Attacks': {
-          cost: 300,
-          variable: 'playerAttack.laser.numShots',
-          inc: 1,
-        },
-        'Missile Speed': {
-          cost: 100,
-          variable: 'playerAttack.missile.delay',
-          inc: -25,
-        },
-        'Missile Damage': {
-          cost: 100,
-          variable: 'playerAttack.missile.damage',
-          inc: 300,
-        },
-        'Ship Speed': {
-          cost: 100,
-          variable: 'playerBody.accel',
-          inc: 250,
-        },
-        'Ship HP': {
-          cost: 100,
-          variable: 'playerBody.maxHP',
-          inc: 500,
-        },
-      },
     });
 
     Object.defineProperty(this.registry.values.playerAttack, 'type', {
@@ -243,17 +205,6 @@ export default class PreloaderScene extends Phaser.Scene {
         this.index = Math.max(this.TYPES.indexOf(val), 0);
       },
     });
-
-    for (const key of Object.keys(this.registry.values.upgrades)) {
-      Object.defineProperty(this.registry.values.upgrades[key], 'value', {
-        get: () => resolve(this.registry.values, this.registry.values.upgrades[key].variable),
-        set: val => deepSet(this.registry.values, this.registry.values.upgrades[key].variable, val),
-      });
-    }
-
-    window.onbeforeunload = () => {
-      window.localStorage.setItem('playerSave', JSON.stringify(this.registry.values));
-    };
 
     this.time.delayedCall(500, () => {
       this.logo.destroy();

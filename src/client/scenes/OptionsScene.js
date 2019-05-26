@@ -1,19 +1,18 @@
 import Button from '../objects/Button';
-import { defaultFont } from '../objects/Util';
+import defaultFont from '../shared/defaultFont';
 
 export default class OptionsScene extends Phaser.Scene {
   constructor() {
     super('Options');
   }
 
-  init(data) {
-    this.prevScene = data.prevScene;
-  }
-
   create() {
     const { width, height } = this.cameras.main;
 
-    const paused = this.scene.isSleeping('Game');
+    let paused;
+    if (this.scene.isSleeping('Game')) paused = 'Game';
+    else if (this.scene.isSleeping('Arena')) paused = 'Arena';
+    else paused = false;
 
     const inc = height / 7;
 
@@ -36,22 +35,25 @@ export default class OptionsScene extends Phaser.Scene {
     this.howToPlay = new Button(this, width / 2, inc * 4, 'How to Play', 'PowerupInfo');
 
     this.reset = new Button(this, width / 2, inc * 5, 'RESET GAME (BE SURE)', () => {
-      window.localStorage.clear();
+      const sure = confirm('Are you sure? This will clear all user data. This cannot be reversed.');
+      if (!sure) return;
+
       this.scene.stop('Background');
       this.scene.stop('Game');
+      this.scene.stop('Arena');
       this.scene.stop('Title');
       this.scene.start('Preloader');
     });
 
     if (paused) {
       this.resume = new Button(this, width / 4, inc * 6, 'Resume', () => {
-        this.scene.wake('Game');
+        this.scene.wake(paused);
         this.scene.stop();
       });
     }
 
-    this.menuButton = new Button(this, width * 3 / 4, inc * 6, 'Menu', () => {
-      if (paused) this.scene.stop('Game'); // Stop the game scene if it is running
+    this.menuButton = new Button(this, paused ? width * 3 / 4 : width / 2, inc * 6, 'Menu', () => {
+      if (paused) this.scene.stop(paused); // Stop the game scene if it is running
       this.scene.start('Title'); // Go to the game scene
     });
 

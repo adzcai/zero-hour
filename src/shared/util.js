@@ -1,20 +1,9 @@
-export const defaultFont = (size = 18, width) => {
-  const style = {
-    fontFamily: 'future',
-    fontSize: `${Math.floor(size)}px`,
-    fill: '#ffffff',
-    align: 'center',
-  };
-  if (width) style.wordWrap = { width, useAdvancedWrap: true };
-  return style;
-};
-
-export function resolve(obj = self, path, separator = '.') {
+export function resolve(obj, path, separator = '.') {
   const properties = Array.isArray(path) ? path : path.split(separator);
   return properties.reduce((prev, curr) => prev && prev[curr], obj);
 }
 
-export function deepSet(obj = self, path, value) {
+export function deepSet(obj, path, value) {
   let schema = obj; // a moving reference to internal objects within obj
   const pList = path.split('.');
   const len = pList.length;

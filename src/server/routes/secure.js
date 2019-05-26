@@ -21,4 +21,20 @@ router.get('/scores', asyncMiddleware(async (req, res, next) => {
   res.status(200).json(users);
 }));
 
+router.post('/update-upgrade', asyncMiddleware(async (req, res, next) => {
+  const { upgrade, cost } = req.body;
+  const { email } = req.user;
+  const set = {};
+  set[`upgrades.${upgrade}`] = { cost };
+  console.log(set);
+  await UserModel.updateOne({ email }, set);
+  res.status(200).json({ status: 'ok' });
+}));
+
+router.get('/upgrades', asyncMiddleware(async (req, res, next) => {
+  const { email } = req.user;
+  const user = await UserModel.findOne({ email }, 'upgrades -_id');
+  res.status(200).json(user);
+}));
+
 module.exports = router;
