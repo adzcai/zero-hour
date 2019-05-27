@@ -111,7 +111,7 @@ function addMessageElement(el) {
   messages.lastChild.scrollIntoView();
 }
 
-socket.on('newMessage', (data) => {
+function addMessage(data) {
   const usernameSpan = document.createElement('span');
   const usernameText = document.createTextNode(data.username);
   usernameSpan.className = 'username';
@@ -128,6 +128,27 @@ socket.on('newMessage', (data) => {
   messageLi.append(messageBodySpan);
 
   addMessageElement(messageLi);
+}
+
+socket.on('newMessage', addMessage);
+
+// Load existing messages
+$.ajax({
+  type: 'GET',
+  url: '/messages',
+  success: (messages) => {
+    console.log(messages);
+    messages.forEach(msg => {
+      addMessage({
+        email: msg.email,
+        username: msg.name,
+        message: msg.message,
+      })
+    });
+  },
+  error: (xhr) => {
+    console.error(xhr);
+  }
 });
 
 // function resize() {

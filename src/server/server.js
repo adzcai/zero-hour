@@ -101,12 +101,19 @@ app.use('/', passport.authenticate('jwt', { session: false }), secureRoutes);
 app.post('/submit-chatline', passport.authenticate('jwt', { session : false }), asyncMiddleware(async (req, res, next) => {
   const { message } = req.body;
   const { email, name } = req.user;
-  await ChatModel.create({ email, message });
+  await ChatModel.create({ email, name, message });
   io.emit('newMessage', {
     username: name,
     message,
   });
   res.status(200).json({ status: 'ok' });
+}));
+
+app.get('/messages', passport.authenticate('jwt', { session : false }), asyncMiddleware(async (req, res, next) => {
+  const messages = await ChatModel.find({}, 'email name message createdAt -_id')
+    .sort({ createdAt: -1 })
+    .limit(30);
+  res.status(200).json(messages.reverse());
 }));
 
 // catch all other routes
