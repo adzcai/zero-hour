@@ -2,10 +2,12 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 /* DIRS */
 const nm = path.resolve(__dirname, 'node_modules');
 const srcPath = path.resolve(__dirname, 'src');
+const pagesPath = path.resolve(__dirname, 'src', 'pages');
 const assetsPath = path.resolve(__dirname, 'assets');
 const stylesPath = path.resolve(__dirname, 'assets', 'styles');
 const fontsPath = path.resolve(__dirname, 'assets', 'fonts');
@@ -18,6 +20,7 @@ module.exports = {
     modules: [
       nm,
       srcPath,
+      pagesPath,
       assetsPath,
       stylesPath,
       fontsPath,
@@ -27,7 +30,8 @@ module.exports = {
     ],
   },
   entry: {
-    game: path.join(srcPath, 'game.js'),
+    mainStyles: path.join(stylesPath, 'main.css'),
+    game: path.join(srcPath, 'client/game.js'),
     vendor: ['phaser'],
   },
   plugins: [
@@ -35,15 +39,23 @@ module.exports = {
       CANVAS_RENDERER: JSON.stringify(true),
       WEBGL_RENDERER: JSON.stringify(true),
     }),
-    new HtmlWebpackPlugin({
-      template: path.resolve(srcPath, 'index.html'),
-      title: 'Phaser3 Heroku ready',
-    }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css',
     }),
-  ],
+    new HtmlWebpackPlugin({
+      hash: true,
+      template: path.resolve(pagesPath, 'game.html'),
+      filename: 'game.html',
+      favicon: path.join(imagesPath, 'favicon.ico')
+    }),
+    // new FaviconsWebpackPlugin(path.join(imagesPath, 'favicon.ico')),
+  ].concat(['index', 'signup', 'forgot-password', 'reset-password'].map(name => new HtmlWebpackPlugin({
+    hash: true,
+    template: path.resolve(pagesPath, `${name}.html`),
+    filename: `${name}.html`,
+    excludeChunks: ['game'],
+  }))),
   module: {
     rules: [
       {

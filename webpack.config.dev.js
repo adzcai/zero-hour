@@ -11,7 +11,7 @@ module.exports = merge(webpackConfig, {
     publicPath: '/',
     progress: true,
     compress: true,
-    port: 3000,
+    port: 8080,
   },
   watch: true,
   output: {

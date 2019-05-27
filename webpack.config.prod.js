@@ -9,7 +9,7 @@ module.exports = merge(webpackConfig, {
   devtool: 'hidden-source-map',
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: '[name].[chunckhash].bundle.js',
+    filename: '[name].[chunkhash].bundle.js',
   },
   plugins: [
     new CleanWebpackPlugin(['build']),

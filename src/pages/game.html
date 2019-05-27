@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  
+  <title>Zero Hour by Alex Cai</title>
+  <meta name="description" content="A shoot 'em up game I designed for a school project." />
+  <meta name="author" content="Alexander Cai" />
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <noscript>How do you expect to play my game without Javascript? Go turn it on!</noscript>
+  <div class="title"><h1 class="h1">Zero Hour</h1></div>
+  <div class="flex-container">
+    <div id="game-container" onclick="document.getElementById('inputMessage').blur()"></div>
+    <div class="chat-container">
+      <div class="chat-area">
+        <ul id="messages" class="messages"></ul>
+      </div>
+      <input id="inputMessage" class="inputMessage" placeholder="Type here..." type="text">
+    </div>
+  </div>
+  <script>
+    var socket = io();
+  </script>
+</body>
+
+</html>
