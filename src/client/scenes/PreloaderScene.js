@@ -164,7 +164,7 @@ export default class PreloaderScene extends Phaser.Scene {
       soundOn: true,
       musicOn: true,
 
-      money: 10000,
+      money: 0,
       level: 1,
 
       ENEMYTYPES: this.textures.get('spaceshooter').getFrameNames().filter(name => name.startsWith('ufo') || name.startsWith('meteor')),
@@ -206,7 +206,6 @@ export default class PreloaderScene extends Phaser.Scene {
       },
       success: (data) => {
         Object.keys(data.upgrades).forEach((key) => {
-          console.log(key, UPGRADES[key].getValue(data.upgrades[key]));
           deepSet(this.registry.values, UPGRADES[key].variable, UPGRADES[key].getValue(data.upgrades[key]));
         });
       },

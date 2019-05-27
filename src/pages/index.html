@@ -10,17 +10,33 @@
 </head>
 
 <body class="text-center">
-  <form class="form-signin">
-    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+  <form id="form-signin" class="form-signin">
+    <h1 class="h1">Zero Hour</h1>
+    <h2 class="h2">By Alexander Cai</h2>
+    <h3 class="h3 mb-3 font-weight-normal">Please sign in</h3>
     <label for="email" class="sr-only">Email address</label>
     <input type="email" id="email" class="form-control" placeholder="Email address" required autofocus>
     <label for="password" class="sr-only">Password</label>
     <input type="password" id="password" class="form-control" placeholder="Password" required>
-    <a class="btn btn-lg btn-primary btn-block" onclick="signIn()">Sign in</a>
+    <a id="sign-in" class="btn btn-lg btn-primary btn-block" onclick="signIn()">Sign in</a>
     <p><a href="/signup.html">Don't have an account? Sign up here.</a></p>
     <p><a href="/forgot-password.html">Forgot password? Reset it here.</a></p>
   </form>
   <script>
+    // Get the input field
+    var input = document.getElementById("form-signin");
+
+    // Execute a function when the user releases a key on the keyboard
+    input.addEventListener("keyup", function(event) {
+      // Number 13 is the "Enter" key on the keyboard
+      if (event.keyCode === 13) {
+        // Cancel the default action, if needed
+        event.preventDefault();
+        // Trigger the button element with a click
+        document.getElementById("sign-in").click();
+      }
+    });
+
     function signIn() {
       const data = {
         email: document.forms[0].elements[0].value,

@@ -92,14 +92,15 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
     let angle = this.rotation;
     const { x, y } = new Phaser.Math.Vector2().setToPolar(angle, this.displayWidth / 2);
 
-    if (this.powerups.scatter) angle += Phaser.Math.FloatBetween(-Math.PI / 16, Math.PI / 16);
+    let addScatter = (theta) => 
+      this.powerups.scatter ? (theta + Phaser.Math.FloatBetween(-Math.PI / 16, Math.PI / 16)) : theta;
 
     if (type === 'Forward') {
       for (let i = 0; i < this.numLaserShots; i += 1) {
         this.scene.bullets.get().init(this.laserColor).fire(
           this.x + x - 2 * x * (i + 1) / (this.numLaserShots + 1),
           this.y + y - 2 * y * (i + 1) / (this.numLaserShots + 1),
-          angle,
+          addScatter(angle),
         );
       }
     } else if (type === 'Spread') {
@@ -110,7 +111,7 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
         this.scene.bullets.get().init(this.laserColor).fire(
           this.x,
           this.y,
-          base + i * inc,
+          addScatter(base + i * inc),
         );
       }
     } else if (type === 'All Around') {
@@ -118,7 +119,7 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
         this.scene.bullets.get().init(this.laserColor).fire(
           this.x,
           this.y,
-          angle + i * (2 * Math.PI) / this.numLaserShots,
+          addScatter(angle + i * (2 * Math.PI) / this.numLaserShots),
         );
       }
     }
