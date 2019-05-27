@@ -4,6 +4,7 @@ import Laser from '../objects/Laser';
 import Powerup from '../objects/Powerup';
 import Button from '../objects/Button';
 import defaultFont from '../../shared/defaultFont';
+import getCookie from '../../shared/getCookie';
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -47,7 +48,7 @@ export default class GameScene extends Phaser.Scene {
 
       if (this.registry.values.soundOn) this.sound.play('shieldDown');
 
-      this.player.hp -= Math.sqrt(enemy.hp);
+      this.player.hp -= enemy.value * 10;
       this.hpBar.displayWidth = Phaser.Math.Percent(this.player.hp, 0, this.registry.values.playerBody.maxHP) * (this.hpBox.displayWidth - 10);
       if (this.player.hp <= 0 && this.state === 'running') this.gameOver('died');
     });
@@ -214,9 +215,19 @@ export default class GameScene extends Phaser.Scene {
 
         if (this.flashTimer.getOverallProgress() === 1) { // When it's finished, show the player's score and prompt restart
           this.add.text(width / 2, height / 2, `Your score: ${this.score}`, defaultFont(18)).setOrigin(0.5).setDepth(50);
-
           this.add.text(width / 2, height * 2 / 3, 'Press any key to restart', defaultFont(18)).setOrigin(0.5).setDepth(50);
-          this.input.keyboard.on('keyup', () => this.scene.start('Title'));
+          $.ajax({
+            type: 'POST',
+            url: 'submit-score',
+            data: {
+              score: this.score,
+              refreshToken: getCookie('refreshJwt'),
+            },
+          });
+          this.input.keyboard.on('keyup', (e) => {
+            e.stopPropagation();
+            this.scene.start('Title')
+          });
         }
       },
       delay: 750,

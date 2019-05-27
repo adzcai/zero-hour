@@ -13,7 +13,7 @@ export default class PowerupInfoScene extends Phaser.Scene {
     const numPerRow = Math.ceil(types.length / 2);
     const inc = height / 7;
 
-    this.title = new Button(this, width / 2, inc, 'How to Play');
+    this.title = new Button(this, width / 2, inc, 'Controls');
 
     this.howToPlayText = this.add.text(width / 2, inc * 2, 'Use WASD or the arrow keys to move. Press or hold space to shoot. Press enter to fire missiles.', defaultFont(18, width)).setOrigin(0.5);
 

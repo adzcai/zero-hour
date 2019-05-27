@@ -32,7 +32,7 @@ export default class OptionsScene extends Phaser.Scene {
     });
     this.soundText = this.add.text(width / 2, inc * 3, 'Sound Enabled', defaultFont(24)).setOrigin(0.25, 0.5);
 
-    this.howToPlay = new Button(this, width / 2, inc * 4, 'How to Play', 'PowerupInfo');
+    this.howToPlay = new Button(this, width / 2, inc * 4, 'Controls', 'PowerupInfo');
 
     this.reset = new Button(this, width / 2, inc * 5, 'RESET GAME (BE SURE)', () => {
       const sure = confirm('Are you sure? This will clear all user data. This cannot be reversed.');

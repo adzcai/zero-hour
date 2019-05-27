@@ -26,9 +26,6 @@ setInterval(() => {
     data: {
       refreshToken: getCookie('refreshJwt'),
     },
-    success(data) {
-      console.log('successfully refreshed');
-    },
     error(xhr) {
       window.alert(JSON.stringify(xhr));
       window.location.replace('/index.html');
@@ -51,8 +48,12 @@ const config = {
     default: 'arcade',
     arcade: {
       gravity: { y: 0, x: 0 },
-      debug: true,
+      debug: false,
     },
+  },
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH
   },
   scene: [
     BootScene,
@@ -70,7 +71,35 @@ const config = {
   ],
 };
 
-const game = new Phaser.Game(config);
+window.addEventListener('load', () => {
+  const game = new Phaser.Game(config);
+
+  function resize() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const scale = Math.min(w / DEFAULT_WIDTH, h / DEFAULT_HEIGHT);
+
+    game.canvas.setAttribute('style', `
+      -ms-transform: scale(${scale}); 
+      -webkit-transform: scale3d(${scale}, 1);
+      -moz-transform: scale(${scale}); -o-transform: scale(${scale}); transform: scale(${scale});
+      transform-origin: top left;
+    `);
+
+    const width = w / scale;
+    const height = h / scale;
+
+    game.scene.getScenes().forEach((scene) => {
+      scene.cameras.main.setViewport(0, 0, width, height);
+    });
+  }
+
+  window.addEventListener('resize', (e) => {
+    console.log('resizing');
+    if (game.isBooted) resize();
+    else game.events.once('boot', resize);
+  }, false);
+});
 
 // Handling messages sent to the game
 
@@ -98,7 +127,6 @@ function sendMessage() {
         message,
         refreshToken: getCookie('refreshJwt'),
       },
-      success(data) {},
       error(xhr) {
         console.error(xhr);
       },
@@ -129,28 +157,3 @@ socket.on('newMessage', (data) => {
 
   addMessageElement(messageLi);
 });
-
-// function resize() {
-//   const w = window.innerWidth;
-//   const h = window.innerHeight;
-//   const scale = Math.min(w / DEFAULT_WIDTH, h / DEFAULT_HEIGHT);
-
-//   game.canvas.setAttribute('style',
-//     ` -ms-transform: scale(${scale}); -webkit-transform: scale3d(${scale}, 1);`
-// 			+ ` -moz-transform: scale(${scale}); -o-transform: scale(${scale}); transform: scale(${scale});`
-// 			+ ' transform-origin: top left;');
-
-//   const width = w / scale;
-//   const height = h / scale;
-//   console.log(width);
-//   console.log(height);
-//   // game.scene.scenes.forEach((scene) => {
-//   //   scene.cameras.main.setViewport(0, 0, width, height);
-//   // });
-// }
-
-// window.addEventListener('resize', (event) => {
-//   console.log('RESIZE EVENT ');
-//   if (game.isBooted) resize();
-//   else game.events.once('boot', resize);
-// }, false);
