@@ -25,10 +25,10 @@ export default class OptionsScene extends Phaser.Scene {
     });
     this.musicText = this.add.text(width / 2, inc * 2, 'Music Enabled', defaultFont(24)).setOrigin(0.25, 0.5);
 
-    this.soundButton = this.add.image(width / 4, inc * 3, 'checkedBox').setOrigin(0.5);
+    this.soundButton = this.add.image(width / 4, inc * 3, this.sound.mute ? 'checkedBox' : 'box').setOrigin(0.5);
     this.soundButton.setInteractive().on('pointerdown', () => {
-      this.registry.values.soundOn = !this.registry.values.soundOn;
-      this.updateAudio();
+      this.sound.mute = !this.sound.mute;
+      this.soundButton.setTexture(this.sound.mute ? 'checkedBox' : 'box'); // Check the box to represent whether or not the sound is on
     });
     this.soundText = this.add.text(width / 2, inc * 3, 'Sound Enabled', defaultFont(24)).setOrigin(0.25, 0.5);
 
@@ -70,7 +70,5 @@ export default class OptionsScene extends Phaser.Scene {
         this.scene.get('Background').bgMusic.play(); // we play the music
       }
     }
-
-    this.soundButton.setTexture(this.registry.values.soundOn ? 'checkedBox' : 'box'); // Check the box to represent whether or not the sound is on
   }
 }

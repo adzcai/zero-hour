@@ -8,6 +8,14 @@ const UserModel = require('../models/userModel');
 
 const router = express.Router();
 
+// This only gets requested from ChooseShipScene.js
+router.post('/submit-texture', asyncMiddleware(async (req, res, next) => {
+  const { frame } = req.body;
+  const { email } = req.user;
+  await UserModel.updateOne({ email }, { shipTexture: frame });
+  res.status(200).json({ status: 'ok' });
+}));
+
 router.post('/submit-score', asyncMiddleware(async (req, res, next) => {
   const { score } = req.body;
   const { email } = req.user;
@@ -31,9 +39,9 @@ router.post('/update-upgrade', asyncMiddleware(async (req, res, next) => {
   res.status(200).json({ status: 'ok' });
 }));
 
-router.get('/upgrades', asyncMiddleware(async (req, res, next) => {
+router.get('/player-data', asyncMiddleware(async (req, res, next) => {
   const { email } = req.user;
-  const user = await UserModel.findOne({ email }, 'upgrades -_id');
+  const user = await UserModel.findOne({ email }, '-_id');
   res.status(200).json(user);
 }));
 

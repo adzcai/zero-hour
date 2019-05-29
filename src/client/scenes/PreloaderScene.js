@@ -161,7 +161,6 @@ export default class PreloaderScene extends Phaser.Scene {
     });
 
     this.registry.set({
-      soundOn: true,
       musicOn: true,
 
       money: 0,
@@ -200,7 +199,7 @@ export default class PreloaderScene extends Phaser.Scene {
     });
     $.ajax({
       type: 'GET',
-      url: '/upgrades',
+      url: '/player-data',
       data: {
         refreshToken: getCookie('refreshJwt'),
       },

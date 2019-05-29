@@ -129,5 +129,5 @@ app.use((err, req, res, next) => {
 
 // have the server start listening on the provided port
 http.listen(process.env.PORT || 8080, () => {
-  console.log(`Server started on port ${process.env.PORT || 8080}`);
+  console.log(`Server started at http://localhost:${process.env.PORT || 8080}`);
 });

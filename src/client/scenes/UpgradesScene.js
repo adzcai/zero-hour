@@ -12,7 +12,7 @@ export default class UpgradesScene extends Phaser.Scene {
   create() {
     $.ajax({
       type: 'GET',
-      url: '/upgrades',
+      url: '/player-data',
       data: {
         refreshToken: getCookie('refreshJwt'),
       },

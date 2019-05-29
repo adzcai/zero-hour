@@ -46,7 +46,7 @@ export default class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.enemies, (player, enemy) => {
       enemy.end();
 
-      if (this.registry.values.soundOn) this.sound.play('shieldDown');
+      this.sound.play('shieldDown');
 
       this.player.hp -= enemy.value * 10;
       this.hpBar.displayWidth = Phaser.Math.Percent(this.player.hp, 0, this.registry.values.playerBody.maxHP) * (this.hpBox.displayWidth - 10);
@@ -153,7 +153,7 @@ export default class GameScene extends Phaser.Scene {
     this.coins.destroy();
 
     if (type === 'died') {
-      if (this.registry.values.soundOn) this.sound.play('lose');
+      this.sound.play('lose');
       this.player.play('sonicExplosionSlow').once('animationcomplete', () => this.player.destroy());
       this.showGameOverMessage('Game Over\n\nYou Died');
     } else if (type === 'won') {

@@ -59,7 +59,9 @@ export default class BackgroundScene extends Phaser.Scene {
 
   playBgMusic(key) {
     this.bgMusic.destroy();
-    this.bgMusic = this.sound.add(key, { volume: 0.5, loop: true });
-    this.bgMusic.play();
+    if (this.registry.values.musicOn) {
+      this.bgMusic = this.sound.add(key, { volume: 0.5, loop: true });
+      this.bgMusic.play();
+    }
   }
 }

@@ -9,9 +9,7 @@ export default class ArenaScene extends Phaser.Scene {
     socket.emit('joinGame');
 
     this.otherPlayers = this.physics.add.group();
-
     this.cursors = this.input.keyboard.createCursorKeys();
-
     this.createEnemies();
 
     socket
@@ -42,6 +40,9 @@ export default class ArenaScene extends Phaser.Scene {
             player.setPosition(playerInfo.x, playerInfo.y);
           }
         });
+      })
+      .on('laserPacket', (laserPacket) => {
+        console.log(laserPacket);
       });
 
     this.input.keyboard.on('keyup_ESC', () => {

@@ -12,7 +12,9 @@ module.exports = merge(webpackConfig, {
     progress: true,
     compress: true,
     port: 8080,
+    stats: 'minimal',
   },
+  stats: 'minimal',
   watch: true,
   output: {
     path: path.resolve(__dirname, 'build'),

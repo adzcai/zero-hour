@@ -30,11 +30,18 @@ const UserSchema = new Schema({
     type: Number,
     default: 0,
   },
+  highestLevel: {
+    type: Number,
+    default: 1,
+  },
   resetToken: {
     type: String,
   },
   resetTokenExp: {
     type: Date,
+  },
+  shipTexture: {
+    type: String,
   },
   upgrades,
 });
