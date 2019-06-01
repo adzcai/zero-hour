@@ -26,9 +26,10 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-  highScore: {
-    type: Number,
-    default: 0,
+  highScores: {
+    type: Map,
+    of: Number,
+    default: {}
   },
   highestLevel: {
     type: Number,

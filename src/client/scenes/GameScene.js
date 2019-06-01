@@ -11,6 +11,10 @@ export default class GameScene extends Phaser.Scene {
     super('Game');
   }
 
+  init(data) {
+    this.level = data.level;
+  }
+
   create() {
     this.state = 'running';
     this._score = 0;
@@ -63,7 +67,7 @@ export default class GameScene extends Phaser.Scene {
       powerup.destroy();
     });
 
-    this.title = new Button(this, width / 2, height / 3, `Level ${this.registry.values.level}`);
+    this.title = new Button(this, width / 2, height / 3, `Level ${this.level}`);
     this.tweens.add({
       targets: this.title,
       alpha: 0,
@@ -78,7 +82,7 @@ export default class GameScene extends Phaser.Scene {
     this.progressTween = this.tweens.addCounter({
       from: 0,
       to: 1,
-      duration: Math.sqrt(this.registry.values.level) * 25 * 1000,
+      duration: Math.sqrt(this.level) * 25 * 1000,
       onUpdate: (t) => {
         this.progressBar.displayHeight = (1 - t.getValue()) * (this.progressBox.height - 10);
         const { x, y } = this.progressBar.getBottomLeft();
@@ -124,9 +128,9 @@ export default class GameScene extends Phaser.Scene {
     this.time.addEvent({
       callback: () => {
         const frame = Phaser.Math.RND.pick(this.registry.get('ENEMYTYPES'));
-        this.enemies.get(0, 0, 'spaceshooter', frame).init();
+        this.enemies.get(0, 0, 'spaceshooter', frame).init(this.level);
       },
-      delay: 1000 / this.registry.values.level,
+      delay: 1000 / this.level,
       loop: true,
     });
 
@@ -187,18 +191,16 @@ export default class GameScene extends Phaser.Scene {
       this.physics.add.collider(this.player, this.platform, () => {
         if (this.platform.body.touching.up) {
           this.score += 5000;
-          this.showGameOverMessage('Game Over\n\nYou Won');
+          this.showGameOverMessage('Game Over\n\nYou Won', true);
           if (this.registry.values.musicOn) this.scene.get('Background').playBgMusic('victoryMusic');
         }
       });
 
       // If he misses the platform, it's handled in update()
-
-      this.registry.values.level += 1;
     }
   }
 
-  showGameOverMessage(message) {
+  showGameOverMessage(message, saveScores) {
     this.state = 'over';
 
     const { width, height } = this.cameras.main;
@@ -216,14 +218,6 @@ export default class GameScene extends Phaser.Scene {
         if (this.flashTimer.getOverallProgress() === 1) { // When it's finished, show the player's score and prompt restart
           this.add.text(width / 2, height / 2, `Your score: ${this.score}`, defaultFont(18)).setOrigin(0.5).setDepth(50);
           this.add.text(width / 2, height * 2 / 3, 'Press any key to restart', defaultFont(18)).setOrigin(0.5).setDepth(50);
-          $.ajax({
-            type: 'POST',
-            url: 'submit-score',
-            data: {
-              score: this.score,
-              refreshToken: getCookie('refreshJwt'),
-            },
-          });
           this.input.keyboard.on('keyup', (e) => {
             e.stopPropagation();
             this.scene.start('Title')
@@ -233,6 +227,21 @@ export default class GameScene extends Phaser.Scene {
       delay: 750,
       repeat: 3,
     });
+
+    if (saveScores) {
+      $.ajax({
+        type: 'POST',
+        url: 'submit-score',
+        data: {
+          level: this.level,
+          score: this.score,
+          refreshToken: getCookie('refreshJwt'),
+        },
+        error: (xhr) => {
+          console.error(xhr);
+        }
+      });
+    }
   }
 
   set score(val) {

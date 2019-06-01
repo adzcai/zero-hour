@@ -12,6 +12,7 @@ import ChooseShipScene from './scenes/ChooseShipScene';
 import TitleScene from './scenes/TitleScene';
 import GameScene from './scenes/GameScene';
 import ArenaScene from './scenes/ArenaScene';
+import ChooseLevelScene from './scenes/ChooseLevelScene';
 import OptionsScene from './scenes/OptionsScene';
 import PowerupInfoScene from './scenes/PowerupInfoScene';
 import UpgradesScene from './scenes/UpgradesScene';
@@ -63,6 +64,7 @@ const config = {
     TitleScene,
     GameScene,
     ArenaScene,
+    ChooseLevelScene,
     OptionsScene,
     PowerupInfoScene,
     UpgradesScene,

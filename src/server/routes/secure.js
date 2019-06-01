@@ -17,9 +17,23 @@ router.post('/submit-texture', asyncMiddleware(async (req, res, next) => {
 }));
 
 router.post('/submit-score', asyncMiddleware(async (req, res, next) => {
-  const { score } = req.body;
+  const { score, level } = req.body;
   const { email } = req.user;
-  await UserModel.updateOne({ email }, { highScore: score });
+  const user = await UserModel.findOne({ email }, '-_id');
+  
+  if (!user.highScores) user.highScores = {};
+  const userScore = user.highScores[`level${level}`];
+
+  if (!userScore || userScore < score) {
+    const set = {};
+    set[`highScores.level${level}`] = score;
+
+    if (!user.highestLevel || user.highestLevel <= level) 
+      set.highestLevel = parseInt(level, 10) + 1;
+
+    await UserModel.updateOne({ email }, set);
+  }
+
   res.status(200).json({ status: 'ok' });
 }));
 
