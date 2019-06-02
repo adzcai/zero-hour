@@ -33,7 +33,8 @@
     "heroku-postbuild": "webpack --config webpack.config.prod.js",
     "start": "node src/server/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint --ignore-path .gitignore . --fix"
+    "lint": "eslint --ignore-path .gitignore . --fix",
+    "precommit": "npm run lint"
   },
   "dependencies": {
     "bcrypt": "^3.0.6",
