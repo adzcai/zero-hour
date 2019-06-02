@@ -90,6 +90,8 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
     const angle = this.rotation;
     const { x, y } = new Phaser.Math.Vector2().setToPolar(angle, this.displayWidth / 2);
 
+    this.scene.sound.play(Phaser.Math.RND.pick(['laser', 'laser1', 'laser2']));
+
     const addScatter = theta => (this.powerups.scatter ? (theta + Phaser.Math.FloatBetween(-Math.PI / 16, Math.PI / 16)) : theta);
 
     if (type === 'Forward') {

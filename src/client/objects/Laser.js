@@ -35,7 +35,6 @@ export default class Laser extends Phaser.GameObjects.Sprite {
 
   fire(x, y, radians) {
     this.body.reset(x, y);
-    this.scene.sound.play(Phaser.Math.RND.pick(['laser', 'laser1', 'laser2']), { volume: 0.2 });
 
     if (this.name.startsWith('missile')) {
       this.findTarget();
