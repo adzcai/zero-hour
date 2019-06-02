@@ -116,10 +116,12 @@ export default class GameScene extends Phaser.Scene {
       },
       on: false,
     });
+
+    this.keys = this.input.keyboard.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,SPACE,ENTER');
   }
 
   update(time, delta) {
-    this.player.update(time, delta);
+    this.player.update(time, delta, this.keys);
     this.physics.world.wrap(this.player, 5);
     if (this.state === 'landing' && this.player.getBottomLeft().y > this.cameras.main.height) this.showGameOverMessage('Game Over');
   }

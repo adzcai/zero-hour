@@ -55,7 +55,9 @@ export default class ChooseLevelScene extends Phaser.Scene {
     })
 
     this.input.on('gameobjectup', (pointer, obj) => {
-      if (obj.name === 'level') this.scene.start('Game', { level: parseInt(obj.text, 10) });
+      if (obj.name === 'level') {
+        this.scene.start('Game', { level: parseInt(obj.text, 10) });
+      }
     })
   }
 }

@@ -13,9 +13,7 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
     this.body.setSize(this.displayHeight, this.displayHeight);
 
     this.hp = this.scene.registry.values.playerBody.maxHP;
-
-    this.keys = this.scene.input.keyboard.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,SPACE,ENTER');
-
+    
     this.nextShot = 0;
     this.nextMissile = 0;
 
@@ -52,24 +50,24 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
     }).startFollow(this);
   }
 
-  update(time, delta) {
+  update(time, delta, keys) {
     if (!this.body) return;
     if (this.body.speed > 5) this.thrust.emitParticle(8, this.x, this.y);
 
     if (this.scene.state === 'running') {
-      if (this.keys.SPACE.isDown && this.scene.time.now > this.nextShot) this.shoot();
-      if (this.keys.ENTER.isDown && this.scene.time.now > this.nextMissile) this.shootMissile();
+      if (keys.SPACE.isDown && this.scene.time.now > this.nextShot) this.shoot();
+      if (keys.ENTER.isDown && this.scene.time.now > this.nextMissile) this.shootMissile();
 
-      if (this.keys.LEFT.isDown || this.keys.A.isDown) this.body.setAccelerationX(-this.accel);
-      else if (this.keys.RIGHT.isDown || this.keys.D.isDown) this.body.setAccelerationX(this.accel);
+      if (keys.LEFT.isDown || keys.A.isDown) this.body.setAccelerationX(-this.accel);
+      else if (keys.RIGHT.isDown || keys.D.isDown) this.body.setAccelerationX(this.accel);
       else this.body.setAccelerationX(0);
 
-      if (this.keys.UP.isDown || this.keys.W.isDown) this.body.setAccelerationY(-this.accel);
-      else if (this.keys.DOWN.isDown || this.keys.S.isDown) this.body.setAccelerationY(this.accel);
+      if (keys.UP.isDown || keys.W.isDown) this.body.setAccelerationY(-this.accel);
+      else if (keys.DOWN.isDown || keys.S.isDown) this.body.setAccelerationY(this.accel);
       else this.body.setAccelerationY(0);
     } else if (this.scene.state === 'landing') {
-      if (this.keys.LEFT.isDown || this.keys.A.isDown) this.body.setAccelerationX(-this.accel);
-      else if (this.keys.RIGHT.isDown || this.keys.D.isDown) this.body.setAccelerationX(this.accel);
+      if (keys.LEFT.isDown || keys.A.isDown) this.body.setAccelerationX(-this.accel);
+      else if (keys.RIGHT.isDown || keys.D.isDown) this.body.setAccelerationX(this.accel);
       else this.body.setAccelerationX(0);
     }
 

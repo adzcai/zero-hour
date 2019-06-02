@@ -1,4 +1,5 @@
 import Button from '../objects/Button';
+import getCookie from '../../shared/getCookie';
 
 export default class TitleScene extends Phaser.Scene {
   constructor() {
@@ -15,14 +16,36 @@ export default class TitleScene extends Phaser.Scene {
 
     const inc = height / 8;
 
-    new Button(this, width / 4, inc, 'Play', 'Game');
+    new Button(this, width / 4, inc, 'Play', () => {
+      $.ajax({
+        type: 'GET',
+        url: '/player-data',
+        data: {
+          refreshToken: getCookie('refreshJwt')
+        },
+        success: (data) => {
+          this.scene.start('Game', { level: data.highestLevel });
+        },
+        error: (xhr) => {
+          console.error(xhr);
+        }
+      });
+    });
+
     new Button(this, width * 3 / 4, inc, 'Arena', 'Arena');
-    new Button(this, width / 2, inc * 2, 'Choose Level', 'ChooseLevel');
-    new Button(this, width / 2, inc * 3, 'Choose Ship', 'ChooseShip')
-    new Button(this, width / 2, inc * 4, 'Options', 'Options');
-    new Button(this, width / 2, inc * 5, 'Upgrades', 'Upgrades');
-    new Button(this, width / 2, inc * 6, 'Leaderboard', 'Leaderboard');
-    new Button(this, width / 2, inc * 7, 'Credits', 'Credits');
+    
+    let buttons = [
+      ['Choose Level', 'ChooseLevel'],
+      ['Choose Ship', 'ChooseShip'],
+      ['Options', 'Options'],
+      ['Upgrades', 'Upgrades'],
+      ['Leaderboard', 'Leaderboard'],
+      ['Credits', 'Credits']
+    ];
+
+    for (let i = 0; i < buttons.length; i++) {
+      new Button(this, width / 2, inc * (2 + i), buttons[i][0], buttons[i][1]);
+    }
 
     this.input.keyboard.createCombo(
       [38, 38, 40, 40, 37, 39, 37, 39, 66, 65, 13],
@@ -35,5 +58,13 @@ export default class TitleScene extends Phaser.Scene {
       .on('keyup_ENTER', () => {
         this.scene.get('Background').changeColor('purple');
       });
+
+    this.scale.on('resize', this.resize, this);
+  }
+
+  resize(gameSize, baseSize, displaySize, resolution) {
+    const { width, height } = gameSize;
+    this.cameras.resize(width, height);
+    console.log(width, height);
   }
 }
