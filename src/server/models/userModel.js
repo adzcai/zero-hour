@@ -45,6 +45,10 @@ const UserSchema = new Schema({
     type: String,
   },
   upgrades,
+  money: {
+    type: Number,
+    default: 0,
+  },
 });
 
 UserSchema.pre('save', async function (next) {

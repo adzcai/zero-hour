@@ -45,5 +45,17 @@ export default class UpgradesScene extends Phaser.Scene {
         console.error(xhr);
       },
     });
+
+    $.ajax({
+      type: 'POST',
+      url: '/submit-money',
+      data: {
+        money: this.registry.values.money,
+        refreshToken: getCookie('refreshJwt'),
+      },
+      error(xhr) {
+        console.error(xhr);
+      },
+    });
   }
 }

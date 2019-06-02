@@ -36,6 +36,13 @@ router.post('/submit-score', asyncMiddleware(async (req, res, next) => {
   res.status(200).json({ status: 'ok' });
 }));
 
+router.post('/submit-money', asyncMiddleware(async (req, res, next) => {
+  const { money } = req.body;
+  const { email } = req.user;
+  await UserModel.updateOne({ email }, { money });
+  res.status(200).json({ status: 'ok' });
+}))
+
 router.get('/scores', asyncMiddleware(async (req, res, next) => {
   const users = await UserModel.find({}, 'name highScore -_id')
     .sort({ highScore: -1 })

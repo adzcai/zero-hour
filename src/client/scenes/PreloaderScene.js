@@ -164,7 +164,6 @@ export default class PreloaderScene extends Phaser.Scene {
       musicOn: true,
 
       money: 0,
-      level: 1,
 
       ENEMYTYPES: this.textures.get('spaceshooter').getFrameNames().filter(name => name.startsWith('ufo') || name.startsWith('meteor')),
       POWERUPTYPES: {
@@ -197,6 +196,7 @@ export default class PreloaderScene extends Phaser.Scene {
         maxHP: 1000,
       },
     });
+
     $.ajax({
       type: 'GET',
       url: '/player-data',
@@ -207,6 +207,8 @@ export default class PreloaderScene extends Phaser.Scene {
         Object.keys(data.upgrades).forEach((key) => {
           deepSet(this.registry.values, UPGRADES[key].variable, UPGRADES[key].getValue(data.upgrades[key]));
         });
+        console.log(data);
+        this.registry.values.money = data.money || 0;
       },
       error(xhr) {
         console.error(xhr);
