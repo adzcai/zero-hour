@@ -42,7 +42,6 @@ export default class ChooseLevelScene extends Phaser.Scene {
     new Button(this, width / 2, inc * (numRows + 3), 'Back', 'Options');
 
     this.input.on('gameobjectover', (pointer, obj) => {
-      console.log('over');
       if (obj.name === 'level') {
         obj.setColor('#ffff00');
         this.highScore.setText(`Highscore: ${this.highScores[`level${obj.text}`] || 'none'}`);
@@ -50,7 +49,6 @@ export default class ChooseLevelScene extends Phaser.Scene {
     });
 
     this.input.on('gameobjectout', (pointer, obj) => {
-      console.log('out');
       if (obj.name === 'level') obj.setColor('#ffffff');
     });
 

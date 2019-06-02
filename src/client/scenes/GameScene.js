@@ -23,8 +23,8 @@ export default class GameScene extends Phaser.Scene {
 
     this.scene.get('Background').changeColor('purple').changeSpeed(5).playBgMusic('gameMusic');
 
-    this.hpBox = this.add.rectangle(5, 5, width / 3, height / 12, 0xfff, 0.8).setOrigin(0);
-    this.hpBar = this.add.rectangle(10, 15, width / 3 - 10, height / 12 - 20, 0x00ff00, 1).setOrigin(0);
+    this.hpBox = this.add.rectangle(5, 5, width / 3, height / 12, 0xfff, 0.8).setOrigin(0).setScrollFactor(0);
+    this.hpBar = this.add.rectangle(10, 15, width / 3 - 10, height / 12 - 20, 0x00ff00, 1).setOrigin(0).setScrollFactor(0);
 
     this.scoreText = this.add.text(width / 2, 5, '0', defaultFont(24)).setOrigin(0.5, 0);
 

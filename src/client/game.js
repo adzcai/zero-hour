@@ -191,7 +191,6 @@ $.ajax({
   type: 'GET',
   url: '/messages',
   success: (messages) => {
-    console.log(messages);
     messages.forEach((msg) => {
       addMessage({
         email: msg.email,

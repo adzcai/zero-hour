@@ -58,13 +58,5 @@ export default class TitleScene extends Phaser.Scene {
       .on('keyup_ENTER', () => {
         this.scene.get('Background').changeColor('purple');
       });
-
-    this.scale.on('resize', this.resize, this);
-  }
-
-  resize(gameSize, baseSize, displaySize, resolution) {
-    const { width, height } = gameSize;
-    this.cameras.resize(width, height);
-    console.log(width, height);
   }
 }

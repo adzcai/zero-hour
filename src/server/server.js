@@ -27,11 +27,10 @@ io.on('connection', (socket) => {
   console.log(`A user connected at socket ${socket.id}`);
 
   socket
-    .on('joinGame', () => {
+    .on('joinGame', (x, y) => {
       console.log(`Player ${socket.id} joined the game`);
       players[socket.id] = {
-        x: Math.floor(Math.random() * 480),
-        y: Math.floor(Math.random() * 640),
+        x, y,
         rotation: Math.floor(Math.random() * 2 * Math.PI),
         playerId: socket.id,
       };

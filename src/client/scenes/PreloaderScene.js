@@ -207,7 +207,6 @@ export default class PreloaderScene extends Phaser.Scene {
         Object.keys(data.upgrades).forEach((key) => {
           deepSet(this.registry.values, UPGRADES[key].variable, UPGRADES[key].getValue(data.upgrades[key]));
         });
-        console.log(data);
         this.registry.values.money = data.money || 0;
       },
       error(xhr) {
