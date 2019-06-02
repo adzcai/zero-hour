@@ -21,26 +21,26 @@ export default class TitleScene extends Phaser.Scene {
         type: 'GET',
         url: '/player-data',
         data: {
-          refreshToken: getCookie('refreshJwt')
+          refreshToken: getCookie('refreshJwt'),
         },
         success: (data) => {
           this.scene.start('Game', { level: data.highestLevel });
         },
         error: (xhr) => {
           console.error(xhr);
-        }
+        },
       });
     });
 
     new Button(this, width * 3 / 4, inc, 'Arena', 'Arena');
-    
-    let buttons = [
+
+    const buttons = [
       ['Choose Level', 'ChooseLevel'],
       ['Choose Ship', 'ChooseShip'],
       ['Options', 'Options'],
       ['Upgrades', 'Upgrades'],
       ['Leaderboard', 'Leaderboard'],
-      ['Credits', 'Credits']
+      ['Credits', 'Credits'],
     ];
 
     for (let i = 0; i < buttons.length; i++) {

@@ -38,6 +38,9 @@ setInterval(() => {
 // const deviceW = window.screen.availWidth;
 const DEFAULT_WIDTH = 480;
 const DEFAULT_HEIGHT = 640;
+const MAX_WIDTH = DEFAULT_WIDTH * 1.5;
+const MAX_HEIGHT = DEFAULT_HEIGHT * 1.5;
+const SCALE_MODE = 'SMOOTH';
 
 const config = {
   type: Phaser.AUTO,
@@ -53,8 +56,11 @@ const config = {
     },
   },
   scale: {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH
+    parent: 'game-container',
+    mode: Phaser.Scale.NONE,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    width: DEFAULT_WIDTH,
+    height: DEFAULT_HEIGHT,
   },
   scene: [
     BootScene,
@@ -76,31 +82,49 @@ const config = {
 window.addEventListener('load', () => {
   const game = new Phaser.Game(config);
 
-  function resize() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+  const resize = () => {
+    const div = document.getElementById('game-container');
+
+    const w = div.clientWidth;
+    const h = div.clientHeight;
+
+    const scaleMode = SCALE_MODE;
+
     const scale = Math.min(w / DEFAULT_WIDTH, h / DEFAULT_HEIGHT);
+    const newWidth = Math.min(w / scale, MAX_WIDTH);
+    const newHeight = Math.min(h / scale, MAX_HEIGHT);
 
-    game.canvas.setAttribute('style', `
-      -ms-transform: scale(${scale}); 
-      -webkit-transform: scale3d(${scale}, 1);
-      -moz-transform: scale(${scale}); -o-transform: scale(${scale}); transform: scale(${scale});
-      transform-origin: top left;
-    `);
+    const defaultRatio = DEFAULT_WIDTH / DEFAULT_HEIGHT;
+    const maxRatioWidth = MAX_WIDTH / DEFAULT_HEIGHT;
+    const maxRatioHeight = DEFAULT_WIDTH / MAX_HEIGHT;
 
-    const width = w / scale;
-    const height = h / scale;
+    // smooth scaling
+    let smooth = 1;
+    if (scaleMode === 'SMOOTH') {
+      const maxSmoothScale = 1.15;
+      const normalize = (value, min, max) => (value - min) / (max - min);
+      if (DEFAULT_WIDTH / DEFAULT_HEIGHT < w / h) {
+        smooth = -normalize(newWidth / newHeight, defaultRatio, maxRatioWidth) / (1 / (maxSmoothScale - 1)) + maxSmoothScale;
+      } else {
+        smooth = -normalize(newWidth / newHeight, defaultRatio, maxRatioHeight) / (1 / (maxSmoothScale - 1)) + maxSmoothScale;
+      }
+    }
 
-    game.scene.getScenes().forEach((scene) => {
-      scene.cameras.main.setViewport(0, 0, width, height);
-    });
-  }
+    // resize the game
+    game.scale.resize(newWidth * smooth, newHeight * smooth);
 
-  window.addEventListener('resize', (e) => {
-    console.log('resizing');
-    if (game.isBooted) resize();
-    else game.events.once('boot', resize);
-  }, false);
+    // scale the width and height of the css
+    game.canvas.style.width = `${newWidth * scale}px`;
+    game.canvas.style.height = `${newHeight * scale}px`;
+
+    // center the game with css margin
+    game.canvas.style.marginTop = `${(h - newHeight * scale) / 2}px`;
+    game.canvas.style.marginLeft = `${(w - newWidth * scale) / 2}px`;
+  };
+  window.addEventListener('resize', (event) => {
+    resize();
+  });
+  resize();
 });
 
 // Handling messages sent to the game
@@ -168,15 +192,15 @@ $.ajax({
   url: '/messages',
   success: (messages) => {
     console.log(messages);
-    messages.forEach(msg => {
+    messages.forEach((msg) => {
       addMessage({
         email: msg.email,
         username: msg.name,
         message: msg.message,
-      })
+      });
     });
   },
   error: (xhr) => {
     console.error(xhr);
-  }
+  },
 });

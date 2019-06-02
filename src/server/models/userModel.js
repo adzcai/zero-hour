@@ -29,7 +29,7 @@ const UserSchema = new Schema({
   highScores: {
     type: Map,
     of: Number,
-    default: {}
+    default: {},
   },
   highestLevel: {
     type: Number,

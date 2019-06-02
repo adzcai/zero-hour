@@ -8,10 +8,10 @@ export default class ChooseShipScene extends Phaser.Scene {
 
   create() {
     $.ajax({
-      type: "GET",
+      type: 'GET',
       url: '/player-data',
       data: {
-        refreshToken: getCookie('refreshJwt'), 
+        refreshToken: getCookie('refreshJwt'),
       },
       success: (data) => {
         if (data.shipTexture) {
@@ -23,8 +23,8 @@ export default class ChooseShipScene extends Phaser.Scene {
       },
       error: (xhr) => {
         console.error(xhr);
-      }
-    })
+      },
+    });
   }
 
   promptShip() {

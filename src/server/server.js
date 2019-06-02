@@ -98,7 +98,7 @@ app.use('/', passwordRoutes);
 app.use('/', passport.authenticate('jwt', { session: false }), secureRoutes);
 
 // We put this here to have access to io
-app.post('/submit-chatline', passport.authenticate('jwt', { session : false }), asyncMiddleware(async (req, res, next) => {
+app.post('/submit-chatline', passport.authenticate('jwt', { session: false }), asyncMiddleware(async (req, res, next) => {
   const { message } = req.body;
   const { email, name } = req.user;
   await ChatModel.create({ email, name, message });
@@ -109,7 +109,7 @@ app.post('/submit-chatline', passport.authenticate('jwt', { session : false }), 
   res.status(200).json({ status: 'ok' });
 }));
 
-app.get('/messages', passport.authenticate('jwt', { session : false }), asyncMiddleware(async (req, res, next) => {
+app.get('/messages', passport.authenticate('jwt', { session: false }), asyncMiddleware(async (req, res, next) => {
   const messages = await ChatModel.find({}, 'email name message createdAt -_id')
     .sort({ createdAt: -1 })
     .limit(30);

@@ -222,7 +222,7 @@ export default class GameScene extends Phaser.Scene {
           this.add.text(width / 2, height * 2 / 3, 'Press any key to restart', defaultFont(18)).setOrigin(0.5).setDepth(50);
           this.input.keyboard.on('keyup', (e) => {
             e.stopPropagation();
-            this.scene.start('Title')
+            this.scene.start('Title');
           });
         }
       },
@@ -241,7 +241,7 @@ export default class GameScene extends Phaser.Scene {
         },
         error: (xhr) => {
           console.error(xhr);
-        }
+        },
       });
     }
   }

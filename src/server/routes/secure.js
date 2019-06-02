@@ -20,7 +20,7 @@ router.post('/submit-score', asyncMiddleware(async (req, res, next) => {
   const { score, level } = req.body;
   const { email } = req.user;
   const user = await UserModel.findOne({ email }, '-_id');
-  
+
   if (!user.highScores) user.highScores = {};
   const userScore = user.highScores[`level${level}`];
 
@@ -28,8 +28,7 @@ router.post('/submit-score', asyncMiddleware(async (req, res, next) => {
     const set = {};
     set[`highScores.level${level}`] = score;
 
-    if (!user.highestLevel || user.highestLevel <= level) 
-      set.highestLevel = parseInt(level, 10) + 1;
+    if (!user.highestLevel || user.highestLevel <= level) { set.highestLevel = parseInt(level, 10) + 1; }
 
     await UserModel.updateOne({ email }, set);
   }

@@ -46,7 +46,7 @@ module.exports = {
       hash: true,
       template: path.resolve(pagesPath, 'game.html'),
       filename: 'game.html',
-      favicon: path.join(imagesPath, 'favicon.ico')
+      favicon: path.join(imagesPath, 'favicon.ico'),
     }),
   ].concat(['index', 'signup', 'forgot-password', 'reset-password'].map(name => new HtmlWebpackPlugin({
     hash: true,

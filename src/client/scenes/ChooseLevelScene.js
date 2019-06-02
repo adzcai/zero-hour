@@ -1,4 +1,4 @@
-import defaultFont from "../../shared/defaultFont";
+import defaultFont from '../../shared/defaultFont';
 import Button from '../objects/Button';
 
 export default class ChooseLevelScene extends Phaser.Scene {
@@ -16,8 +16,8 @@ export default class ChooseLevelScene extends Phaser.Scene {
       },
       error: (xhr) => {
         console.error(xhr);
-      }
-    })
+      },
+    });
   }
 
   showLevels(highestLevel) {
@@ -35,7 +35,7 @@ export default class ChooseLevelScene extends Phaser.Scene {
         width * ((i % 4) + 1) / 5,
         inc * (Math.floor(i / 4) + 3),
         i + 1,
-        defaultFont()
+        defaultFont(),
       ).setInteractive().setName('level');
     }
 
@@ -45,19 +45,19 @@ export default class ChooseLevelScene extends Phaser.Scene {
       console.log('over');
       if (obj.name === 'level') {
         obj.setColor('#ffff00');
-        this.highScore.setText(`Highscore: ${this.highScores[`level${obj.text}`] || 'none'}`)
+        this.highScore.setText(`Highscore: ${this.highScores[`level${obj.text}`] || 'none'}`);
       }
     });
 
     this.input.on('gameobjectout', (pointer, obj) => {
       console.log('out');
       if (obj.name === 'level') obj.setColor('#ffffff');
-    })
+    });
 
     this.input.on('gameobjectup', (pointer, obj) => {
       if (obj.name === 'level') {
         this.scene.start('Game', { level: parseInt(obj.text, 10) });
       }
-    })
+    });
   }
 }

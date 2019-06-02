@@ -13,7 +13,7 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
     this.body.setSize(this.displayHeight, this.displayHeight);
 
     this.hp = this.scene.registry.values.playerBody.maxHP;
-    
+
     this.nextShot = 0;
     this.nextMissile = 0;
 
@@ -87,11 +87,10 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
   }
 
   fireLaser(type) {
-    let angle = this.rotation;
+    const angle = this.rotation;
     const { x, y } = new Phaser.Math.Vector2().setToPolar(angle, this.displayWidth / 2);
 
-    let addScatter = (theta) => 
-      this.powerups.scatter ? (theta + Phaser.Math.FloatBetween(-Math.PI / 16, Math.PI / 16)) : theta;
+    const addScatter = theta => (this.powerups.scatter ? (theta + Phaser.Math.FloatBetween(-Math.PI / 16, Math.PI / 16)) : theta);
 
     if (type === 'Forward') {
       for (let i = 0; i < this.numLaserShots; i += 1) {
