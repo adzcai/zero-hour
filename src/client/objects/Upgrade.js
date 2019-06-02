@@ -1,6 +1,6 @@
 import defaultFont from '../../shared/defaultFont';
 import deepSet from '../../shared/deepSet';
-import { UPGRADES } from '../../shared/constants';
+import UPGRADES from '../../shared/upgrades';
 import getCookie from '../../shared/getCookie';
 
 export default class Upgrade extends Phaser.GameObjects.Text {

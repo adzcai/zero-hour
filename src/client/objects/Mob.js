@@ -43,8 +43,8 @@ export default class Mob extends Phaser.GameObjects.Sprite {
     }
   }
 
-  hitBy(bullet) {
-    this.hp -= bullet.damage;
+  hitBy(laser) {
+    this.hp -= laser.damage;
     this.hpBar.displayWidth = Phaser.Math.Percent(this.hp, 0, this.maxHP) * this.width;
     if (this.hp <= 0) this.end();
   }

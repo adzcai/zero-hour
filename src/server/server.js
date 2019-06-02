@@ -46,6 +46,12 @@ io.on('connection', (socket) => {
           players[socket.id].rotation = data.rotation;
           socket.broadcast.emit('playerMoved', players[socket.id]);
         })
+        .on('laserFired', (laser) => {
+          socket.broadcast.emit('laserFired', laser);
+        })
+        .on('laserHit', (laserId) => {
+          socket.broadcast.emit('laserHit', laserId);
+        })
         .on('leaveGame', () => {
           console.log(`Player ${socket.id} left the game`);
           delete players[socket.id];

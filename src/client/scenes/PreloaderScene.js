@@ -1,5 +1,5 @@
 import defaultFont from '../../shared/defaultFont';
-import { UPGRADES } from '../../shared/constants';
+import UPGRADES from '../../shared/upgrades';
 import getCookie from '../../shared/getCookie';
 import deepSet from '../../shared/deepSet';
 

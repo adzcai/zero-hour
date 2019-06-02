@@ -1,5 +1,6 @@
 import Button from '../objects/Button';
 import defaultFont from '../../shared/defaultFont';
+import getCookie from '../../shared/getCookie';
 
 export default class OptionsScene extends Phaser.Scene {
   constructor() {
@@ -38,11 +39,23 @@ export default class OptionsScene extends Phaser.Scene {
       const sure = confirm('Are you sure? This will clear all user data. This cannot be reversed.');
       if (!sure) return;
 
-      this.scene.stop('Background');
-      this.scene.stop('Game');
-      this.scene.stop('Arena');
-      this.scene.stop('Title');
-      this.scene.start('Preloader');
+      $.ajax({
+        type: 'POST',
+        url: 'reset-upgrades',
+        data: {
+          refreshToken: getCookie('refreshJwt'),
+        },
+        success: () => {
+          this.scene.stop('Background');
+          this.scene.stop('Game');
+          this.scene.stop('Arena');
+          this.scene.stop('Title');
+          this.scene.start('Preloader');
+        },
+        error: (xhr) => {
+          console.error(xhr);
+        }
+      });
     });
 
     if (paused) {

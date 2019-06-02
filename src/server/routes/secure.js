@@ -5,6 +5,7 @@
 const express = require('express');
 const asyncMiddleware = require('../middleware/asyncMiddleware');
 const UserModel = require('../models/userModel');
+const UPGRADES = require('../../shared/upgrades');
 
 const router = express.Router();
 
@@ -41,14 +42,17 @@ router.post('/submit-money', asyncMiddleware(async (req, res, next) => {
   const { email } = req.user;
   await UserModel.updateOne({ email }, { money });
   res.status(200).json({ status: 'ok' });
-}))
-
-router.get('/scores', asyncMiddleware(async (req, res, next) => {
-  const users = await UserModel.find({}, 'name highScore -_id')
-    .sort({ highScore: -1 })
-    .limit(10);
-  res.status(200).json(users);
 }));
+
+router.post('/reset-upgrades', asyncMiddleware(async (req, res, next) => {
+  const { email } = req.user;
+  const set = {}
+  Object.keys(UPGRADES).forEach((key) => {
+    set[`upgrades.${key}`] = 0;
+  });
+  await UserModel.updateOne({ email }, set);
+  res.status(200).json({ status: 'ok' });
+}))
 
 router.post('/update-upgrade', asyncMiddleware(async (req, res, next) => {
   const { upgrade, count } = req.body;
@@ -57,6 +61,13 @@ router.post('/update-upgrade', asyncMiddleware(async (req, res, next) => {
   set[`upgrades.${upgrade}`] = count;
   await UserModel.updateOne({ email }, set);
   res.status(200).json({ status: 'ok' });
+}));
+
+router.get('/scores', asyncMiddleware(async (req, res, next) => {
+  const users = await UserModel.find({}, 'name highScore -_id')
+    .sort({ highScore: -1 })
+    .limit(10);
+  res.status(200).json(users);
 }));
 
 router.get('/player-data', asyncMiddleware(async (req, res, next) => {

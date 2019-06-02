@@ -42,8 +42,8 @@ export default class GameScene extends Phaser.Scene {
     });
 
     // ========== INITIALIZING ENTITIES ==========
-    this.player = new PlayerShip(this, width / 2, height - 5, 'spaceshooter', 'playerShip1_blue');
-    this.bullets = this.physics.add.group({ classType: Laser });
+    this.player = new PlayerShip(this, width / 2, height - 5);
+    this.lasers = this.physics.add.group({ classType: Laser });
     this.enemies = this.physics.add.group({ classType: Mob });
     this.powerups = this.physics.add.group({ classType: Powerup });
 
@@ -57,9 +57,9 @@ export default class GameScene extends Phaser.Scene {
       if (this.player.hp <= 0 && this.state === 'running') this.gameOver('died');
     });
 
-    this.physics.add.overlap(this.bullets, this.enemies, (bullet, enemy) => {
-      enemy.hitBy(bullet);
-      bullet.destroy();
+    this.physics.add.overlap(this.lasers, this.enemies, (laser, enemy) => {
+      enemy.hitBy(laser);
+      laser.destroy();
     });
 
     this.physics.add.overlap(this.player, this.powerups, (player, powerup) => {
@@ -124,6 +124,10 @@ export default class GameScene extends Phaser.Scene {
     this.player.update(time, delta, this.keys);
     this.physics.world.wrap(this.player, 5);
     if (this.state === 'landing' && this.player.getBottomLeft().y > this.cameras.main.height) this.showGameOverMessage('Game Over');
+  }
+
+  fireLaser(type, x, y, theta) {
+    this.lasers.get().init(type).fire(x, y, theta);
   }
 
   initSpawners() {

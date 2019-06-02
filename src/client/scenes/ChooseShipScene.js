@@ -48,8 +48,9 @@ export default class ChooseShipScene extends Phaser.Scene {
         $.ajax({
           type: 'POST',
           url: '/submit-texture',
-          data: { frame },
-          success: (data) => {
+          data: {
+            frame,
+            refreshToken: getCookie('refreshJwt'),
           },
           error: (xhr) => {
             console.error(xhr);

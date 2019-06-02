@@ -1,7 +1,7 @@
 import Button from '../objects/Button';
 import Upgrade from '../objects/Upgrade';
 import defaultFont from '../../shared/defaultFont';
-import { UPGRADES } from '../../shared/constants';
+import UPGRADES from '../../shared/upgrades';
 import getCookie from '../../shared/getCookie';
 
 export default class UpgradesScene extends Phaser.Scene {

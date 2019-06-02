@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const { UPGRADES } = require('../../shared/constants');
+const UPGRADES = require('../../shared/upgrades');
 
 const { Schema } = mongoose;
 
