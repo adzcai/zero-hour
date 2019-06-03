@@ -53,17 +53,6 @@ body {
   background-color: #0b0e11;
 }
 
-#game-container {
-  position: relative;
-  left: 0%; bottom: 0%;
-  width: 600px;
-  height: 100%;
-}
-
-#game-container > canvas {
-  border: 3px solid silver;
-}
-
 /* Chat page */
 
 .chat.page {
@@ -85,6 +74,10 @@ body {
   font-size: 70%;
   margin: 5px;
   text-align: center;
+}
+
+#game-container {
+  height: 100%;
 }
 
 /* Messages */

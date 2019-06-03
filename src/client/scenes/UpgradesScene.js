@@ -1,7 +1,7 @@
 import Button from '../objects/Button';
 import Upgrade from '../objects/Upgrade';
 import defaultFont from '../../shared/defaultFont';
-import { UPGRADES } from '../../shared/constants';
+import UPGRADES from '../../shared/upgrades';
 import getCookie from '../../shared/getCookie';
 
 export default class UpgradesScene extends Phaser.Scene {
@@ -12,7 +12,7 @@ export default class UpgradesScene extends Phaser.Scene {
   create() {
     $.ajax({
       type: 'GET',
-      url: '/upgrades',
+      url: '/player-data',
       data: {
         refreshToken: getCookie('refreshJwt'),
       },
@@ -25,7 +25,7 @@ export default class UpgradesScene extends Phaser.Scene {
         const upgradeButtons = [];
 
         Object.keys(UPGRADES).forEach((key, i) => {
-          upgradeButtons.push(new Upgrade(this, i, key, this.upgrades[key] || 0))
+          upgradeButtons.push(new Upgrade(this, i, key, this.upgrades[key] || 0));
         });
 
         this.moneyText = this.add.text(5, 5, `Money: ${this.registry.values.money}`, defaultFont());
@@ -40,6 +40,18 @@ export default class UpgradesScene extends Phaser.Scene {
         });
 
         this.back = new Button(this, width / 2, height * (numUpgrades + 2) / (numUpgrades + 3), 'Back', 'Title');
+      },
+      error(xhr) {
+        console.error(xhr);
+      },
+    });
+
+    $.ajax({
+      type: 'POST',
+      url: '/submit-money',
+      data: {
+        money: this.registry.values.money,
+        refreshToken: getCookie('refreshJwt'),
       },
       error(xhr) {
         console.error(xhr);

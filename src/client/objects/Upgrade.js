@@ -1,6 +1,6 @@
 import defaultFont from '../../shared/defaultFont';
 import deepSet from '../../shared/deepSet';
-import { UPGRADES } from '../../shared/constants';
+import UPGRADES from '../../shared/upgrades';
 import getCookie from '../../shared/getCookie';
 
 export default class Upgrade extends Phaser.GameObjects.Text {
@@ -16,9 +16,9 @@ export default class Upgrade extends Phaser.GameObjects.Text {
       .setOrigin(0, 0.5);
 
     this.scene.add.existing(this);
-    
+
     this.costText = this.scene.add.text(width * 5 / 8, this.y, '', defaultFont()).setOrigin(0, 0.5);
-    this.valueText = this.scene.add.text(width * 15 / 16,this.y,this.value,defaultFont()).setOrigin(1, 0.5);
+    this.valueText = this.scene.add.text(width * 15 / 16, this.y, this.value, defaultFont()).setOrigin(1, 0.5);
 
     this.count = count; // Use the setter to update the text
 

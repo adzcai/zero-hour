@@ -1,4 +1,5 @@
 import Button from '../objects/Button';
+import getCookie from '../../shared/getCookie';
 
 export default class TitleScene extends Phaser.Scene {
   constructor() {
@@ -13,14 +14,38 @@ export default class TitleScene extends Phaser.Scene {
       .changeSpeed(1)
       .playBgMusic('titleMusic');
 
-    const inc = height / 7;
+    const inc = height / 8;
 
-    this.gameButton = new Button(this, width / 2, inc, 'Play', 'Game');
-    this.arenaButton = new Button(this, width / 2, inc * 2, 'Arena', 'Arena');
-    this.optionsButton = new Button(this, width / 2, inc * 3, 'Options', 'Options');
-    this.upgradesButton = new Button(this, width / 2, inc * 4, 'Upgrades', 'Upgrades');
-    this.leaderboardButton = new Button(this, width / 2, inc * 5, 'Leaderboard', 'Leaderboard');
-    this.creditsButton = new Button(this, width / 2, inc * 6, 'Credits', 'Credits');
+    new Button(this, width / 4, inc, 'Play', () => {
+      $.ajax({
+        type: 'GET',
+        url: '/player-data',
+        data: {
+          refreshToken: getCookie('refreshJwt'),
+        },
+        success: (data) => {
+          this.scene.start('Game', { level: data.highestLevel });
+        },
+        error: (xhr) => {
+          console.error(xhr);
+        },
+      });
+    });
+
+    new Button(this, width * 3 / 4, inc, 'Arena', 'Arena');
+
+    const buttons = [
+      ['Choose Level', 'ChooseLevel'],
+      ['Choose Ship', () => this.scene.start('ChooseShip', { chooseShip: true })],
+      ['Options', 'Options'],
+      ['Upgrades', 'Upgrades'],
+      ['Leaderboard', 'Leaderboard'],
+      ['Credits', 'Credits'],
+    ];
+
+    for (let i = 0; i < buttons.length; i++) {
+      new Button(this, width / 2, inc * (2 + i), buttons[i][0], buttons[i][1]);
+    }
 
     this.input.keyboard.createCombo(
       [38, 38, 40, 40, 37, 39, 37, 39, 66, 65, 13],

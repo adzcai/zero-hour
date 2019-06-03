@@ -1,11 +1,22 @@
 export default class Mob extends Phaser.GameObjects.Sprite {
-  constructor(scene, x, y, texture, frame) {
+  constructor(scene, x, y, texture, frame, level) {
     super(scene, x, y, 'spaceshooter', frame);
 
     this.scene.add.existing(this);
     this.scene.physics.add.existing(this);
+  }
 
-    this.maxHP = Math.pow(this.displayWidth, 1.5) * this.scene.registry.values.level;
+  preUpdate(time, delta) {
+    super.preUpdate(time, delta);
+    this.hpBar.setPosition(this.x, this.y - 32);
+  }
+
+  init(level) {
+    const { width } = this.scene.cameras.main;
+    this.setRandomPosition(0, -320, width, 320);
+    this.hpBar = this.scene.add.rectangle(this.x, this.y, this.width, 10, 0xff00, 1);
+
+    this.maxHP = Math.pow(this.displayWidth, 1.5) * level;
     this.hp = this.maxHP;
     this.value = Math.floor(Math.sqrt(this.maxHP));
 
@@ -15,17 +26,6 @@ export default class Mob extends Phaser.GameObjects.Sprite {
     }
 
     this.numCoins = Math.floor(Phaser.Math.FloatBetween(0.5, 1) * Math.sqrt(this.value) / 2);
-  }
-
-  preUpdate(time, delta) {
-    super.preUpdate(time, delta);
-    this.hpBar.setPosition(this.x, this.y - 32);
-  }
-
-  init() {
-    const { width } = this.scene.cameras.main;
-    this.setRandomPosition(0, -320, width, 320);
-    this.hpBar = this.scene.add.rectangle(this.x, this.y, this.width, 10, 0xff00, 1);
 
     if (this.frame.name.startsWith('meteor')) {
       this.body.setAngularVelocity(300);
@@ -43,8 +43,8 @@ export default class Mob extends Phaser.GameObjects.Sprite {
     }
   }
 
-  hitBy(bullet) {
-    this.hp -= bullet.damage;
+  hitBy(laser) {
+    this.hp -= laser.damage;
     this.hpBar.displayWidth = Phaser.Math.Percent(this.hp, 0, this.maxHP) * this.width;
     if (this.hp <= 0) this.end();
   }
@@ -53,7 +53,7 @@ export default class Mob extends Phaser.GameObjects.Sprite {
     this.scene.score += this.value;
     this.scene.coins.emitParticleAt(this.x, this.y, this.numCoins);
 
-    if (this.scene.registry.values.soundOn) this.scene.sound.play('explosion');
+    this.scene.sound.play('explosion');
 
     this.hpBar.destroy();
     if (this.tween) this.tween.stop();

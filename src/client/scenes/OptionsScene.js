@@ -1,5 +1,6 @@
 import Button from '../objects/Button';
 import defaultFont from '../../shared/defaultFont';
+import getCookie from '../../shared/getCookie';
 
 export default class OptionsScene extends Phaser.Scene {
   constructor() {
@@ -25,10 +26,10 @@ export default class OptionsScene extends Phaser.Scene {
     });
     this.musicText = this.add.text(width / 2, inc * 2, 'Music Enabled', defaultFont(24)).setOrigin(0.25, 0.5);
 
-    this.soundButton = this.add.image(width / 4, inc * 3, 'checkedBox').setOrigin(0.5);
+    this.soundButton = this.add.image(width / 4, inc * 3, this.sound.mute ? 'checkedBox' : 'box').setOrigin(0.5);
     this.soundButton.setInteractive().on('pointerdown', () => {
-      this.registry.values.soundOn = !this.registry.values.soundOn;
-      this.updateAudio();
+      this.sound.mute = !this.sound.mute;
+      this.soundButton.setTexture(this.sound.mute ? 'checkedBox' : 'box'); // Check the box to represent whether or not the sound is on
     });
     this.soundText = this.add.text(width / 2, inc * 3, 'Sound Enabled', defaultFont(24)).setOrigin(0.25, 0.5);
 
@@ -38,11 +39,23 @@ export default class OptionsScene extends Phaser.Scene {
       const sure = confirm('Are you sure? This will clear all user data. This cannot be reversed.');
       if (!sure) return;
 
-      this.scene.stop('Background');
-      this.scene.stop('Game');
-      this.scene.stop('Arena');
-      this.scene.stop('Title');
-      this.scene.start('Preloader');
+      $.ajax({
+        type: 'POST',
+        url: 'reset-upgrades',
+        data: {
+          refreshToken: getCookie('refreshJwt'),
+        },
+        success: () => {
+          this.scene.stop('Background');
+          this.scene.stop('Game');
+          this.scene.stop('Arena');
+          this.scene.stop('Title');
+          this.scene.start('Preloader');
+        },
+        error: (xhr) => {
+          console.error(xhr);
+        }
+      });
     });
 
     if (paused) {
@@ -70,7 +83,5 @@ export default class OptionsScene extends Phaser.Scene {
         this.scene.get('Background').bgMusic.play(); // we play the music
       }
     }
-
-    this.soundButton.setTexture(this.registry.values.soundOn ? 'checkedBox' : 'box'); // Check the box to represent whether or not the sound is on
   }
 }

@@ -1,5 +1,5 @@
 export default class Button extends Phaser.GameObjects.Container {
-  constructor(scene, x, y, text, targetScene, key1 = 'buttonBlue', key2 = 'buttonBlue') {
+  constructor(scene, x, y, text, targetScene, key1 = 'buttonBlue', key2 = 'buttonYellow') {
     super(scene, x, y);
 
     this.button = this.scene.add.sprite(0, 0, 'spaceshooter', key1).setInteractive();

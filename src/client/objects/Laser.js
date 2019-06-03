@@ -14,6 +14,7 @@ export default class Laser extends Phaser.GameObjects.Sprite {
   init(type) {
     this.setName(type);
     this.play(type);
+    this.id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
     if (this.name.startsWith('missile')) {
       this.speed = this.scene.registry.values.playerAttack.missile.speed;
@@ -35,7 +36,6 @@ export default class Laser extends Phaser.GameObjects.Sprite {
 
   fire(x, y, radians) {
     this.body.reset(x, y);
-    if (this.scene.registry.get('soundOn')) this.scene.sound.play(Phaser.Math.RND.pick(['laser', 'laser1', 'laser2']));
 
     if (this.name.startsWith('missile')) {
       this.findTarget();

@@ -11,6 +11,10 @@ export default class GameScene extends Phaser.Scene {
     super('Game');
   }
 
+  init(data) {
+    this.level = data.level;
+  }
+
   create() {
     this.state = 'running';
     this._score = 0;
@@ -19,8 +23,8 @@ export default class GameScene extends Phaser.Scene {
 
     this.scene.get('Background').changeColor('purple').changeSpeed(5).playBgMusic('gameMusic');
 
-    this.hpBox = this.add.rectangle(5, 5, width / 3, height / 12, 0xfff, 0.8).setOrigin(0);
-    this.hpBar = this.add.rectangle(10, 15, width / 3 - 10, height / 12 - 20, 0x00ff00, 1).setOrigin(0);
+    this.hpBox = this.add.rectangle(5, 5, width / 3, height / 12, 0xfff, 0.8).setOrigin(0).setScrollFactor(0);
+    this.hpBar = this.add.rectangle(10, 15, width / 3 - 10, height / 12 - 20, 0x00ff00, 1).setOrigin(0).setScrollFactor(0);
 
     this.scoreText = this.add.text(width / 2, 5, '0', defaultFont(24)).setOrigin(0.5, 0);
 
@@ -38,24 +42,24 @@ export default class GameScene extends Phaser.Scene {
     });
 
     // ========== INITIALIZING ENTITIES ==========
-    this.player = new PlayerShip(this, width / 2, height - 5, 'spaceshooter', 'playerShip1_blue');
-    this.bullets = this.physics.add.group({ classType: Laser });
+    this.player = new PlayerShip(this, width / 2, height - 5);
+    this.lasers = this.physics.add.group({ classType: Laser });
     this.enemies = this.physics.add.group({ classType: Mob });
     this.powerups = this.physics.add.group({ classType: Powerup });
 
     this.physics.add.collider(this.player, this.enemies, (player, enemy) => {
       enemy.end();
 
-      if (this.registry.values.soundOn) this.sound.play('shieldDown');
+      this.sound.play('shieldDown');
 
       this.player.hp -= enemy.value * 10;
       this.hpBar.displayWidth = Phaser.Math.Percent(this.player.hp, 0, this.registry.values.playerBody.maxHP) * (this.hpBox.displayWidth - 10);
       if (this.player.hp <= 0 && this.state === 'running') this.gameOver('died');
     });
 
-    this.physics.add.overlap(this.bullets, this.enemies, (bullet, enemy) => {
-      enemy.hitBy(bullet);
-      bullet.destroy();
+    this.physics.add.overlap(this.lasers, this.enemies, (laser, enemy) => {
+      enemy.hitBy(laser);
+      laser.destroy();
     });
 
     this.physics.add.overlap(this.player, this.powerups, (player, powerup) => {
@@ -63,7 +67,7 @@ export default class GameScene extends Phaser.Scene {
       powerup.destroy();
     });
 
-    this.title = new Button(this, width / 2, height / 3, `Level ${this.registry.values.level}`);
+    this.title = new Button(this, width / 2, height / 3, `Level ${this.level}`);
     this.tweens.add({
       targets: this.title,
       alpha: 0,
@@ -78,7 +82,7 @@ export default class GameScene extends Phaser.Scene {
     this.progressTween = this.tweens.addCounter({
       from: 0,
       to: 1,
-      duration: Math.sqrt(this.registry.values.level) * 25 * 1000,
+      duration: Math.sqrt(this.level) * 25 * 1000,
       onUpdate: (t) => {
         this.progressBar.displayHeight = (1 - t.getValue()) * (this.progressBox.height - 10);
         const { x, y } = this.progressBar.getBottomLeft();
@@ -112,21 +116,27 @@ export default class GameScene extends Phaser.Scene {
       },
       on: false,
     });
+
+    this.keys = this.input.keyboard.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,SPACE,ENTER');
   }
 
   update(time, delta) {
-    this.player.update(time, delta);
+    this.player.update(time, delta, this.keys);
     this.physics.world.wrap(this.player, 5);
     if (this.state === 'landing' && this.player.getBottomLeft().y > this.cameras.main.height) this.showGameOverMessage('Game Over');
+  }
+
+  fireLaser(type, x, y, theta) {
+    this.lasers.get().init(type).fire(x, y, theta);
   }
 
   initSpawners() {
     this.time.addEvent({
       callback: () => {
         const frame = Phaser.Math.RND.pick(this.registry.get('ENEMYTYPES'));
-        this.enemies.get(0, 0, 'spaceshooter', frame).init();
+        this.enemies.get(0, 0, 'spaceshooter', frame).init(this.level);
       },
-      delay: 1000 / this.registry.values.level,
+      delay: 1000 / this.level,
       loop: true,
     });
 
@@ -153,7 +163,7 @@ export default class GameScene extends Phaser.Scene {
     this.coins.destroy();
 
     if (type === 'died') {
-      if (this.registry.values.soundOn) this.sound.play('lose');
+      this.sound.play('lose');
       this.player.play('sonicExplosionSlow').once('animationcomplete', () => this.player.destroy());
       this.showGameOverMessage('Game Over\n\nYou Died');
     } else if (type === 'won') {
@@ -187,18 +197,16 @@ export default class GameScene extends Phaser.Scene {
       this.physics.add.collider(this.player, this.platform, () => {
         if (this.platform.body.touching.up) {
           this.score += 5000;
-          this.showGameOverMessage('Game Over\n\nYou Won');
+          this.showGameOverMessage('Game Over\n\nYou Won', true);
           if (this.registry.values.musicOn) this.scene.get('Background').playBgMusic('victoryMusic');
         }
       });
 
       // If he misses the platform, it's handled in update()
-
-      this.registry.values.level += 1;
     }
   }
 
-  showGameOverMessage(message) {
+  showGameOverMessage(message, saveScores) {
     this.state = 'over';
 
     const { width, height } = this.cameras.main;
@@ -216,23 +224,30 @@ export default class GameScene extends Phaser.Scene {
         if (this.flashTimer.getOverallProgress() === 1) { // When it's finished, show the player's score and prompt restart
           this.add.text(width / 2, height / 2, `Your score: ${this.score}`, defaultFont(18)).setOrigin(0.5).setDepth(50);
           this.add.text(width / 2, height * 2 / 3, 'Press any key to restart', defaultFont(18)).setOrigin(0.5).setDepth(50);
-          $.ajax({
-            type: 'POST',
-            url: 'submit-score',
-            data: {
-              score: this.score,
-              refreshToken: getCookie('refreshJwt'),
-            },
-          });
           this.input.keyboard.on('keyup', (e) => {
             e.stopPropagation();
-            this.scene.start('Title')
+            this.scene.start('Title');
           });
         }
       },
       delay: 750,
       repeat: 3,
     });
+
+    if (saveScores) {
+      $.ajax({
+        type: 'POST',
+        url: 'submit-score',
+        data: {
+          level: this.level,
+          score: this.score,
+          refreshToken: getCookie('refreshJwt'),
+        },
+        error: (xhr) => {
+          console.error(xhr);
+        },
+      });
+    }
   }
 
   set score(val) {

@@ -14,8 +14,6 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
 
     this.hp = this.scene.registry.values.playerBody.maxHP;
 
-    this.keys = this.scene.input.keyboard.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,SPACE,ENTER');
-
     this.nextShot = 0;
     this.nextMissile = 0;
 
@@ -52,24 +50,24 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
     }).startFollow(this);
   }
 
-  update(time, delta) {
+  update(time, delta, keys) {
     if (!this.body) return;
     if (this.body.speed > 5) this.thrust.emitParticle(8, this.x, this.y);
 
     if (this.scene.state === 'running') {
-      if (this.keys.SPACE.isDown && this.scene.time.now > this.nextShot) this.shoot();
-      if (this.keys.ENTER.isDown && this.scene.time.now > this.nextMissile) this.shootMissile();
+      if (keys.SPACE.isDown && this.scene.time.now > this.nextShot) this.shoot();
+      if (keys.ENTER.isDown && this.scene.time.now > this.nextMissile) this.shootMissile();
 
-      if (this.keys.LEFT.isDown || this.keys.A.isDown) this.body.setAccelerationX(-this.accel);
-      else if (this.keys.RIGHT.isDown || this.keys.D.isDown) this.body.setAccelerationX(this.accel);
+      if (keys.LEFT.isDown || keys.A.isDown) this.body.setAccelerationX(-this.accel);
+      else if (keys.RIGHT.isDown || keys.D.isDown) this.body.setAccelerationX(this.accel);
       else this.body.setAccelerationX(0);
 
-      if (this.keys.UP.isDown || this.keys.W.isDown) this.body.setAccelerationY(-this.accel);
-      else if (this.keys.DOWN.isDown || this.keys.S.isDown) this.body.setAccelerationY(this.accel);
+      if (keys.UP.isDown || keys.W.isDown) this.body.setAccelerationY(-this.accel);
+      else if (keys.DOWN.isDown || keys.S.isDown) this.body.setAccelerationY(this.accel);
       else this.body.setAccelerationY(0);
     } else if (this.scene.state === 'landing') {
-      if (this.keys.LEFT.isDown || this.keys.A.isDown) this.body.setAccelerationX(-this.accel);
-      else if (this.keys.RIGHT.isDown || this.keys.D.isDown) this.body.setAccelerationX(this.accel);
+      if (keys.LEFT.isDown || keys.A.isDown) this.body.setAccelerationX(-this.accel);
+      else if (keys.RIGHT.isDown || keys.D.isDown) this.body.setAccelerationX(this.accel);
       else this.body.setAccelerationX(0);
     }
 
@@ -89,15 +87,17 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
   }
 
   fireLaser(type) {
-    let angle = this.rotation;
+    const angle = this.rotation;
     const { x, y } = new Phaser.Math.Vector2().setToPolar(angle, this.displayWidth / 2);
 
-    let addScatter = (theta) => 
-      this.powerups.scatter ? (theta + Phaser.Math.FloatBetween(-Math.PI / 16, Math.PI / 16)) : theta;
+    this.scene.sound.play(Phaser.Math.RND.pick(['laser', 'laser1', 'laser2']));
+
+    const addScatter = theta => (this.powerups.scatter ? (theta + Phaser.Math.FloatBetween(-Math.PI / 16, Math.PI / 16)) : theta);
 
     if (type === 'Forward') {
       for (let i = 0; i < this.numLaserShots; i += 1) {
-        this.scene.bullets.get().init(this.laserColor).fire(
+        this.scene.fireLaser(
+          this.laserColor,
           this.x + x - 2 * x * (i + 1) / (this.numLaserShots + 1),
           this.y + y - 2 * y * (i + 1) / (this.numLaserShots + 1),
           addScatter(angle),
@@ -108,7 +108,8 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
       const inc = total / (this.numLaserShots - 1);
       const base = angle - total / 2;
       for (let i = 0; i < this.numLaserShots; i += 1) {
-        this.scene.bullets.get().init(this.laserColor).fire(
+        this.scene.fireLaser(
+          this.laserColor,
           this.x,
           this.y,
           addScatter(base + i * inc),
@@ -116,7 +117,8 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
       }
     } else if (type === 'All Around') {
       for (let i = 0; i < this.numLaserShots; i += 1) {
-        this.scene.bullets.get().init(this.laserColor).fire(
+        this.scene.fireLaser(
+          this.laserColor,
           this.x,
           this.y,
           addScatter(angle + i * (2 * Math.PI) / this.numLaserShots),
@@ -127,7 +129,11 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
 
   shootMissile() {
     this.nextMissile = this.scene.time.now + (this.powerups.spedUp ? this.attack.missile.delay / 2 : this.attack.missile.delay);
-    this.scene.bullets.get().init(this.missileColor).fire(this.x, this.y);
+    this.scene.fireLaser(
+      this.missileColor,
+      this.x,
+      this.y
+    );
   }
 
   get laserColor() {

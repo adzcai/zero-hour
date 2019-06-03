@@ -1,5 +1,5 @@
 import defaultFont from '../../shared/defaultFont';
-import { UPGRADES } from '../../shared/constants';
+import UPGRADES from '../../shared/upgrades';
 import getCookie from '../../shared/getCookie';
 import deepSet from '../../shared/deepSet';
 
@@ -161,11 +161,9 @@ export default class PreloaderScene extends Phaser.Scene {
     });
 
     this.registry.set({
-      soundOn: true,
       musicOn: true,
 
       money: 0,
-      level: 1,
 
       ENEMYTYPES: this.textures.get('spaceshooter').getFrameNames().filter(name => name.startsWith('ufo') || name.startsWith('meteor')),
       POWERUPTYPES: {
@@ -198,9 +196,10 @@ export default class PreloaderScene extends Phaser.Scene {
         maxHP: 1000,
       },
     });
+
     $.ajax({
       type: 'GET',
-      url: '/upgrades',
+      url: '/player-data',
       data: {
         refreshToken: getCookie('refreshJwt'),
       },
@@ -208,6 +207,7 @@ export default class PreloaderScene extends Phaser.Scene {
         Object.keys(data.upgrades).forEach((key) => {
           deepSet(this.registry.values, UPGRADES[key].variable, UPGRADES[key].getValue(data.upgrades[key]));
         });
+        this.registry.values.money = data.money || 0;
       },
       error(xhr) {
         console.error(xhr);

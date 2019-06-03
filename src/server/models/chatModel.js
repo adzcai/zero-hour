@@ -7,11 +7,15 @@ const ChatSchema = new Schema({
     type: String,
     required: true,
   },
+  name: {
+    type: String,
+    required: true,
+  },
   message: {
     type: String,
     required: true,
   },
-});
+}, { timestamps: true });
 
 const ChatModel = mongoose.model('chat', ChatSchema);
 

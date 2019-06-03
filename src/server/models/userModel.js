@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const { UPGRADES } = require('../../shared/constants');
+const UPGRADES = require('../../shared/upgrades');
 
 const { Schema } = mongoose;
 
@@ -26,9 +26,14 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-  highScore: {
+  highScores: {
+    type: Map,
+    of: Number,
+    default: {},
+  },
+  highestLevel: {
     type: Number,
-    default: 0,
+    default: 1,
   },
   resetToken: {
     type: String,
@@ -36,7 +41,14 @@ const UserSchema = new Schema({
   resetTokenExp: {
     type: Date,
   },
+  shipTexture: {
+    type: String,
+  },
   upgrades,
+  money: {
+    type: Number,
+    default: 0,
+  },
 });
 
 UserSchema.pre('save', async function (next) {

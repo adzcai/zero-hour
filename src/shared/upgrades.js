@@ -1,12 +1,15 @@
 function Upgrade(cost, variable, inc, baseValue) {
   return {
-    cost, variable, inc, baseValue,
-    getCost: (count) => cost * Math.pow(2, count),
-    getValue: (count) => baseValue + inc * count
+    cost,
+    variable,
+    inc,
+    baseValue,
+    getCost: count => cost * (2 ** count),
+    getValue: count => baseValue + inc * count,
   };
 }
 
-module.exports.UPGRADES = {
+module.exports = {
   'Attack Speed': Upgrade(100, 'playerAttack.laser.delay', -25, 200),
   'Attack Damage': Upgrade(100, 'playerAttack.laser.damage', 100, 400),
   'Laser Speed': Upgrade(50, 'playerAttack.laser.speed', 50, 750),

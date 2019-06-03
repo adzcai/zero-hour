@@ -11,6 +11,10 @@ export default class BackgroundScene extends Phaser.Scene {
     this.background = this.add.tileSprite(0, 0, width, height, 'black').setOrigin(0);
     this.bgMusic = this.sound.add('titleMusic', { volume: 0.5, loop: true });
     this.bgMusic.play();
+
+    this.events.on('shutdown', () => {
+      if (this.bgMusic) this.bgMusic.destroy();
+    });
   }
 
   update() {
@@ -59,7 +63,9 @@ export default class BackgroundScene extends Phaser.Scene {
 
   playBgMusic(key) {
     this.bgMusic.destroy();
-    this.bgMusic = this.sound.add(key, { volume: 0.5, loop: true });
-    this.bgMusic.play();
+    if (this.registry.values.musicOn) {
+      this.bgMusic = this.sound.add(key, { volume: 0.5, loop: true });
+      this.bgMusic.play();
+    }
   }
 }

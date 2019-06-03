@@ -1,4 +1,6 @@
-const inputMessage = document.getElementById('inputMessage');
+import PlayerShip from "../objects/PlayerShip";
+import Laser from "../objects/Laser";
+import Powerup from "../objects/Powerup";
 
 export default class ArenaScene extends Phaser.Scene {
   constructor() {
@@ -6,13 +8,23 @@ export default class ArenaScene extends Phaser.Scene {
   }
 
   create() {
-    socket.emit('joinGame');
+    this.state = 'running';
 
     this.otherPlayers = this.physics.add.group();
-
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    this.createEnemies();
+    this.lasers = this.physics.add.group({ classType: Laser });
+    this.enemyLasers = this.physics.add.group({ classType: Laser });
+    this.powerups = this.physics.add.group({ classType: Powerup });
+
+    const { width, height } = this.cameras.main;
+
+    this.hpBox = this.add.rectangle(5, 5, width / 3, height / 12, 0xfff, 0.8).setOrigin(0).setScrollFactor(0);
+    this.hpBar = this.add.rectangle(10, 15, width / 3 - 10, height / 12 - 20, 0x00ff00, 1).setOrigin(0).setScrollFactor(0);
+
+    const x = Math.floor(Math.random() * width);
+    const y = Math.floor(Math.random() * height);
+    socket.emit('joinGame', x, y, this.registry.values.playerTexture);
 
     socket
       .on('currentPlayers', (players) => {
@@ -24,11 +36,18 @@ export default class ArenaScene extends Phaser.Scene {
           }
         });
       })
+      .on('arenaBounds', (arenaWidth, arenaHeight) => {
+        this.physics.world.setBounds(0, 0, arenaWidth, arenaHeight);
+        const bounds = this.physics.world.bounds;
+        this.add.rectangle(bounds.x, bounds.y, bounds.width, bounds.height, 0xff0000, 0.1).setOrigin(0);
+        this.cameras.main.setBounds(-width / 2, -height / 2, bounds.width + width, bounds.height + height);
+      })
       .on('newPlayer', (playerInfo) => {
-        this.addOtherPlayers(playerInfo);
+        if (playerInfo.id !== socket.id)
+          this.addOtherPlayers(playerInfo);
       })
       .on('leaveGame', (playerId) => {
-        if (playerId === socket.id) return;
+        if (playerId === socket.id || !this.otherPlayers) return;
         this.otherPlayers.getChildren().forEach((player) => {
           if (playerId === player.playerId) {
             player.destroy();
@@ -36,53 +55,61 @@ export default class ArenaScene extends Phaser.Scene {
         });
       })
       .on('playerMoved', (playerInfo) => {
+        if (!this.otherPlayers) return;
         this.otherPlayers.getChildren().forEach((player) => {
           if (playerInfo.playerId === player.playerId) {
-            player.flipX = playerInfo.flipX;
             player.setPosition(playerInfo.x, playerInfo.y);
+            player.setRotation(playerInfo.rotation);
           }
         });
+      })
+      .on('laserFired', (laser) => {
+        this.enemyLasers.get().init(laser.type).fire(laser.x, laser.y, laser.theta);
+      })
+      .on('laserHit', (laserId) => {
+        this.enemyLasers.getChildren().forEach((laser) => {
+          if (laser.id === laserId) laser.destroy();
+        })
       });
 
     this.input.keyboard.on('keyup_ESC', () => {
-      this.scene.sleep();
-      this.scene.launch('Options');
+      this.quit();
     });
+  }
 
-    this.events.on('shutdown', () => {
-      socket.emit('leaveGame');
-    });
+  quit() {
+    socket.emit('leaveGame');
+    socket.removeAllListeners();
+    this.scene.start('Title');
   }
 
   createPlayer(playerInfo) {
-    this.player = this.add.sprite(0, 0, 'spaceshooter', 'playerShip1_blue');
-
-    this.container = this.add.container(playerInfo.x, playerInfo.y);
-    this.container.setSize(16, 16);
-    this.physics.world.enable(this.container);
-    this.container.add(this.player);
-
-    // add weapon
-    this.weapon = this.add.sprite(10, 0, 'spaceshooter', 'laserBlue01');
-    this.weapon.setScale(2);
-    this.weapon.setSize(8, 8);
-    this.physics.world.enable(this.weapon);
-
-    this.container.add(this.weapon);
-    this.attacking = false;
-
+    this.player = new PlayerShip(this, playerInfo.x, playerInfo.y);
     // update camera
     this.updateCamera();
 
-    // don't go out of the map
-    this.container.body.setCollideWorldBounds(true);
+    this.physics.add.overlap(this.player, this.enemyLasers, (player, laser) => {
+      socket.emit('laserHit', laser.id);
+      laser.destroy();
 
-    this.physics.add.overlap(this.weapon, this.spawns, this.onMeetEnemy, false, this);
-    this.physics.add.collider(this.container, this.spawns);
+      this.sound.play('shieldDown');
+      this.player.hp -= laser.damage;
+      this.hpBar.displayWidth = Phaser.Math.Percent(this.player.hp, 0, this.registry.values.playerBody.maxHP) * (this.hpBox.displayWidth - 10);
+
+      if (this.player.hp <= 0 && this.state === 'running') {
+        this.quit();
+      }
+    });
+
+    this.physics.add.overlap(this.lasers, this.otherPlayers, (laser, otherPlayer) => {
+      laser.destroy();
+    });
+
+    this.keys = this.input.keyboard.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,SPACE,ENTER');
   }
 
   addOtherPlayers(playerInfo) {
-    const otherPlayer = this.add.sprite(playerInfo.x, playerInfo.y, 'spaceshooter', 'playerShip3_red');
+    const otherPlayer = this.add.sprite(playerInfo.x, playerInfo.y, 'spaceshooter', playerInfo.playerTexture);
     otherPlayer.setTint(Math.random() * 0xffffff);
     otherPlayer.playerId = playerInfo.playerId;
     this.otherPlayers.add(otherPlayer);
@@ -90,141 +117,41 @@ export default class ArenaScene extends Phaser.Scene {
 
   updateCamera() {
     // limit camera to map
-    this.cameras.main.setBounds(0, 0, 1024, 1024);
-    this.cameras.main.startFollow(this.container);
+    this.cameras.main.startFollow(this.player);
     this.cameras.main.roundPixels = true; // avoid tile bleed
-  }
-
-  createEnemies() {
-    this.spawns = this.physics.add.group({
-      classType: Phaser.GameObjects.Sprite,
-    });
-
-    for (let i = 0; i < 5; i++) {
-      const location = this.getValidLocation();
-      // parameters are x, y, width, height
-      const enemy = this.spawns.create(location.x, location.y, 'spaceshooter', this.getEnemySprite());
-      enemy.body.setCollideWorldBounds(true);
-      enemy.body.setImmovable();
-    }
-
-    // move enemies
-    this.timedEvent = this.time.addEvent({
-      delay: 3000,
-      callback: this.moveEnemies,
-      callbackScope: this,
-      loop: true,
-    });
-  }
-
-  moveEnemies() {
-    this.spawns.getChildren().forEach((enemy) => {
-      const randNumber = Math.floor((Math.random() * 4) + 1);
-
-      switch (randNumber) {
-        case 1:
-          enemy.body.setVelocityX(50);
-          break;
-        case 2:
-          enemy.body.setVelocityX(-50);
-          break;
-        case 3:
-          enemy.body.setVelocityY(50);
-          break;
-        case 4:
-          enemy.body.setVelocityY(50);
-          break;
-        default:
-          enemy.body.setVelocityX(50);
-      }
-    });
-
-    setTimeout(() => {
-      this.spawns.setVelocityX(0);
-      this.spawns.setVelocityY(0);
-    }, 500);
-  }
-
-  getEnemySprite() {
-    const sprites = this.textures.get('spaceshooter').getFrameNames().filter(name => name.startsWith('enemy'));
-    return Phaser.Math.RND.pick(sprites);
   }
 
   getValidLocation() {
     let validLocation = false;
-    let x; let
-      y;
+    let x, y;
+
     while (!validLocation) {
       x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
       y = Phaser.Math.RND.between(0, this.physics.world.bounds.height);
 
       let occupied = false;
-      this.spawns.getChildren().forEach((child) => {
-        if (child.getBounds().contains(x, y)) {
-          occupied = true;
-        }
-      });
       if (!occupied) validLocation = true;
     }
     return { x, y };
   }
 
-  onMeetEnemy(player, enemy) {
-    if (this.attacking) {
-      const location = this.getValidLocation();
-      enemy.x = location.x;
-      enemy.y = location.y;
+  update(time, delta) {
+    if (this.player) {
+      this.player.update(time, delta, this.keys);
+      
+      const { x, y, rotation } = this.player;
+      if (this.player.oldPosition
+        && ((Math.abs(x - this.player.oldPosition.x) > 1)
+        || (Math.abs(y - this.player.oldPosition.y) > 1))) {
+        socket.emit('playerMovement', { x, y, rotation });
+      }
+
+      this.player.oldPosition = { x, y, rotation };
     }
   }
 
-  update() {
-    if (this.container) {
-      this.container.body.setVelocity(0);
-
-      // Horizontal movement
-      if (this.cursors.left.isDown) {
-        this.container.body.setVelocityX(-80);
-      } else if (this.cursors.right.isDown) {
-        this.container.body.setVelocityX(80);
-      }
-
-      // Vertical movement
-      if (this.cursors.up.isDown) {
-        this.container.body.setVelocityY(-80);
-      } else if (this.cursors.down.isDown) {
-        this.container.body.setVelocityY(80);
-      }
-
-      if (Phaser.Input.Keyboard.JustDown(this.cursors.space) && !this.attacking && document.activeElement !== inputMessage) {
-        this.attacking = true;
-        setTimeout(() => {
-          this.attacking = false;
-          this.weapon.angle = 0;
-        }, 150);
-      }
-
-      if (this.attacking) {
-        if (this.weapon.flipX) {
-          this.weapon.angle -= 10;
-        } else {
-          this.weapon.angle += 10;
-        }
-      }
-
-      const { x, y } = this.container;
-      const { flipX } = this.player;
-      if (this.container.oldPosition
-        && (x !== this.container.oldPosition.x
-        || y !== this.container.oldPosition.y
-        || flipX !== this.container.oldPosition.flipX)) {
-        socket.emit('playerMovement', { x, y, flipX });
-      }
-
-      this.container.oldPosition = {
-        x: this.container.x,
-        y: this.container.y,
-        flipX: this.player.flipX,
-      };
-    }
+  fireLaser(type, x, y, theta) {
+    this.lasers.get().init(type).fire(x, y, theta);
+    socket.emit('laserFired', { type, x, y, theta });
   }
 }

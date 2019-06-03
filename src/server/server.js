@@ -22,41 +22,51 @@ const asyncMiddleware = require('./middleware/asyncMiddleware');
 const ChatModel = require('./models/chatModel');
 
 const players = {};
+const ARENA_WIDTH = 6400;
+const ARENA_HEIGHT = 6400;
 
 io.on('connection', (socket) => {
   console.log(`A user connected at socket ${socket.id}`);
 
   socket
-    .on('joinGame', () => {
+    .on('joinGame', (x, y, texture) => {
       console.log(`Player ${socket.id} joined the game`);
       players[socket.id] = {
-        x: Math.floor(Math.random() * 480),
-        y: Math.floor(Math.random() * 640),
+        x, y,
         rotation: Math.floor(Math.random() * 2 * Math.PI),
         playerId: socket.id,
+        playerTexture: texture,
       };
-
+      // We send the client the information of the current players
       socket.emit('currentPlayers', players);
+      socket.emit('arenaBounds', ARENA_WIDTH, ARENA_HEIGHT);
+      // And tell all of the other clients that a new player has joined
       socket.broadcast.emit('newPlayer', players[socket.id]);
-
-      socket
-        .on('playerMovement', (data) => {
-          players[socket.id].x = data.x;
-          players[socket.id].y = data.y;
-          players[socket.id].rotation = data.rotation;
-          socket.broadcast.emit('playerMoved', players[socket.id]);
-        })
-        .on('leaveGame', () => {
-          console.log(`Player ${socket.id} left the game`);
-          delete players[socket.id];
-          io.emit('leaveGame', socket.id);
-        });
+    })
+    .on('playerMovement', (data) => {
+      if (!players[socket.id]) return;
+      players[socket.id].x = data.x;
+      players[socket.id].y = data.y;
+      players[socket.id].rotation = data.rotation;
+      socket.broadcast.emit('playerMoved', players[socket.id]);
+    })
+    .on('laserFired', (laser) => {
+      socket.broadcast.emit('laserFired', laser);
+    })
+    .on('laserHit', (laserId) => {
+      socket.broadcast.emit('laserHit', laserId);
+    })
+    .on('leaveGame', () => {
+      console.log(`Player ${socket.id} left the game`);
+      delete players[socket.id];
+      socket.broadcast.emit('leaveGame', socket.id);
     })
     .on('disconnect', () => {
       console.log(`The user at socket ${socket.id} disconnected`);
       if (players[socket.id]) {
+        console.log(`Player ${socket.id} left the game`);
         delete players[socket.id];
-        io.emit('leaveGame', socket.id);
+        socket.broadcast.emit('leaveGame', socket.id);
       }
     });
 });
@@ -98,15 +108,22 @@ app.use('/', passwordRoutes);
 app.use('/', passport.authenticate('jwt', { session: false }), secureRoutes);
 
 // We put this here to have access to io
-app.post('/submit-chatline', passport.authenticate('jwt', { session : false }), asyncMiddleware(async (req, res, next) => {
+app.post('/submit-chatline', passport.authenticate('jwt', { session: false }), asyncMiddleware(async (req, res, next) => {
   const { message } = req.body;
   const { email, name } = req.user;
-  await ChatModel.create({ email, message });
+  await ChatModel.create({ email, name, message });
   io.emit('newMessage', {
     username: name,
     message,
   });
   res.status(200).json({ status: 'ok' });
+}));
+
+app.get('/messages', passport.authenticate('jwt', { session: false }), asyncMiddleware(async (req, res, next) => {
+  const messages = await ChatModel.find({}, 'email name message createdAt -_id')
+    .sort({ createdAt: -1 })
+    .limit(30);
+  res.status(200).json(messages.reverse());
 }));
 
 // catch all other routes
@@ -122,5 +139,5 @@ app.use((err, req, res, next) => {
 
 // have the server start listening on the provided port
 http.listen(process.env.PORT || 8080, () => {
-  console.log(`Server started on port ${process.env.PORT || 8080}`);
+  console.log(`Server started at http://localhost:${process.env.PORT || 8080}`);
 });
