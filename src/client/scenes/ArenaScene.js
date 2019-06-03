@@ -24,7 +24,7 @@ export default class ArenaScene extends Phaser.Scene {
 
     const x = Math.floor(Math.random() * width);
     const y = Math.floor(Math.random() * height);
-    socket.emit('joinGame', x, y);
+    socket.emit('joinGame', x, y, this.registry.values.playerTexture);
 
     socket
       .on('currentPlayers', (players) => {
@@ -109,7 +109,7 @@ export default class ArenaScene extends Phaser.Scene {
   }
 
   addOtherPlayers(playerInfo) {
-    const otherPlayer = this.add.sprite(playerInfo.x, playerInfo.y, 'spaceshooter', 'playerShip3_red');
+    const otherPlayer = this.add.sprite(playerInfo.x, playerInfo.y, 'spaceshooter', playerInfo.playerTexture);
     otherPlayer.setTint(Math.random() * 0xffffff);
     otherPlayer.playerId = playerInfo.playerId;
     this.otherPlayers.add(otherPlayer);

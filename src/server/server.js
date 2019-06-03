@@ -29,12 +29,13 @@ io.on('connection', (socket) => {
   console.log(`A user connected at socket ${socket.id}`);
 
   socket
-    .on('joinGame', (x, y) => {
+    .on('joinGame', (x, y, texture) => {
       console.log(`Player ${socket.id} joined the game`);
       players[socket.id] = {
         x, y,
         rotation: Math.floor(Math.random() * 2 * Math.PI),
         playerId: socket.id,
+        playerTexture: texture,
       };
       // We send the client the information of the current players
       socket.emit('currentPlayers', players);

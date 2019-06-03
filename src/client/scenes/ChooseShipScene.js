@@ -6,25 +6,33 @@ export default class ChooseShipScene extends Phaser.Scene {
     super('ChooseShip');
   }
 
+  init(data) {
+    this.chooseShip = data.chooseShip;
+    console.log(this.chooseShip)
+  }
+
   create() {
-    $.ajax({
-      type: 'GET',
-      url: '/player-data',
-      data: {
-        refreshToken: getCookie('refreshJwt'),
-      },
-      success: (data) => {
-        if (data.shipTexture) {
-          this.registry.set('playerTexture', data.shipTexture);
-          this.scene.start('Title');
-        } else {
-          this.promptShip();
-        }
-      },
-      error: (xhr) => {
-        console.error(xhr);
-      },
-    });
+    if (this.chooseShip) this.promptShip();
+    else {
+      $.ajax({
+        type: 'GET',
+        url: '/player-data',
+        data: {
+          refreshToken: getCookie('refreshJwt'),
+        },
+        success: (data) => {
+          if (data.shipTexture) {
+            this.registry.set('playerTexture', data.shipTexture);
+            this.scene.start('Title');
+          } else {
+            this.promptShip();
+          }
+        },
+        error: (xhr) => {
+          console.error(xhr);
+        },
+      });
+    }
   }
 
   promptShip() {
@@ -51,6 +59,10 @@ export default class ChooseShipScene extends Phaser.Scene {
           data: {
             frame,
             refreshToken: getCookie('refreshJwt'),
+          },
+          success: () => {
+            this.registry.set('playerTexture', frame);
+            this.scene.start('Title');
           },
           error: (xhr) => {
             console.error(xhr);

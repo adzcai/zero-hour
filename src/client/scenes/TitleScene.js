@@ -36,7 +36,7 @@ export default class TitleScene extends Phaser.Scene {
 
     const buttons = [
       ['Choose Level', 'ChooseLevel'],
-      ['Choose Ship', 'ChooseShip'],
+      ['Choose Ship', () => this.scene.start('ChooseShip', { chooseShip: true })],
       ['Options', 'Options'],
       ['Upgrades', 'Upgrades'],
       ['Leaderboard', 'Leaderboard'],
