@@ -22,6 +22,8 @@ const asyncMiddleware = require('./middleware/asyncMiddleware');
 const ChatModel = require('./models/chatModel');
 
 const players = {};
+const ARENA_WIDTH = 6400;
+const ARENA_HEIGHT = 6400;
 
 io.on('connection', (socket) => {
   console.log(`A user connected at socket ${socket.id}`);
@@ -34,34 +36,36 @@ io.on('connection', (socket) => {
         rotation: Math.floor(Math.random() * 2 * Math.PI),
         playerId: socket.id,
       };
-
+      // We send the client the information of the current players
       socket.emit('currentPlayers', players);
+      socket.emit('arenaBounds', ARENA_WIDTH, ARENA_HEIGHT);
+      // And tell all of the other clients that a new player has joined
       socket.broadcast.emit('newPlayer', players[socket.id]);
-
-      socket
-        .on('playerMovement', (data) => {
-          players[socket.id].x = data.x;
-          players[socket.id].y = data.y;
-          players[socket.id].rotation = data.rotation;
-          socket.broadcast.emit('playerMoved', players[socket.id]);
-        })
-        .on('laserFired', (laser) => {
-          socket.broadcast.emit('laserFired', laser);
-        })
-        .on('laserHit', (laserId) => {
-          socket.broadcast.emit('laserHit', laserId);
-        })
-        .on('leaveGame', () => {
-          console.log(`Player ${socket.id} left the game`);
-          delete players[socket.id];
-          io.emit('leaveGame', socket.id);
-        });
+    })
+    .on('playerMovement', (data) => {
+      if (!players[socket.id]) return;
+      players[socket.id].x = data.x;
+      players[socket.id].y = data.y;
+      players[socket.id].rotation = data.rotation;
+      socket.broadcast.emit('playerMoved', players[socket.id]);
+    })
+    .on('laserFired', (laser) => {
+      socket.broadcast.emit('laserFired', laser);
+    })
+    .on('laserHit', (laserId) => {
+      socket.broadcast.emit('laserHit', laserId);
+    })
+    .on('leaveGame', () => {
+      console.log(`Player ${socket.id} left the game`);
+      delete players[socket.id];
+      socket.broadcast.emit('leaveGame', socket.id);
     })
     .on('disconnect', () => {
       console.log(`The user at socket ${socket.id} disconnected`);
       if (players[socket.id]) {
+        console.log(`Player ${socket.id} left the game`);
         delete players[socket.id];
-        io.emit('leaveGame', socket.id);
+        socket.broadcast.emit('leaveGame', socket.id);
       }
     });
 });

@@ -1,6 +1,5 @@
 import PlayerShip from "../objects/PlayerShip";
 import Laser from "../objects/Laser";
-import Mob from "../objects/Mob";
 import Powerup from "../objects/Powerup";
 
 export default class ArenaScene extends Phaser.Scene {
@@ -37,6 +36,12 @@ export default class ArenaScene extends Phaser.Scene {
           }
         });
       })
+      .on('arenaBounds', (arenaWidth, arenaHeight) => {
+        this.physics.world.setBounds(0, 0, arenaWidth, arenaHeight);
+        const bounds = this.physics.world.bounds;
+        this.add.rectangle(bounds.x, bounds.y, bounds.width, bounds.height, 0xff0000, 0.1).setOrigin(0);
+        this.cameras.main.setBounds(-width / 2, -height / 2, bounds.width + width, bounds.height + height);
+      })
       .on('newPlayer', (playerInfo) => {
         if (playerInfo.id !== socket.id)
           this.addOtherPlayers(playerInfo);
@@ -68,10 +73,14 @@ export default class ArenaScene extends Phaser.Scene {
       });
 
     this.input.keyboard.on('keyup_ESC', () => {
-      socket.emit('leaveGame');
-      this.player.destroy();
-      this.scene.start('Title');
+      this.quit();
     });
+  }
+
+  quit() {
+    socket.emit('leaveGame');
+    socket.removeAllListeners();
+    this.scene.start('Title');
   }
 
   createPlayer(playerInfo) {
@@ -88,9 +97,7 @@ export default class ArenaScene extends Phaser.Scene {
       this.hpBar.displayWidth = Phaser.Math.Percent(this.player.hp, 0, this.registry.values.playerBody.maxHP) * (this.hpBox.displayWidth - 10);
 
       if (this.player.hp <= 0 && this.state === 'running') {
-        socket.emit('leaveGame');
-        this.player.destroy();
-        this.scene.start('Title');
+        this.quit();
       }
     });
 
@@ -110,7 +117,6 @@ export default class ArenaScene extends Phaser.Scene {
 
   updateCamera() {
     // limit camera to map
-    this.cameras.main.setBounds(0, 0, 1024, 1024);
     this.cameras.main.startFollow(this.player);
     this.cameras.main.roundPixels = true; // avoid tile bleed
   }
