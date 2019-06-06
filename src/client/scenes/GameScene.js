@@ -250,6 +250,23 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
+  findTarget(x, y) {
+    const { width, height } = this.cameras.main;
+
+    let target = null;
+    let min = Phaser.Math.Distance.Between(0, 0, width, height);
+
+    this.enemies.children.each((child) => {
+      const dist = Phaser.Math.Distance.Between(x, y, child.x, child.y);
+      if (dist < min) {
+        min = dist;
+        target = child;
+      }
+    });
+
+    return target;
+  }
+
   set score(val) {
     this._score = val;
     this.scoreText.setText(val);

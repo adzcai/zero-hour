@@ -7,14 +7,20 @@ export default class Laser extends Phaser.GameObjects.Sprite {
 
     this.speed = this.scene.registry.values.playerAttack.laser.speed;
     this.damage = this.scene.registry.values.playerAttack.laser.damage;
-
-    this.lifespan = this.name.startsWith('missile') ? 5000 : 1000;
+    
+    this.lifespan = 10000;
   }
 
   init(type) {
     this.setName(type);
     this.play(type);
     this.id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+    this.body.setCollideWorldBounds(true);
+    this.body.onWorldBounds = true;
+    this.body.world.on('worldbounds', (obj) => {
+      if (obj.gameObject.id === this.id) this.destroy();
+    });
 
     if (this.name.startsWith('missile')) {
       this.speed = this.scene.registry.values.playerAttack.missile.speed;
@@ -26,7 +32,7 @@ export default class Laser extends Phaser.GameObjects.Sprite {
   preUpdate(time, delta) {
     super.preUpdate(time, delta);
     if (this.name.startsWith('missile')) {
-      if (this.target === null) this.findTarget();
+      if (this.target === null) this.target = this.scene.findTarget(this.x, this.y);
       else if (!this.target.body) this.target = null;
       else this.scene.physics.moveToObject(this, this.target, this.speed);
     }
@@ -38,26 +44,12 @@ export default class Laser extends Phaser.GameObjects.Sprite {
     this.body.reset(x, y);
 
     if (this.name.startsWith('missile')) {
-      this.findTarget();
+      this.target = this.scene.findTarget(this.x, this.y);
     } else {
       this.setRotation(radians);
 
       this.scene.physics.velocityFromRotation(radians - Math.PI / 2, this.speed, this.body.velocity);
       this.body.velocity.scale(2);
     }
-  }
-
-  findTarget() {
-    const { width, height } = this.scene.cameras.main;
-    this.target = null;
-    let min = Phaser.Math.Distance.Between(0, 0, width, height);
-
-    this.scene.enemies.children.each((child) => {
-      const dist = Phaser.Math.Distance.Between(this.x, this.y, child.x, child.y);
-      if (dist < min) {
-        min = dist;
-        this.target = child;
-      }
-    });
   }
 }

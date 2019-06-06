@@ -19,8 +19,12 @@ export default class ArenaScene extends Phaser.Scene {
 
     const { width, height } = this.cameras.main;
 
-    this.hpBox = this.add.rectangle(5, 5, width / 3, height / 12, 0xfff, 0.8).setOrigin(0).setScrollFactor(0);
-    this.hpBar = this.add.rectangle(10, 15, width / 3 - 10, height / 12 - 20, 0x00ff00, 1).setOrigin(0).setScrollFactor(0);
+    this.hpBox = this.add.rectangle(5, 5, width / 3, height / 12, 0xfff, 0.8)
+      .setOrigin(0)
+      .setScrollFactor(0);
+    this.hpBar = this.add.rectangle(10, 15, width / 3 - 10, height / 12 - 20, 0x00ff00, 1)
+      .setOrigin(0)
+      .setScrollFactor(0);
 
     const x = Math.floor(Math.random() * width);
     const y = Math.floor(Math.random() * height);
@@ -43,8 +47,9 @@ export default class ArenaScene extends Phaser.Scene {
         this.cameras.main.setBounds(-width / 2, -height / 2, bounds.width + width, bounds.height + height);
       })
       .on('newPlayer', (playerInfo) => {
-        if (playerInfo.id !== socket.id)
+        if (playerInfo.playerId !== socket.id) {
           this.addOtherPlayers(playerInfo);
+        }
       })
       .on('leaveGame', (playerId) => {
         if (playerId === socket.id || !this.otherPlayers) return;
@@ -121,20 +126,6 @@ export default class ArenaScene extends Phaser.Scene {
     this.cameras.main.roundPixels = true; // avoid tile bleed
   }
 
-  getValidLocation() {
-    let validLocation = false;
-    let x, y;
-
-    while (!validLocation) {
-      x = Phaser.Math.RND.between(0, this.physics.world.bounds.width);
-      y = Phaser.Math.RND.between(0, this.physics.world.bounds.height);
-
-      let occupied = false;
-      if (!occupied) validLocation = true;
-    }
-    return { x, y };
-  }
-
   update(time, delta) {
     if (this.player) {
       this.player.update(time, delta, this.keys);
@@ -148,6 +139,23 @@ export default class ArenaScene extends Phaser.Scene {
 
       this.player.oldPosition = { x, y, rotation };
     }
+  }
+
+  findTarget(x, y) {
+    const { width, height } = this.cameras.main;
+
+    let target = null;
+    let min = Phaser.Math.Distance.Between(0, 0, width, height);
+
+    this.otherPlayers.children.each((child) => {
+      const dist = Phaser.Math.Distance.Between(x, y, child.x, child.y);
+      if (dist < min) {
+        min = dist;
+        target = child;
+      }
+    });
+
+    return target;
   }
 
   fireLaser(type, x, y, theta) {
