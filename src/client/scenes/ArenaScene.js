@@ -147,7 +147,7 @@ export default class ArenaScene extends Phaser.Scene {
     let target = null;
     let min = Phaser.Math.Distance.Between(0, 0, width, height);
 
-    this.otherPlayers.children.each((child) => {
+    this.otherPlayers.getChildren().forEach((child) => {
       const dist = Phaser.Math.Distance.Between(x, y, child.x, child.y);
       if (dist < min) {
         min = dist;
