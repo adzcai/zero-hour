@@ -51,18 +51,8 @@ app.use(express.static(path.resolve(__dirname, '../../build')));
 app.use('/', routes);
 app.use('/', passwordRoutes);
 app.use('/', passport.authenticate('jwt', { session: false }), secureRoutes);
-// catch all other routes
-app.use((req, res, next) => {
-  res.status(404).json({ message: '404 - Not Found' });
-});
-// handle errors
-app.use((err, req, res, next) => {
-  console.error(err.message);
-  res.status(err.status || 500).json({ error: err.message });
-});
 
 // Specific paths when the user tries to access certain parts
-
 app.get('/', function (req, res) {
   res.sendFile(path.resolve(__dirname, '../../build/index.html'));
 });
@@ -87,6 +77,16 @@ app.post('/submit-chatline', passport.authenticate('jwt', { session: false }), a
   });
   res.status(200).json({ status: 'ok' });
 }));
+
+// catch all other routes
+app.use((req, res, next) => {
+  res.status(404).json({ message: '404 - Not Found' });
+});
+// handle errors
+app.use((err, req, res, next) => {
+  console.error(err.message);
+  res.status(err.status || 500).json({ error: err.message });
+});
 
 function setupAuthoritativePhaser() {
   console.log('setting up authoritative server');

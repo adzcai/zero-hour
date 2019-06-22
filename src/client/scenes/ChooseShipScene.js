@@ -8,7 +8,6 @@ export default class ChooseShipScene extends Phaser.Scene {
 
   init(data) {
     this.chooseShip = data.chooseShip;
-    console.log(this.chooseShip)
   }
 
   create() {
