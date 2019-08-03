@@ -27,12 +27,10 @@
     "url": "git+https://github.com/piguyinthesky/zero-hour.git"
   },
   "scripts": {
-    "dev": "webpack-dev-server --config webpack.config.dev.js",
-    "build:dev": "webpack --config webpack.config.dev.js",
+    "dev": "concurrently -n \"mongod,webpack,server\" -c \"cyan.bold,magenta.bold,yellow.bold\" --kill-others \"mongod --quiet --bind_ip 127.0.0.1\" \"webpack --config webpack.config.dev.js\" \"node --inspect src/server/server.js\"",
     "build": "npm run heroku-postbuild",
     "heroku-postbuild": "webpack --config webpack.config.prod.js",
-    "start": "node --inspect src/server/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server/server.js",
     "lint": "eslint --ignore-path .gitignore . --fix",
     "precommit": "npm run lint"
   },
@@ -60,6 +58,7 @@
     "babel-loader": "^7.1.5",
     "babel-preset-env": "^1.7.0",
     "clean-webpack-plugin": "^0.1.19",
+    "concurrently": "^4.1.1",
     "copy-webpack-plugin": "^4.6.0",
     "css-loader": "^1.0.0",
     "eslint": "^5.16.0",

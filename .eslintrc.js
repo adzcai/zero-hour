@@ -10,6 +10,7 @@ module.exports = {
     Phaser: 'readonly',
     $: 'readonly',
     socket: 'readonly',
+    io: 'readonly',
   },
   parserOptions: {
     ecmaVersion: 2018,
