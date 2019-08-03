@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 // reads in our .env file and makes those values available as environment variables
 require('dotenv').config();
 
@@ -53,11 +54,11 @@ app.use('/', passwordRoutes);
 app.use('/', passport.authenticate('jwt', { session: false }), secureRoutes);
 
 // Specific paths when the user tries to access certain parts
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../../build/index.html'));
 });
 app.get('/game.html', passport.authenticate('jwt', { session: false }), (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../../build/game.html'))
+  res.sendFile(path.resolve(__dirname, '../../build/game.html'));
 });
 app.get('/messages', passport.authenticate('jwt', { session: false }), asyncMiddleware(async (req, res, next) => {
   const messages = await ChatModel.find({}, 'email name message createdAt -_id')
@@ -93,16 +94,20 @@ function setupAuthoritativePhaser() {
 
   JSDOM.fromFile(path.join(__dirname, 'authoritative-server/index.html'), {
     // To run the scripts in the html file
-    runScripts: "dangerously",
+    runScripts: 'dangerously',
     // Also load supported external resources
-    resources: "usable",
+    resources: 'usable',
     // So requestAnimatinFrame events fire
-    pretendToBeVisual: true
+    pretendToBeVisual: true,
   }).then((dom) => {
     console.log('finished loading file');
     dom.window.URL.createObjectURL = (blob) => {
-      if (blob){
-        return datauri.format(blob.type, blob[Object.getOwnPropertySymbols(blob)[0]]._buffer).content;
+      if (blob) {
+        return datauri.format(
+          blob.type,
+          // eslint-disable-next-line no-underscore-dangle
+          blob[Object.getOwnPropertySymbols(blob)[0]]._buffer,
+        ).content;
       }
     };
     dom.window.URL.revokeObjectURL = (objectURL) => {};
@@ -118,3 +123,5 @@ function setupAuthoritativePhaser() {
 }
 
 setupAuthoritativePhaser();
+
+console.log('Open the debugger at chrome://inspect/#devices');

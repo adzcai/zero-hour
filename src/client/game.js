@@ -191,7 +191,7 @@ $.ajax({
   type: 'GET',
   url: '/messages',
   data: {
-    refreshToken: getCookie('refreshJwt')
+    refreshToken: getCookie('refreshJwt'),
   },
   success: (messages) => {
     messages.forEach((msg) => {

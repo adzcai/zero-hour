@@ -46,13 +46,13 @@ router.post('/submit-money', asyncMiddleware(async (req, res, next) => {
 
 router.post('/reset-upgrades', asyncMiddleware(async (req, res, next) => {
   const { email } = req.user;
-  const set = {}
+  const set = {};
   Object.keys(UPGRADES).forEach((key) => {
     set[`upgrades.${key}`] = 0;
   });
   await UserModel.updateOne({ email }, set);
   res.status(200).json({ status: 'ok' });
-}))
+}));
 
 router.post('/update-upgrade', asyncMiddleware(async (req, res, next) => {
   const { upgrade, count } = req.body;

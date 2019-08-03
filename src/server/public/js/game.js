@@ -1,16 +1,16 @@
-var config = {
+const config = {
   type: Phaser.AUTO,
   parent: 'phaser-example',
   width: 800,
   height: 600,
   scene: {
-    preload: preload,
-    create: create,
-    update: update
-  }
+    preload,
+    create,
+    update,
+  },
 };
 
-var game = new Phaser.Game(config);
+const game = new Phaser.Game(config);
 
 function preload() {
   this.load.image('ship', 'assets/spaceShips_001.png');
@@ -19,15 +19,14 @@ function preload() {
 }
 
 function create() {
-  var self = this;
   this.socket = io();
   this.players = this.add.group();
 
   this.blueScoreText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#0000FF' });
   this.redScoreText = this.add.text(584, 16, '', { fontSize: '32px', fill: '#FF0000' });
 
-  this.socket.on('currentPlayers', function (players) {
-    Object.keys(players).forEach(function (id) {
+  this.socket.on('currentPlayers', (players) => {
+    Object.keys(players).forEach((id) => {
       if (players[id].playerId === self.socket.id) {
         displayPlayers(self, players[id], 'ship');
       } else {
@@ -36,21 +35,21 @@ function create() {
     });
   });
 
-  this.socket.on('newPlayer', function (playerInfo) {
+  this.socket.on('newPlayer', (playerInfo) => {
     displayPlayers(self, playerInfo, 'otherPlayer');
   });
 
-  this.socket.on('disconnect', function (playerId) {
-    self.players.getChildren().forEach(function (player) {
+  this.socket.on('disconnect', (playerId) => {
+    self.players.getChildren().forEach((player) => {
       if (playerId === player.playerId) {
         player.destroy();
       }
     });
   });
 
-  this.socket.on('playerUpdates', function (players) {
-    Object.keys(players).forEach(function (id) {
-      self.players.getChildren().forEach(function (player) {
+  this.socket.on('playerUpdates', (players) => {
+    Object.keys(players).forEach((id) => {
+      self.players.getChildren().forEach((player) => {
         if (players[id].playerId === player.playerId) {
           player.setRotation(players[id].rotation);
           player.setPosition(players[id].x, players[id].y);
@@ -59,12 +58,12 @@ function create() {
     });
   });
 
-  this.socket.on('updateScore', function (scores) {
-    self.blueScoreText.setText('Blue: ' + scores.blue);
-    self.redScoreText.setText('Red: ' + scores.red);
+  this.socket.on('updateScore', (scores) => {
+    self.blueScoreText.setText(`Blue: ${scores.blue}`);
+    self.redScoreText.setText(`Red: ${scores.red}`);
   });
 
-  this.socket.on('starLocation', function (starLocation) {
+  this.socket.on('starLocation', (starLocation) => {
     if (!self.star) {
       self.star = self.add.image(starLocation.x, starLocation.y, 'star');
     } else {
@@ -99,7 +98,7 @@ function update() {
   }
 
   if (left !== this.leftKeyPressed || right !== this.rightKeyPressed || up !== this.upKeyPressed) {
-    this.socket.emit('playerInput', { left: this.leftKeyPressed , right: this.rightKeyPressed, up: this.upKeyPressed });
+    this.socket.emit('playerInput', { left: this.leftKeyPressed, right: this.rightKeyPressed, up: this.upKeyPressed });
   }
 }
 

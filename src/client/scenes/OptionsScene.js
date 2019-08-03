@@ -54,7 +54,7 @@ export default class OptionsScene extends Phaser.Scene {
         },
         error: (xhr) => {
           console.error(xhr);
-        }
+        },
       });
     });
 

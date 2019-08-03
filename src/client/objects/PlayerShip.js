@@ -9,7 +9,7 @@ export default class PlayerShip extends Phaser.GameObjects.Image {
 
     this.setDepth(10);
 
-    this.setTexture('spaceshooter', this.scene.registry.get('playerTexture'));
+    this.setTexture('spaceshooter', this.scene.registry.values.playerBody.texture);
     this.body.setSize(this.displayHeight, this.displayHeight);
 
     this.hp = this.scene.registry.values.playerBody.maxHP;
@@ -132,19 +132,19 @@ export default class PlayerShip extends Phaser.GameObjects.Image {
     this.scene.fireLaser(
       this.missileColor,
       this.x,
-      this.y
+      this.y,
     );
   }
 
   get laserColor() {
     if (this.scene.registry.get('konami')) return `laser${Phaser.Math.RND.pick(['Red', 'Green', 'Blue'])}0${Phaser.Math.RND.pick([1, 2])}`;
-    const color = this.scene.registry.get('playerTexture').split('_')[1];
+    const color = this.scene.registry.values.playerBody.texture.split('_')[1];
     return `laser${color === 'orange' ? 'Red' : color.charAt(0).toUpperCase() + color.slice(1)}01`;
   }
 
   get missileColor() {
     if (this.scene.registry.get('konami')) return `missile${Phaser.Math.RND.pick(['Red', 'Green', 'Blue'])}`;
-    const color = this.scene.registry.get('playerTexture').split('_')[1];
+    const color = this.scene.registry.values.playerBody.texture.split('_')[1];
     return `missile${color === 'orange' ? 'Red' : color.charAt(0).toUpperCase() + color.slice(1)}`;
   }
 
