@@ -6,7 +6,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 /* DIRS */
 const nm = path.resolve(__dirname, 'node_modules');
 const srcPath = path.resolve(__dirname, 'src');
-const pagesPath = path.resolve(__dirname, 'src', 'pages');
+const publicPath = path.resolve(__dirname, 'public');
 const assetsPath = path.resolve(__dirname, 'assets');
 const stylesPath = path.resolve(__dirname, 'assets', 'styles');
 const fontsPath = path.resolve(__dirname, 'assets', 'fonts');
@@ -19,7 +19,7 @@ module.exports = {
     modules: [
       nm,
       srcPath,
-      pagesPath,
+      publicPath,
       assetsPath,
       stylesPath,
       fontsPath,
@@ -44,13 +44,13 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       hash: true,
-      template: path.resolve(pagesPath, 'game.html'),
+      template: path.resolve(publicPath, 'game.html'),
       filename: 'game.html',
       favicon: path.join(imagesPath, 'favicon.ico'),
     }),
   ].concat(['index', 'signup', 'forgot-password', 'reset-password'].map(name => new HtmlWebpackPlugin({
     hash: true,
-    template: path.resolve(pagesPath, `${name}.html`),
+    template: path.resolve(publicPath, `${name}.html`),
     filename: `${name}.html`,
     excludeChunks: ['game'],
   }))),

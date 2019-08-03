@@ -15,6 +15,9 @@ This app is hosted using heroku. Simply go to the site https://thepiguy-zero-hou
   - Starts a local `mongod` server for testing
   - Bundles your files using webpack, watching your files for any changes and automatically updating them
   - Begins the server with `src/server/server.js` as the entry point
+5. To view the server console logs, either:
+  - Inspect Element using Google Chrome and click on the Node.js symbol in the toolbar, or
+  - Go to [chrome://inspect/#devices](chrome://inspect/#devices) in your browser.
 
 ## How to run
 1. Run `npm run build` to build the webpack files, and then run `npm start` to launch the server.

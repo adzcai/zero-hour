@@ -27,10 +27,10 @@
     "url": "git+https://github.com/piguyinthesky/zero-hour.git"
   },
   "scripts": {
-    "dev": "concurrently -n \"mongod,webpack,server\" -c \"cyan.bold,magenta.bold,yellow.bold\" --kill-others \"mongod --quiet --bind_ip 127.0.0.1\" \"webpack --config webpack.config.dev.js\" \"node --inspect src/server/server.js\"",
+    "dev": "concurrently -n \"mongod,webpack,server\" -c \"cyan.bold,magenta.bold,yellow.bold\" --kill-others \"mongod --quiet --bind_ip 127.0.0.1\" \"webpack --config webpack.config.dev.js\" \"node --inspect server.js\"",
     "build": "npm run heroku-postbuild",
     "heroku-postbuild": "webpack --config webpack.config.prod.js",
-    "start": "node src/server/server.js",
+    "start": "node server.js",
     "lint": "eslint --ignore-path .gitignore . --fix",
     "precommit": "npm run lint"
   },

@@ -17,12 +17,12 @@ const server = require('http').createServer(app);
 const io = require('socket.io').listen(server);
 
 // Load routes from other files
-const routes = require('./routes/main');
-const secureRoutes = require('./routes/secure');
-const passwordRoutes = require('./routes/password');
+const routes = require('./src/server/routes/main');
+const secureRoutes = require('./src/server/routes/secure');
+const passwordRoutes = require('./src/server/routes/password');
 
-const asyncMiddleware = require('./middleware/asyncMiddleware');
-const ChatModel = require('./models/chatModel');
+const asyncMiddleware = require('./src/server/middleware/asyncMiddleware');
+const ChatModel = require('./src/server/models/chatModel');
 
 const datauri = new Datauri();
 const { JSDOM } = jsdom;
@@ -45,20 +45,20 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-require('./auth/auth');
+require('./src/server/auth/auth');
 
 // Serve our static files and set up our main routes (see ./routes)
-app.use(express.static(path.resolve(__dirname, '../../build')));
+app.use(express.static(path.resolve(__dirname, 'build')));
 app.use('/', routes);
 app.use('/', passwordRoutes);
 app.use('/', passport.authenticate('jwt', { session: false }), secureRoutes);
 
 // Specific paths when the user tries to access certain parts
 app.get('/', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../../build/index.html'));
+  res.sendFile(path.resolve(__dirname, 'build', 'index.html'));
 });
 app.get('/game.html', passport.authenticate('jwt', { session: false }), (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../../build/game.html'));
+  res.sendFile(path.resolve(__dirname, 'build', 'game.html'));
 });
 app.get('/messages', passport.authenticate('jwt', { session: false }), asyncMiddleware(async (req, res, next) => {
   const messages = await ChatModel.find({}, 'email name message createdAt -_id')
@@ -92,7 +92,7 @@ app.use((err, req, res, next) => {
 function setupAuthoritativePhaser() {
   console.log('setting up authoritative server');
 
-  JSDOM.fromFile(path.join(__dirname, 'authoritative-server/index.html'), {
+  JSDOM.fromFile(path.resolve(__dirname, 'src', 'server', 'authoritative-server', 'index.html'), {
     // To run the scripts in the html file
     runScripts: 'dangerously',
     // Also load supported external resources
