@@ -1,4 +1,4 @@
-export default class PlayerShip extends Phaser.GameObjects.Image {
+export default class PlayerShip extends Phaser.GameObjects.Sprite {
   constructor(scene, x, y) {
     super(scene, x, y);
 
