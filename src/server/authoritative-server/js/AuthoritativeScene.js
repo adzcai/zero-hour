@@ -2,24 +2,34 @@ function randomPosition(max) {
   return Math.floor(Math.random() * max) + 50;
 }
 
+/**
+ * We map the players two ways: firstly through this dictionary which contains all of the
+ * information, as well as through a phaser group that tracks the physics of the player.
+ */
+const players = {};
+
+/**
+ * This scene handles all of the logic for the multiplayer part of our game.
+ */
 class AuthoritativeScene extends Phaser.Scene {
+  /** Load in our asset files. */
   preload() {
     this.load.setBaseURL('../../../assets/')
-  
+
       .setPath('images/ui')
       .image('box', 'grey_box.png')
       .image('checkedBox', 'blue_boxCheckmark.png')
-  
+
       .setPath('images/backgrounds')
       .image('black')
       .image('blue')
       .image('darkPurple')
       .image('purple')
-  
+
       .setPath('images/particles')
       .image('trace', 'trace_01.png')
       .image('flare', 'spark_05.png')
-  
+
       .setPath('audio')
       .audio('laser', 'Laser_Shoot.wav')
       .audio('laser1', 'sfx_laser1.ogg')
@@ -30,79 +40,60 @@ class AuthoritativeScene extends Phaser.Scene {
       .audio('powerup', 'sfx_twoTone.ogg')
       .audio('select', 'Blip_Select.wav')
       .audio('explosion', 'Explosion.wav')
-  
+
       .audio('titleMusic', 'Title Theme.mp3')
       .audio('gameMusic', 'Sunstrider.mp3')
       .audio('victoryMusic', 'All Clear.mp3')
-  
+
       .setPath('spritesheets')
       .atlasXML('spaceshooter')
       .atlasXML('spaceshooter2')
       .atlasXML('coins')
-  
+
       .setPath('images/explosions');
-  
+
     for (let i = 0; i < 9; i += 1) {
       this.load
         .image(`regularExplosion0${i}`)
         .image(`sonicExplosion0${i}`);
     }
-    console.log('Assets loaded');
   }
 
   create() {
     this.players = this.physics.add.group();
 
-    this.scores = {
-      blue: 0,
-      red: 0
-    };
-
-    this.star = this.physics.add.image(randomPosition(700), randomPosition(500), 'star');
-    this.physics.add.collider(this.players);
-
-    this.physics.add.overlap(this.players, this.star, function (star, player) {
-      if (players[player.playerId].team === 'red') {
-        this.scores.red += 10;
-      } else {
-        this.scores.blue += 10;
-      }
-      this.star.setPosition(randomPosition(700), randomPosition(500));
-      io.emit('updateScore', this.scores);
-      io.emit('starLocation', { x: this.star.x, y: this.star.y });
-    });
-
     io.on('connection', (socket) => {
       console.log(`A user connected at socket ${socket.id}`);
 
       socket
-        .on('joinGame', (x, y, texture) => {
+        .on('joinGame', (texture) => {
           console.log(`Player ${socket.id} joined the game`);
           players[socket.id] = {
-            x, y,
-            rotation: Math.floor(Math.random() * 2 * Math.PI),
+            // TODO: fix hardcoded values
+            x: randomPosition(480),
+            y: randomPosition(640),
+            rotation: Math.floor(Math.random() * 2 * Math.PI), // a random angle
             playerId: socket.id,
-            playerTexture: texture,
+            texture,
+            input: {
+              left: false,
+              right: false,
+              up: false,
+              down: false,
+              space: false,
+              enter: false,
+            },
           };
+          this.addPlayer(players[socket.id]);
           // We send the client the information of the current players
           socket.emit('currentPlayers', players);
-          socket.emit('arenaBounds', ARENA_WIDTH, ARENA_HEIGHT);
+          socket.emit('arenaBounds', 480, 640);
           // And tell all of the other clients that a new player has joined
           socket.broadcast.emit('newPlayer', players[socket.id]);
         })
         .on('playerInput', (data) => {
           if (!players[socket.id]) return;
-          // players[socket.id].x = data.x;
-          // players[socket.id].y = data.y;
-          // players[socket.id].rotation = data.rotation;
-          // socket.broadcast.emit('playerMoved', players[socket.id]);
-          this.handlePlayerInput(socket.id, data);
-        })
-        .on('laserFired', (laser) => {
-          socket.broadcast.emit('laserFired', laser);
-        })
-        .on('laserHit', (laserId) => {
-          socket.broadcast.emit('laserHit', laserId);
+          players[socket.id].input = data;
         })
         .on('leaveGame', () => {
           console.log(`Player ${socket.id} left the game`);
@@ -122,7 +113,8 @@ class AuthoritativeScene extends Phaser.Scene {
 
   update() {
     this.players.getChildren().forEach((player) => {
-      const input = players[player.playerId].input;
+      if (!players[player.playerId]) return;
+      const { input } = players[player.playerId];
       if (input.left) {
         player.setAngularVelocity(-300);
       } else if (input.right) {
@@ -143,18 +135,14 @@ class AuthoritativeScene extends Phaser.Scene {
     });
     this.physics.world.wrap(this.players, 5);
     io.emit('playerUpdates', players);
-  }
-
-  handlePlayerInput(playerId, input) {
-    this.players.getChildren().forEach((player) => {
-      if (playerId === player.playerId) {
-        players[player.playerId].input = input;
-      }
-    });
+    // TODO change this to:
+    // for (let id of Object.keys(players)) {
+    //   // emit to socket #{id}
+    // }
   }
 
   addPlayer(playerInfo) {
-    const player = this.physics.add.image(playerInfo.x, playerInfo.y, 'ship').setOrigin(0.5, 0.5).setDisplaySize(53, 40);
+    const player = this.physics.add.image(playerInfo.x, playerInfo.y, 'spaceshooter', playerInfo.texture).setOrigin(0.5, 0.5).setDisplaySize(53, 40);
     player.setDrag(100);
     player.setAngularDrag(100);
     player.setMaxVelocity(200);

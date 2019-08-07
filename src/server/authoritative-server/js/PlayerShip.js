@@ -52,8 +52,11 @@ class PlayerShip {
       this.setRotation(angle);
     }
 
-    if (this.powerups.scatter && this.sprite.scene.time.now > this.powerups.scatter) this.powerups.scatter = false;
-    if (this.powerups.spedUp && this.sprite.scene.time.now > this.powerups.spedUp) this.powerups.spedUp = false;
+    for (const k of Object.keys(this.powerups)) {
+      if (this.powerups[k] && this.sprite.scene.time.now > this.powerups[k]) {
+        this.powerups[k] = false;
+      }
+    }
   }
 
   shoot() {
