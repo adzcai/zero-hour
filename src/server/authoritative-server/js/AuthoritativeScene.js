@@ -62,6 +62,7 @@ class AuthoritativeScene extends Phaser.Scene {
 
   create() {
     this.players = this.physics.add.group();
+    this.lasers = this.physics.add.group({ classType: Laser });
 
     io.on('connection', (socket) => {
       console.log(`A user connected at socket ${socket.id}`);
@@ -117,8 +118,9 @@ class AuthoritativeScene extends Phaser.Scene {
     // }
   }
 
-  fireLaser() {
-    console.log('laser fired');
+
+  fireLaser(type, x, y, theta, speed, damage) {
+    this.lasers.get(x, y, 'spaceshooter', type, true).init(speed, damage).fire(theta);
   }
 
   removePlayer(playerId) {

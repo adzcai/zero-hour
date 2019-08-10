@@ -54,7 +54,7 @@ class PlayerShip extends Phaser.GameObjects.Image {
     }
 
     if (input.space && this.scene.time.now > this.nextShot) this.shoot();
-    if (input.enter && this.scene.time.now > this.nextMissile) this.shootMissile();
+    // if (input.enter && this.scene.time.now > this.nextMissile) this.shootMissile();
 
     for (const k of Object.keys(this.powerups)) {
       if (this.powerups[k] && this.scene.time.now > this.powerups[k]) {
@@ -77,9 +77,12 @@ class PlayerShip extends Phaser.GameObjects.Image {
     if (type === 'Forward') {
       for (let i = 0; i < this.numLaserShots; i += 1) {
         this.scene.fireLaser(
+          this.laserColor,
           this.x + x - 2 * x * (i + 1) / (this.numLaserShots + 1),
           this.y + y - 2 * y * (i + 1) / (this.numLaserShots + 1),
           addScatter(angle),
+          this.playerAttack.laser.speed,
+          this.playerAttack.laser.damage,
         );
       }
     } else if (type === 'Spread') {
@@ -88,29 +91,41 @@ class PlayerShip extends Phaser.GameObjects.Image {
       const base = angle - total / 2;
       for (let i = 0; i < this.numLaserShots; i += 1) {
         this.scene.fireLaser(
+          this.laserColor,
           this.x,
           this.y,
           addScatter(base + i * inc),
+          this.playerAttack.laser.speed,
+          this.playerAttack.laser.damage,
         );
       }
     } else if (type === 'All Around') {
       for (let i = 0; i < this.numLaserShots; i += 1) {
         this.scene.fireLaser(
+          this.laserColor,
           this.x,
           this.y,
           addScatter(angle + i * (2 * Math.PI) / this.numLaserShots),
+          this.playerAttack.laser.speed,
+          this.playerAttack.laser.damage,
         );
       }
     }
   }
 
-  shootMissile() {
-    this.nextMissile = this.scene.time.now + (this.powerups.spedUp ? this.playerAttack.missile.delay / 2 : this.playerAttack.missile.delay);
-    this.scene.fireLaser(
-      this.x,
-      this.y,
-    );
+  get laserColor() {
+    // if (this.scene.registry.get('konami')) return `laser${Phaser.Math.RND.pick(['Red', 'Green', 'Blue'])}0${Phaser.Math.RND.pick([1, 2])}`;
+    const color = this.playerBody.texture.split('_')[1];
+    return `laser${color === 'orange' ? 'Red' : color.charAt(0).toUpperCase() + color.slice(1)}01`;
   }
+
+  // shootMissile() {
+  //   this.nextMissile = this.scene.time.now + (this.powerups.spedUp ? this.playerAttack.missile.delay / 2 : this.playerAttack.missile.delay);
+  //   this.scene.fireLaser(
+  //     this.x,
+  //     this.y,
+  //   );
+  // }
 
   get numLaserShots() {
     return this.playerAttack.laser.numShots + this.powerups.numShots;
