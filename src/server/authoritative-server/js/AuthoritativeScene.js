@@ -2,6 +2,9 @@ function randomPosition(max) {
   return Math.floor(Math.random() * max) + 50;
 }
 
+const ARENA_WIDTH = 4800;
+const ARENA_HEIGHT = 4800;
+
 /**
  * We map the players two ways: firstly through this dictionary which contains all of the
  * information, as well as through a phaser group that tracks the physics of the player.
@@ -64,6 +67,8 @@ class AuthoritativeScene extends Phaser.Scene {
     this.players = this.physics.add.group();
     this.lasers = this.physics.add.group({ classType: Laser });
 
+    this.physics.world.setBounds(0, 0, ARENA_WIDTH, ARENA_HEIGHT);
+
     io.on('connection', (socket) => {
       console.log(`A user connected at socket ${socket.id}`);
 
@@ -75,7 +80,7 @@ class AuthoritativeScene extends Phaser.Scene {
 
           // We send the client the information of the current players
           socket.emit('currentPlayers', players);
-          socket.emit('arenaBounds', 480, 640);
+          socket.emit('arenaBounds', ARENA_WIDTH, ARENA_HEIGHT);
           // And tell all of the other clients that a new player has joined
           socket.broadcast.emit('newPlayer', players[socket.id]);
         })

@@ -37,11 +37,11 @@ export default class ArenaScene extends Phaser.Scene {
       .on('arenaBounds', (arenaWidth, arenaHeight) => {
         this.physics.world.setBounds(0, 0, arenaWidth, arenaHeight);
         const { bounds } = this.physics.world;
-        this.add.rectangle(bounds.x, bounds.y, bounds.width, bounds.height, 0xff0000, 0.1).setOrigin(0);
+        this.add.rectangle(bounds.x, bounds.y, bounds.width, bounds.height, 0xff0000, 0.05).setOrigin(0);
         this.cameras.main.setBounds(-width / 2, -height / 2, bounds.width + width, bounds.height + height);
       })
-      .on('newPlayer', (playerInfo) => {
-        this.displayPlayer(playerInfo, false);
+      .on('newPlayer', (data) => {
+        this.displayPlayer(data, false);
       })
       .on('hit', () => {
         this.sound.play('shieldDown');
@@ -101,13 +101,15 @@ export default class ArenaScene extends Phaser.Scene {
 
   /**
    * See `src/server/authoritative-server/js/Player.js`.
-   * @param {Player} playerInfo 
+   * @param {Player} data 
    */
-  displayPlayer(playerInfo) {
-    const otherPlayer = this.add.sprite(playerInfo.x, playerInfo.y, 'spaceshooter', playerInfo.playerBody.texture);
-    otherPlayer.setTint(Math.random() * 0xffffff);
-    otherPlayer.playerId = playerInfo.playerId;
-    this.players.add(otherPlayer);
+  displayPlayer(data) {
+    const player = this.add.sprite(data.x, data.y, 'spaceshooter', data.playerBody.texture);
+    player.setTint(Math.random() * 0xffffff);
+    player.playerId = data.playerId;
+    if (data.playerId === socket.id)
+      this.cameras.main.startFollow(player);
+    this.players.add(player);
   }
 
   update(time, delta) {
