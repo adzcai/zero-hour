@@ -26,7 +26,7 @@ export default class ArenaScene extends Phaser.Scene {
       .setOrigin(0)
       .setScrollFactor(0);
 
-    socket.emit('joinGame', this.registry.values.playerBody.texture);
+    socket.emit('joinGame', this.registry.values.playerAttack, this.registry.values.playerBody);
 
     socket
       .on('currentPlayers', (players) => {
@@ -60,7 +60,7 @@ export default class ArenaScene extends Phaser.Scene {
           this.players.getChildren().forEach((player) => { // For each player in the client's group object
             if (id === player.playerId) {
               player.setPosition(players[id].x, players[id].y);
-              player.setRotation(players[id].rotation + Math.PI); // the Math.PI accounts for the rotation of the game sprite
+              player.setRotation(players[id].rotation);
             }
           });
         });
@@ -81,8 +81,12 @@ export default class ArenaScene extends Phaser.Scene {
     this.scene.start('Title');
   }
 
+  /**
+   * See `src/server/authoritative-server/js/Player.js`.
+   * @param {Player} playerInfo 
+   */
   displayPlayer(playerInfo) {
-    const otherPlayer = this.add.sprite(playerInfo.x, playerInfo.y, 'spaceshooter', playerInfo.texture);
+    const otherPlayer = this.add.sprite(playerInfo.x, playerInfo.y, 'spaceshooter', playerInfo.playerBody.texture);
     otherPlayer.setTint(Math.random() * 0xffffff);
     otherPlayer.playerId = playerInfo.playerId;
     this.players.add(otherPlayer);

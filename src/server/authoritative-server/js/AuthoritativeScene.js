@@ -5,6 +5,7 @@ function randomPosition(max) {
 /**
  * We map the players two ways: firstly through this dictionary which contains all of the
  * information, as well as through a phaser group that tracks the physics of the player.
+ * @type {Object.<string, Player>}
  */
 const players = {};
 
@@ -66,25 +67,12 @@ class AuthoritativeScene extends Phaser.Scene {
       console.log(`A user connected at socket ${socket.id}`);
 
       socket
-        .on('joinGame', (texture) => {
+        .on('joinGame', (attack, body) => {
           console.log(`Player ${socket.id} joined the game`);
-          players[socket.id] = {
-            // TODO: fix hardcoded values
-            x: randomPosition(480),
-            y: randomPosition(640),
-            rotation: Math.floor(Math.random() * 2 * Math.PI), // a random angle
-            playerId: socket.id,
-            texture,
-            input: {
-              left: false,
-              right: false,
-              up: false,
-              down: false,
-              space: false,
-              enter: false,
-            },
-          };
-          this.addPlayer(players[socket.id]);
+          players[socket.id] = new Player(attack, body, socket.id);
+          console.log(players[socket.id]);
+          this.players.add(new PlayerShip(this, players[socket.id])); // Create the sprite using the player data
+
           // We send the client the information of the current players
           socket.emit('currentPlayers', players);
           socket.emit('arenaBounds', 480, 640);
@@ -112,27 +100,15 @@ class AuthoritativeScene extends Phaser.Scene {
   }
 
   update() {
-    this.players.getChildren().forEach((player) => {
-      if (!players[player.playerId]) return;
-      const { input } = players[player.playerId];
-      if (input.left) {
-        player.setAngularVelocity(-300);
-      } else if (input.right) {
-        player.setAngularVelocity(300);
-      } else {
-        player.setAngularVelocity(0);
+    this.players.getChildren().forEach((playerShip) => {
+      if (players[playerShip.playerId]) {
+        playerShip.update(players[playerShip.playerId].input);
+        players[playerShip.playerId].x = playerShip.x;
+        players[playerShip.playerId].y = playerShip.y;
+        players[playerShip.playerId].rotation = playerShip.rotation;
       }
-
-      if (input.up) {
-        this.physics.velocityFromRotation(player.rotation + 1.5, 200, player.body.acceleration);
-      } else {
-        player.setAcceleration(0);
-      }
-
-      players[player.playerId].x = player.x;
-      players[player.playerId].y = player.y;
-      players[player.playerId].rotation = player.rotation;
     });
+    
     this.physics.world.wrap(this.players, 5);
     io.emit('playerUpdates', players);
     // TODO change this to:
@@ -141,13 +117,8 @@ class AuthoritativeScene extends Phaser.Scene {
     // }
   }
 
-  addPlayer(playerInfo) {
-    const player = this.physics.add.image(playerInfo.x, playerInfo.y, 'spaceshooter', playerInfo.texture).setOrigin(0.5, 0.5).setDisplaySize(53, 40);
-    player.setDrag(100);
-    player.setAngularDrag(100);
-    player.setMaxVelocity(200);
-    player.playerId = playerInfo.playerId;
-    this.players.add(player);
+  fireLaser() {
+    console.log('laser fired');
   }
 
   removePlayer(playerId) {
