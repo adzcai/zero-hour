@@ -71,7 +71,6 @@ class AuthoritativeScene extends Phaser.Scene {
         .on('joinGame', (attack, body) => {
           console.log(`Player ${socket.id} joined the game`);
           players[socket.id] = new Player(attack, body, socket.id);
-          console.log(players[socket.id]);
           this.players.add(new PlayerShip(this, players[socket.id])); // Create the sprite using the player data
 
           // We send the client the information of the current players
@@ -100,7 +99,8 @@ class AuthoritativeScene extends Phaser.Scene {
     });
   }
 
-  update() {
+  update(time, delta) {
+    super.update(time, delta);
     this.players.getChildren().forEach((playerShip) => {
       if (players[playerShip.playerId]) {
         playerShip.update(players[playerShip.playerId].input);
@@ -109,18 +109,27 @@ class AuthoritativeScene extends Phaser.Scene {
         players[playerShip.playerId].rotation = playerShip.rotation;
       }
     });
-    
+
+    this.lasers.getChildren().forEach(laser => laser.update(time, delta));
+
     this.physics.world.wrap(this.players, 5);
     io.emit('playerUpdates', players);
+    io.emit('laserUpdates', this.lasers.getChildren().map(laser => ({
+      type: laser.name,
+      x: laser.x,
+      y: laser.y,
+      theta: laser.rotation,
+      speed: laser.speed
+    })));
     // TODO change this to:
     // for (let id of Object.keys(players)) {
     //   // emit to socket #{id}
     // }
   }
 
-
   fireLaser(type, x, y, theta, speed, damage) {
-    this.lasers.get(x, y, 'spaceshooter', type, true).init(speed, damage).fire(theta);
+    const id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    this.lasers.get(x, y, 'spaceshooter', type, true).init(id, speed, damage).fire(theta);
   }
 
   removePlayer(playerId) {

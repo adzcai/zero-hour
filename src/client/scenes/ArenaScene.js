@@ -64,6 +64,24 @@ export default class ArenaScene extends Phaser.Scene {
             }
           });
         });
+      })
+      .on('laserUpdates', (lasers) => {
+        // Destroy lasers that were not sent by the server
+        this.lasers.getChildren()
+          .filter(laser => !Object.keys(lasers).includes(laser.id))
+          .forEach(laser => laser.destroy());
+
+        Object.keys(lasers).forEach((id) => {
+          const laser = this.lasers.getChildren().find(laser => laser.id === id);
+          if (!laser) { // we create a new laser
+            const laser = this.add.sprite(lasers[id].x, lasers[id].y);
+            laser.play(lasers[id].type);
+            laser.setRotation(lasers[id].theta);
+            this.lasers.add(laser);
+          } else {
+            laser.setPosition(lasers[id].x, lasers[id].y);
+          }
+        });
       });
 
     this.input.keyboard.on('keyup_ESC', () => {

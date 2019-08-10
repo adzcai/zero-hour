@@ -2,8 +2,7 @@ class Laser extends Phaser.GameObjects.Image {
   constructor(scene, x, y, texture, frame) {
     super(scene, x, y, texture, frame);
 
-    this.id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    this.setName(frame);
+    this.setName(frame); // aka type
 
     this.scene.add.existing(this);
     this.scene.physics.add.existing(this);
@@ -11,7 +10,8 @@ class Laser extends Phaser.GameObjects.Image {
     this.lifespan = 10000;
   }
 
-  init(speed, damage) {
+  init(id, speed, damage) {
+    this.id = id;
     this.speed = speed;
     this.damage = damage;
 
@@ -24,7 +24,8 @@ class Laser extends Phaser.GameObjects.Image {
     return this; // for future chaining
   }
 
-  preUpdate(time, delta) {
+  update(time, delta) {
+    super.update(time, delta);
     // if (this.name.startsWith('missile')) {
     //   if (this.target === null) this.target = this.scene.findTarget(this.x, this.y);
     //   else if (!this.target.body) this.target = null;

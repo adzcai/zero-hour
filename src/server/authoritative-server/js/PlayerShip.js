@@ -1,3 +1,7 @@
+const SHIP_SPEED = 200;
+const SHIP_TURN_SPEED = 300;
+const SHIP_DRAG = 0.85;
+const SHIP_MAX_VELOCITY = 650;
 /**
  * The game object that the server uses to handle logic.
  */
@@ -29,8 +33,8 @@ class PlayerShip extends Phaser.GameObjects.Image {
     this.scene.physics.add.existing(this);
 
     this.body.useDamping = true;
-    this.body.setDrag(0.85);
-    this.body.setMaxVelocity(650);
+    this.body.setDrag(SHIP_DRAG);
+    this.body.setMaxVelocity(SHIP_MAX_VELOCITY);
 
     // Make the body square
     this.body.setSize(this.displayHeight, this.displayHeight);
@@ -40,15 +44,17 @@ class PlayerShip extends Phaser.GameObjects.Image {
     if (!this.body) return;
 
     if (input.left) {
-      this.body.setAngularVelocity(-300);
+      this.body.setAngularVelocity(-SHIP_TURN_SPEED);
     } else if (input.right) {
-      this.body.setAngularVelocity(300);
+      this.body.setAngularVelocity(SHIP_TURN_SPEED);
     } else {
       this.body.setAngularVelocity(0);
     }
 
     if (input.up) {
-      this.scene.physics.velocityFromRotation(this.rotation, 200, this.body.acceleration);
+      // Not sure why, but we need to subtract the quarter turn to get
+      // the velocity facing the right direction
+      this.scene.physics.velocityFromRotation(this.rotation - Math.PI / 2, SHIP_SPEED, this.body.acceleration);
     } else {
       this.body.setAcceleration(0);
     }
