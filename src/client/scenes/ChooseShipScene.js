@@ -8,7 +8,6 @@ export default class ChooseShipScene extends Phaser.Scene {
 
   init(data) {
     this.chooseShip = data.chooseShip;
-    console.log(this.chooseShip)
   }
 
   create() {
@@ -22,7 +21,7 @@ export default class ChooseShipScene extends Phaser.Scene {
         },
         success: (data) => {
           if (data.shipTexture) {
-            this.registry.set('playerTexture', data.shipTexture);
+            this.registry.values.playerBody.texture = data.shipTexture;
             this.scene.start('Title');
           } else {
             this.promptShip();
@@ -61,7 +60,7 @@ export default class ChooseShipScene extends Phaser.Scene {
             refreshToken: getCookie('refreshJwt'),
           },
           success: () => {
-            this.registry.set('playerTexture', frame);
+            this.registry.values.playerBody.texture = frame;
             this.scene.start('Title');
           },
           error: (xhr) => {

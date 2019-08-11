@@ -7,7 +7,7 @@ export default class Laser extends Phaser.GameObjects.Sprite {
 
     this.speed = this.scene.registry.values.playerAttack.laser.speed;
     this.damage = this.scene.registry.values.playerAttack.laser.damage;
-    
+
     this.lifespan = 10000;
   }
 

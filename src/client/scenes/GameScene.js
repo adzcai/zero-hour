@@ -32,7 +32,7 @@ export default class GameScene extends Phaser.Scene {
     this.progressBar = this.add.rectangle(width - 10, 10,
       this.progressBox.displayWidth - 10,
       this.progressBox.displayHeight - 10, 0x00ff00, 1).setOrigin(1, 0);
-    this.progressImg = this.add.image(0, 0, 'spaceshooter', this.registry.get('playerTexture').replace('Ship', 'Life'));
+    this.progressImg = this.add.image(0, 0, 'spaceshooter', this.registry.values.playerBody.texture.replace('Ship', 'Life'));
 
     this.physics.world.setBounds(0, 0, width, height).setBoundsCollision(false, false, true, true);
 

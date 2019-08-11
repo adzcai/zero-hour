@@ -15,7 +15,7 @@ passport.use('signup', new LocalStrategy({
     const user = await UserModel.create({ email, password, name });
     return done(null, user);
   } catch (error) {
-    done(error);
+    return done(error);
   }
 }));
 
@@ -51,6 +51,6 @@ passport.use(new JWTstrategy({
   try {
     return done(null, token.user);
   } catch (error) {
-    done(error);
+    return done(error);
   }
 }));

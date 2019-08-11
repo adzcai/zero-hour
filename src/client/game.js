@@ -18,6 +18,7 @@ import PowerupInfoScene from './scenes/PowerupInfoScene';
 import UpgradesScene from './scenes/UpgradesScene';
 import LeaderboardScene from './scenes/LeaderboardScene';
 import CreditsScene from './scenes/CreditsScene';
+import DeathScene from './scenes/DeathScene';
 
 // Refresh the user JWT every 10 seconds
 setInterval(() => {
@@ -76,6 +77,7 @@ const config = {
     UpgradesScene,
     LeaderboardScene,
     CreditsScene,
+    DeathScene,
   ],
 };
 
@@ -190,6 +192,9 @@ socket.on('newMessage', addMessage);
 $.ajax({
   type: 'GET',
   url: '/messages',
+  data: {
+    refreshToken: getCookie('refreshJwt'),
+  },
   success: (messages) => {
     messages.forEach((msg) => {
       addMessage({
