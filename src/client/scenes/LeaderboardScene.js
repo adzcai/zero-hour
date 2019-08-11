@@ -10,15 +10,19 @@ export default class LeaderboardScene extends Phaser.Scene {
     $.ajax({
       type: 'GET',
       url: '/scores',
-      success: (users) => {
+      success: (users) => {        
         const { width, height } = this.cameras.main;
-
         const inc = height / 8;
+
+        const sortedUsers = users.map((user) => ({
+          name: user.name,
+          highScore: Object.values(user.highScores).reduce((a, b) => a + b),
+        }));
 
         this.rank = new Button(this, width / 2, inc, 'Rank');
 
         for (let i = 1; i <= 5; i += 1) {
-          const user = users[i - 1];
+          const user = sortedUsers[i - 1];
           if (!user) continue;
 
           // The following ratios might not always fit users with incredibly long names
