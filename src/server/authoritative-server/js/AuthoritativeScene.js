@@ -69,6 +69,19 @@ class AuthoritativeScene extends Phaser.Scene {
 
     this.physics.world.setBounds(0, 0, ARENA_WIDTH, ARENA_HEIGHT);
 
+    this.physics.add.overlap(this.lasers, this.players, (laser, player) => {
+      if (player.playerId === laser.shooterId) return;
+      player.hp -= laser.damage;
+      io.to(player.playerId).emit('hit', player.hp, player.playerBody.maxHP);
+      if (player.hp <= 0) { // we remove the player from the game
+        if (players[player.playerId]) delete players[player.playerId];
+        io.to(player.playerId).emit('death');
+        io.emit('leaveGame', player.playerId);
+        player.destroy()
+      }
+      laser.destroy();
+    });
+
     io.on('connection', (socket) => {
       console.log(`A user connected at socket ${socket.id}`);
 
@@ -88,18 +101,10 @@ class AuthoritativeScene extends Phaser.Scene {
           if (!players[socket.id]) return;
           players[socket.id].input = data;
         })
-        .on('leaveGame', () => {
-          console.log(`Player ${socket.id} left the game`);
-          delete players[socket.id];
-          socket.broadcast.emit('leaveGame', socket.id);
-        })
+        .on('leaveGame', () => this.removePlayer(socket))
         .on('disconnect', () => {
           console.log(`The user at socket ${socket.id} disconnected`);
-          if (players[socket.id]) {
-            console.log(`Player ${socket.id} left the game`);
-            delete players[socket.id];
-            socket.broadcast.emit('leaveGame', socket.id);
-          }
+          this.removePlayer(socket);
         });
     });
   }
@@ -132,16 +137,16 @@ class AuthoritativeScene extends Phaser.Scene {
     // }
   }
 
-  fireLaser(type, x, y, theta, speed, damage) {
+  fireLaser(shooterId, type, x, y, theta, speed, damage) {
     const id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    this.lasers.get(x, y, 'spaceshooter', type, true).init(id, speed, damage).fire(theta);
+    this.lasers.get(x, y, 'spaceshooter', type, true).init(shooterId, id, speed, damage).fire(theta);
   }
 
-  removePlayer(playerId) {
-    this.players.getChildren().forEach((player) => {
-      if (playerId === player.playerId) {
-        player.destroy();
-      }
-    });
+  removePlayer(socket) {
+    console.log(`Player ${socket.id} left the game`);
+    if (players[socket.id]) delete players[socket.id];
+    const left = this.players.getChildren().find(player => player.playerId === socket.id);
+    if (left) left.destroy();
+    socket.broadcast.emit('leaveGame', socket.id);
   }
 }

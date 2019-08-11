@@ -10,7 +10,8 @@ class Laser extends Phaser.GameObjects.Image {
     this.lifespan = 10000;
   }
 
-  init(id, speed, damage) {
+  init(shooterId, id, speed, damage) {
+    this.shooterId = shooterId;
     this.id = id;
     this.speed = speed;
     this.damage = damage;

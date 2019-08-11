@@ -43,11 +43,6 @@ export default class ArenaScene extends Phaser.Scene {
       .on('newPlayer', (data) => {
         this.displayPlayer(data, false);
       })
-      .on('hit', () => {
-        this.sound.play('shieldDown');
-        this.player.hp -= laser.damage;
-        this.hpBar.displayWidth = Phaser.Math.Percent(this.player.hp, 0, this.registry.values.playerBody.maxHP) * (this.hpBox.displayWidth - 10);
-      })
       .on('leaveGame', (playerId) => {
         this.players.getChildren().forEach((player) => {
           if (playerId === player.playerId) {
@@ -82,6 +77,16 @@ export default class ArenaScene extends Phaser.Scene {
             laser.setPosition(lasers[id].x, lasers[id].y);
           }
         });
+      })
+      .on('hit', (hp, maxHp) => {
+        console.log(`hp: ${hp}`);
+        console.log(`maxHp: ${maxHp}`);
+        this.sound.play('shieldDown');
+        this.hpBar.displayWidth = Phaser.Math.Percent(hp, 0, maxHp) * (this.hpBox.displayWidth - 10);
+      })
+      .on('death', () => {
+        socket.removeAllListeners();
+        this.scene.start('Death');
       });
 
     this.input.keyboard.on('keyup_ESC', () => {

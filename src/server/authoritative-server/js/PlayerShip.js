@@ -83,6 +83,7 @@ class PlayerShip extends Phaser.GameObjects.Image {
     if (type === 'Forward') {
       for (let i = 0; i < this.numLaserShots; i += 1) {
         this.scene.fireLaser(
+          this.playerId,
           this.laserColor,
           this.x + x - 2 * x * (i + 1) / (this.numLaserShots + 1),
           this.y + y - 2 * y * (i + 1) / (this.numLaserShots + 1),
@@ -97,6 +98,7 @@ class PlayerShip extends Phaser.GameObjects.Image {
       const base = angle - total / 2;
       for (let i = 0; i < this.numLaserShots; i += 1) {
         this.scene.fireLaser(
+          this.playerId,
           this.laserColor,
           this.x,
           this.y,
@@ -108,6 +110,7 @@ class PlayerShip extends Phaser.GameObjects.Image {
     } else if (type === 'All Around') {
       for (let i = 0; i < this.numLaserShots; i += 1) {
         this.scene.fireLaser(
+          this.playerId,
           this.laserColor,
           this.x,
           this.y,
