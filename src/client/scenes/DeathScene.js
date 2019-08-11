@@ -2,7 +2,7 @@ import defaultFont from '../../shared/defaultFont';
 
 export default class DeathScene extends Phaser.Scene {
   constructor() {
-    super('Death')
+    super('Death');
   }
 
   create() {
@@ -13,6 +13,6 @@ export default class DeathScene extends Phaser.Scene {
 
     this.input.keyboard.on('keyup', () => {
       this.scene.start('Title');
-    })
+    });
   }
 }

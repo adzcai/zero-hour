@@ -77,7 +77,7 @@ class AuthoritativeScene extends Phaser.Scene {
         if (players[player.playerId]) delete players[player.playerId];
         io.to(player.playerId).emit('death');
         io.emit('leaveGame', player.playerId);
-        player.destroy()
+        player.destroy();
       }
       laser.destroy();
     });
@@ -129,7 +129,7 @@ class AuthoritativeScene extends Phaser.Scene {
       x: laser.x,
       y: laser.y,
       theta: laser.rotation,
-      speed: laser.speed
+      speed: laser.speed,
     })));
     // TODO change this to:
     // for (let id of Object.keys(players)) {

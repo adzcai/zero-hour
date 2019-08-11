@@ -106,14 +106,13 @@ export default class ArenaScene extends Phaser.Scene {
 
   /**
    * See `src/server/authoritative-server/js/Player.js`.
-   * @param {Player} data 
+   * @param {Player} data
    */
   displayPlayer(data) {
     const player = this.add.sprite(data.x, data.y, 'spaceshooter', data.playerBody.texture);
     player.setTint(Math.random() * 0xffffff);
     player.playerId = data.playerId;
-    if (data.playerId === socket.id)
-      this.cameras.main.startFollow(player);
+    if (data.playerId === socket.id) this.cameras.main.startFollow(player);
     this.players.add(player);
   }
 

@@ -40,10 +40,10 @@ class Laser extends Phaser.GameObjects.Image {
     // if (this.name.startsWith('missile')) {
     //   this.target = this.scene.findTarget(this.x, this.y);
     // } else {
-      this.setRotation(radians);
+    this.setRotation(radians);
 
-      this.scene.physics.velocityFromRotation(radians - Math.PI / 2, this.speed, this.body.velocity);
-      this.body.velocity.scale(2);
+    this.scene.physics.velocityFromRotation(radians - Math.PI / 2, this.speed, this.body.velocity);
+    this.body.velocity.scale(2);
     // }
   }
 }

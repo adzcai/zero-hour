@@ -7,8 +7,8 @@ const SHIP_MAX_VELOCITY = 650;
  */
 class PlayerShip extends Phaser.GameObjects.Image {
   /**
-   * @param {Phaser.Scene} scene 
-   * @param {Player} data 
+   * @param {Phaser.Scene} scene
+   * @param {Player} data
    */
   constructor(scene, data) {
     super(scene, data.x, data.y, 'spaceshooter', data.playerBody.texture);

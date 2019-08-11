@@ -33,7 +33,7 @@ smtpTransport.use('compile', hbs(handlebarsOptions));
 
 const router = express.Router();
 
-router.post('/forgot-password', asyncMiddleware(async (req, res, next) => {
+router.post('/forgot-password', asyncMiddleware(async (req, res) => {
   const { email } = req.body;
   const user = await UserModel.findOne({ email });
   if (!user) {
@@ -46,7 +46,7 @@ router.post('/forgot-password', asyncMiddleware(async (req, res, next) => {
   const token = buffer.toString('hex');
 
   // update user reset password token and exp
-  await UserModel.findByIdAndUpdate({ _id: user._id }, {
+  await UserModel.findByIdAndUpdate({ _id: user._id }, { // eslint-disable-line
     resetToken: token,
     resetTokenExp: Date.now() + 600000,
   });
@@ -67,7 +67,7 @@ router.post('/forgot-password', asyncMiddleware(async (req, res, next) => {
   res.status(200).json({ message: 'An email has been sent to your email. Password reset link is only valid for 10 minutes.' });
 }));
 
-router.post('/reset-password', asyncMiddleware(async (req, res, next) => {
+router.post('/reset-password', asyncMiddleware(async (req, res) => {
   const user = await UserModel.findOne({
     resetToken: req.body.token,
     resetTokenExp: { $gt: Date.now() },
