@@ -14,7 +14,7 @@ const config = {
   autoFocus: false,
 };
 
-function WebGLTexture() { } // Shim to prevent a small bug
+function WebGLTexture() {} // Shim to prevent a small bug
 
 const game = new Phaser.Game(config);
 window.gameLoaded();

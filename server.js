@@ -57,10 +57,12 @@ app.use('/', passport.authenticate('jwt', { session: false }), secureRoutes);
 app.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'build', 'index.html'));
 });
+
 app.get('/game.html', passport.authenticate('jwt', { session: false }), (req, res) => {
   res.sendFile(path.resolve(__dirname, 'build', 'game.html'));
 });
-app.get('/messages', passport.authenticate('jwt', { session: false }), asyncMiddleware(async (req, res, next) => {
+
+app.get('/messages', passport.authenticate('jwt', { session: false }), asyncMiddleware(async (req, res) => {
   const messages = await ChatModel.find({}, 'email name message createdAt -_id')
     .sort({ createdAt: -1 })
     .limit(30);
@@ -68,7 +70,7 @@ app.get('/messages', passport.authenticate('jwt', { session: false }), asyncMidd
 }));
 
 // We put this here to have access to SocketIO
-app.post('/submit-chatline', passport.authenticate('jwt', { session: false }), asyncMiddleware(async (req, res, next) => {
+app.post('/submit-chatline', passport.authenticate('jwt', { session: false }), asyncMiddleware(async (req, res) => {
   const { message } = req.body;
   const { email, name } = req.user;
   await ChatModel.create({ email, name, message });
@@ -80,11 +82,12 @@ app.post('/submit-chatline', passport.authenticate('jwt', { session: false }), a
 }));
 
 // catch all other routes
-app.use((req, res, next) => {
+app.use((req, res) => {
   res.status(404).json({ message: '404 - Not Found' });
 });
+
 // handle errors
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   console.error(err.message);
   res.status(err.status || 500).json({ error: err.message });
 });
@@ -110,9 +113,9 @@ function setupAuthoritativePhaser() {
         ).content;
       }
     };
-    dom.window.URL.revokeObjectURL = (objectURL) => {};
+    dom.window.URL.revokeObjectURL = () => {};
     dom.window.gameLoaded = () => {
-      server.listen(8080, () => {
+      server.listen(process.env.PORT || 8080, () => {
         console.log(`Listening on http://localhost:${server.address().port}`);
       });
     };
