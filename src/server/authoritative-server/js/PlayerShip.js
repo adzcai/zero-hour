@@ -62,15 +62,17 @@ class PlayerShip extends Phaser.GameObjects.Image {
     if (input.space && this.scene.time.now > this.nextShot) this.shoot();
     // if (input.enter && this.scene.time.now > this.nextMissile) this.shootMissile();
 
-    for (const k of Object.keys(this.powerups)) {
+    Object.keys(this.powerups).forEach((k) => {
       if (this.powerups[k] && this.scene.time.now > this.powerups[k]) {
         this.powerups[k] = false;
       }
-    }
+    });
   }
 
   shoot() {
-    this.nextShot = this.scene.time.now + (this.powerups.spedUp ? this.playerAttack.laser.delay / 2 : this.playerAttack.laser.delay);
+    this.nextShot = this.scene.time.now + (this.powerups.spedUp
+      ? this.playerAttack.laser.delay / 2
+      : this.playerAttack.laser.delay);
     this.fireLaser(this.numLaserShots === 1 ? 'Forward' : this.playerAttack.type);
   }
 
@@ -78,7 +80,9 @@ class PlayerShip extends Phaser.GameObjects.Image {
     const angle = this.rotation;
     const { x, y } = new Phaser.Math.Vector2().setToPolar(angle, this.displayWidth / 2);
 
-    const addScatter = theta => (this.powerups.scatter ? (theta + Phaser.Math.FloatBetween(-Math.PI / 16, Math.PI / 16)) : theta);
+    const addScatter = theta => (this.powerups.scatter
+      ? (theta + Phaser.Math.FloatBetween(-Math.PI / 16, Math.PI / 16))
+      : theta);
 
     if (type === 'Forward') {
       for (let i = 0; i < this.numLaserShots; i += 1) {

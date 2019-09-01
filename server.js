@@ -105,7 +105,6 @@ function setupAuthoritativePhaser() {
       if (blob) {
         return datauri.format(
           blob.type,
-          // eslint-disable-next-line no-underscore-dangle
           blob[Object.getOwnPropertySymbols(blob)[0]]._buffer,
         ).content;
       }

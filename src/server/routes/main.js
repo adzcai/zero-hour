@@ -1,28 +1,34 @@
 const passport = require('passport');
-const express = require('express');
+const { Router } = require('express');
 const jwt = require('jsonwebtoken');
 
 const tokenList = {};
-const router = express.Router();
+const router = new Router();
 
-router.get('/status', (req, res, next) => {
+router.get('/status', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
 // We authenticate the user through passport -- see the signup authenticator in auth.js
-router.post('/signup', passport.authenticate('signup', { session: false }), async (req, res, next) => {
+router.post('/signup', passport.authenticate('signup', { session: false }), (req, res) => {
   res.status(200).json({ message: 'signup successful' });
 });
 
 // Ditto
-router.post('/login', async (req, res, next) => {
-  passport.authenticate('login', async (err, user, info) => {
+router.post('/login', (req, res, next) => {
+  passport.authenticate('login', (err, user) => {
     try {
-      if (err || !user) {
-        return next(user ? err : new Error('User not found'));
+      if (err) {
+        next(err);
+        return;
       }
 
-      req.login(user, { session: false }, async (error) => {
+      if (!user) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
+
+      req.login(user, { session: false }, (error) => {
         if (error) return next(error);
 
         const body = {
@@ -51,7 +57,7 @@ router.post('/login', async (req, res, next) => {
         return res.status(200).json({ token, refreshToken });
       });
     } catch (error) {
-      return next(error);
+      next(error);
     }
   })(req, res, next);
 });
