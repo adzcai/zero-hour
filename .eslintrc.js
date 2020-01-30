@@ -21,5 +21,6 @@ module.exports = {
     'max-len': 'warn',
     'no-console': 'off',
     'no-restricted-syntax': 'off',
+    'no-param-reassign': 'off',
   },
 };
