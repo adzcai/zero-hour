@@ -34,20 +34,6 @@ class AuthoritativeScene extends Phaser.Scene {
       .image('trace', 'trace_01.png')
       .image('flare', 'spark_05.png')
 
-      .setPath('audio')
-      .audio('laser', 'Laser_Shoot.wav')
-      .audio('laser1', 'sfx_laser1.ogg')
-      .audio('laser2', 'sfx_laser2.ogg')
-      .audio('lose', 'sfx_lose.ogg')
-      .audio('shieldDown', 'sfx_shieldDown.ogg')
-      .audio('shieldUp', 'sfx_shieldUp.ogg')
-      .audio('powerup', 'sfx_twoTone.ogg')
-      .audio('select', 'Blip_Select.wav')
-      .audio('explosion', 'Explosion.wav')
-
-      .audio('titleMusic', 'Title Theme.mp3')
-      .audio('gameMusic', 'Sunstrider.mp3')
-      .audio('victoryMusic', 'All Clear.mp3')
 
       .setPath('spritesheets')
       .atlasXML('spaceshooter')

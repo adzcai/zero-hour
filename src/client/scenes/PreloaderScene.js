@@ -55,21 +55,21 @@ export default class PreloaderScene extends Phaser.Scene {
     // load assets needed in our game
     this.load.setBaseURL('assets/')
 
-      .setPath('images/ui')
+      .setPath('images/ui/')
       .image('box', 'grey_box.png')
       .image('checkedBox', 'blue_boxCheckmark.png')
 
-      .setPath('images/backgrounds')
+      .setPath('images/backgrounds/')
       .image('black')
       .image('blue')
       .image('darkPurple')
       .image('purple')
 
-      .setPath('images/particles')
+      .setPath('images/particles/')
       .image('trace', 'trace_01.png')
       .image('flare', 'spark_05.png')
 
-      .setPath('audio')
+      .setPath('audio/')
       .audio('laser', 'Laser_Shoot.wav')
       .audio('laser1', 'sfx_laser1.ogg')
       .audio('laser2', 'sfx_laser2.ogg')
@@ -79,7 +79,6 @@ export default class PreloaderScene extends Phaser.Scene {
       .audio('powerup', 'sfx_twoTone.ogg')
       .audio('select', 'Blip_Select.wav')
       .audio('explosion', 'Explosion.wav')
-
       .audio('titleMusic', 'Title Theme.mp3')
       .audio('gameMusic', 'Sunstrider.mp3')
       .audio('victoryMusic', 'All Clear.mp3')
@@ -89,7 +88,7 @@ export default class PreloaderScene extends Phaser.Scene {
       .atlasXML('spaceshooter2')
       .atlasXML('coins')
 
-      .setPath('images/explosions');
+      .setPath('images/explosions/');
 
     for (let i = 0; i < 9; i += 1) {
       this.load
