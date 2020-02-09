@@ -16,6 +16,7 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
 
     this.nextShot = 0;
     this.nextMissile = 0;
+    this.laserCount = 0;
 
     this.powerups = {
       spedUp: false,
@@ -92,37 +93,42 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
 
     this.scene.sound.play(Phaser.Math.RND.pick(['laser', 'laser1', 'laser2']));
 
-    const addScatter = theta => (this.powerups.scatter ? (theta + Phaser.Math.FloatBetween(-Math.PI / 16, Math.PI / 16)) : theta);
+    const addScatter = theta => (this.powerups.scatter
+      ? (theta + Phaser.Math.FloatBetween(-Math.PI / 16, Math.PI / 16))
+      : theta);
 
     if (type === 'Forward') {
       for (let i = 0; i < this.numLaserShots; i += 1) {
-        this.scene.fireLaser(
-          this.laserColor,
-          this.x + x - 2 * x * (i + 1) / (this.numLaserShots + 1),
-          this.y + y - 2 * y * (i + 1) / (this.numLaserShots + 1),
-          addScatter(angle),
-        );
+        this.scene.fireLaser({
+          id: `${socket.id}-${this.laserCount++}`,
+          type: this.laserColor,
+          x: this.x + x - 2 * x * (i + 1) / (this.numLaserShots + 1),
+          y: this.y + y - 2 * y * (i + 1) / (this.numLaserShots + 1),
+          theta: addScatter(angle),
+        });
       }
     } else if (type === 'Spread') {
       const total = Math.PI * 1.5 * (-4 / (this.numLaserShots + 3) + 1);
       const inc = total / (this.numLaserShots - 1);
       const base = angle - total / 2;
       for (let i = 0; i < this.numLaserShots; i += 1) {
-        this.scene.fireLaser(
-          this.laserColor,
-          this.x,
-          this.y,
-          addScatter(base + i * inc),
-        );
+        this.scene.fireLaser({
+          id: `${socket.id}-${this.laserCount++}`,
+          type: this.laserColor,
+          x: this.x,
+          y: this.y,
+          theta: addScatter(base + i * inc),
+        });
       }
     } else if (type === 'All Around') {
       for (let i = 0; i < this.numLaserShots; i += 1) {
-        this.scene.fireLaser(
-          this.laserColor,
-          this.x,
-          this.y,
-          addScatter(angle + i * (2 * Math.PI) / this.numLaserShots),
-        );
+        this.scene.fireLaser({
+          id: `${socket.id}-${this.laserCount++}`,
+          type: this.laserColor,
+          x: this.x,
+          y: this.y,
+          theta: addScatter(angle + i * (2 * Math.PI) / this.numLaserShots),
+        });
       }
     }
   }

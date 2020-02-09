@@ -4,9 +4,7 @@ require('dotenv').config();
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const Datauri = require('datauri');
 const express = require('express');
-const jsdom = require('jsdom');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const path = require('path');
@@ -24,8 +22,7 @@ const passwordRoutes = require('./src/server/routes/password');
 const asyncMiddleware = require('./src/server/middleware/asyncMiddleware');
 const ChatModel = require('./src/server/models/chatModel');
 
-const datauri = new Datauri();
-const { JSDOM } = jsdom;
+const authoritativeServer = require('./src/server/authoritativeServer');
 
 // setup mongo connection
 const uri = process.env.MONGODB_URI;
@@ -92,38 +89,10 @@ app.use((err, req, res) => {
   res.status(err.status || 500).json({ error: err.message });
 });
 
-function setupAuthoritativePhaser() {
-  console.log('setting up authoritative server');
+authoritativeServer(io);
 
-  JSDOM.fromFile(path.resolve(__dirname, 'src', 'server', 'authoritative-server', 'index.html'), {
-    // To run the scripts in the html file
-    runScripts: 'dangerously',
-    // Also load supported external resources
-    resources: 'usable',
-    // So requestAnimatinFrame events fire
-    pretendToBeVisual: true,
-  }).then((dom) => {
-    console.log('finished loading file');
-    dom.window.URL.createObjectURL = (blob) => {
-      if (blob) {
-        return datauri.format(
-          blob.type,
-          blob[Object.getOwnPropertySymbols(blob)[0]]._buffer,
-        ).content;
-      }
-    };
-    dom.window.URL.revokeObjectURL = () => {};
-    dom.window.gameLoaded = () => {
-      server.listen(process.env.PORT || 8080, () => {
-        console.log(`Listening on http://localhost:${server.address().port}`);
-      });
-    };
-    dom.window.io = io;
-  }).catch((error) => {
-    console.log(error.message);
-  });
-}
-
-setupAuthoritativePhaser();
+server.listen(process.env.PORT || 8080, () => {
+  console.log(`Listening on http://localhost:${server.address().port}`);
+});
 
 console.log('Open the debugger at chrome://inspect/#devices');

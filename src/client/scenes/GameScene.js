@@ -126,8 +126,11 @@ export default class GameScene extends Phaser.Scene {
     if (this.state === 'landing' && this.player.getBottomLeft().y > this.cameras.main.height) this.showGameOverMessage('Game Over');
   }
 
-  fireLaser(type, x, y, theta) {
-    this.lasers.get().init(type).fire(x, y, theta);
+  fireLaser(opts) {
+    const laser = new Laser(this, opts);
+    this.lasers.add(laser);
+    this.physics.velocityFromRotation(opts.theta-Math.PI/2, laser.speed, laser.body.velocity);
+    laser.body.velocity.scale(2);
   }
 
   initSpawners() {

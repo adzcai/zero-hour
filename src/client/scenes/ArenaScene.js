@@ -16,6 +16,7 @@ export default class ArenaScene extends Phaser.Scene {
     this.players = this.physics.add.group();
     this.lasers = this.physics.add.group({ classType: Laser });
     this.powerups = this.physics.add.group({ classType: Powerup });
+    const existingLaserIds = [];
 
     const { width, height } = this.cameras.main;
 
@@ -30,63 +31,51 @@ export default class ArenaScene extends Phaser.Scene {
 
     socket
       .on('currentPlayers', (players) => {
-        Object.keys(players).forEach((id) => {
-          this.displayPlayer(players[id], players[id].playerId === socket.id);
+        players.forEach((p) => {
+          this.displayPlayer(p);
         });
       })
       .on('arenaBounds', (arenaWidth, arenaHeight) => {
         this.physics.world.setBounds(0, 0, arenaWidth, arenaHeight);
         const { bounds } = this.physics.world;
-        this.add.rectangle(bounds.x, bounds.y, bounds.width, bounds.height, 0xff0000, 0.05).setOrigin(0);
-        this.cameras.main.setBounds(-width / 2, -height / 2, bounds.width + width, bounds.height + height);
+        this.add.tileSprite(0, 0, arenaWidth, arenaHeight, 'purple').setOrigin(0).setDepth(-5);
+        this.cameras.main.setBounds(
+          -width / 2, -height / 2,
+          bounds.width + width, bounds.height + height,
+        );
       })
       .on('newPlayer', (data) => {
-        this.displayPlayer(data, false);
+        this.displayPlayer(data);
       })
-      .on('leaveGame', (playerId) => {
+      .on('leaveGame', (id) => {
         this.players.getChildren().forEach((player) => {
-          if (playerId === player.playerId) {
-            player.destroy();
-          }
+          if (id === player.id) player.destroy();
         });
       })
       .on('playerUpdates', (players) => {
-        Object.keys(players).forEach((id) => { // For each player in the game
-          this.players.getChildren().forEach((player) => { // For each player in the client's group object
-            if (id === player.playerId) {
-              player.setPosition(players[id].x, players[id].y);
-              player.setRotation(players[id].rotation);
-            }
-          });
+        players.forEach((p) => { // For each player in the game
+          const player = this.players.getChildren().find(ship => p.id === ship.id);
+          player.setPosition(p.x, p.y);
+          player.setRotation(p.rotation);
         });
       })
       .on('laserUpdates', (lasers) => {
-        // Destroy lasers that were not sent by the server
-        this.lasers.getChildren()
-          .filter(laser => !Object.keys(lasers).includes(laser.id))
-          .forEach(laser => laser.destroy());
-
-        Object.keys(lasers).forEach((id) => {
-          const laser = this.lasers.getChildren().find(laser => laser.id === id);
-          if (!laser) { // we create a new laser
-            const laser = this.add.sprite(lasers[id].x, lasers[id].y);
-            laser.play(lasers[id].type);
-            laser.setRotation(lasers[id].theta);
-            this.lasers.add(laser);
-          } else {
-            laser.setPosition(lasers[id].x, lasers[id].y);
-          }
+        // We create all of the new lasers
+        lasers.filter(({ id }) => !existingLaserIds.includes(id)).forEach((data) => {
+          const shooter = data.id.substring(0, data.id.lastIndexOf('-'));
+          const { x, y } = this.players.getChildren().find(ship => ship.id === shooter);
+          data.x = x || data.x;
+          data.y = y || data.y;
+          const laser = new Laser(this, data);
+          this.lasers.add(laser, true);
+          this.physics.velocityFromRotation(data.theta-Math.PI/2, laser.speed, laser.body.velocity);
+          laser.body.velocity.scale(2);
+          existingLaserIds.push(data.id);
         });
       })
       .on('hit', (hp, maxHp) => {
-        console.log(`hp: ${hp}`);
-        console.log(`maxHp: ${maxHp}`);
         this.sound.play('shieldDown');
-        this.hpBar.displayWidth = Phaser.Math.Percent(hp, 0, maxHp) * (this.hpBox.displayWidth - 10);
-      })
-      .on('death', () => {
-        socket.removeAllListeners();
-        this.scene.start('Death');
+        this.hpBar.displayWidth = Phaser.Math.Percent(hp, 0, maxHp) * (this.hpBox.displayWidth-10);
       });
 
     this.input.keyboard.on('keyup_ESC', () => {
@@ -95,12 +84,18 @@ export default class ArenaScene extends Phaser.Scene {
 
     this.keys = this.input.keyboard.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,SPACE,ENTER');
 
-    this.upKeyPressed = this.downKeyPressed = this.leftKeyPressed = this.rightKeyPressed = this.spaceKeyPressed = this.enterKeyPressed = false;
+    this.upKeyPressed = false;
+    this.downKeyPressed = false;
+    this.leftKeyPressed = false;
+    this.rightKeyPressed = false;
+    this.spaceKeyPressed = false;
+    this.enterKeyPressed = false;
   }
 
   quit() {
+    this.lasers.clear(true, true);
     socket.emit('leaveGame');
-    socket.removeAllListeners();
+    ['currentGame', 'arenaBounds', 'newPlayer', 'leaveGame', 'playerUpdates', 'laserUpdates'].forEach(event => socket.off(event));
     this.scene.start('Title');
   }
 
@@ -108,11 +103,23 @@ export default class ArenaScene extends Phaser.Scene {
    * See `src/server/authoritative-server/js/Player.js`.
    * @param {Player} data
    */
-  displayPlayer(data) {
-    const player = this.add.sprite(data.x, data.y, 'spaceshooter', data.playerBody.texture);
+  displayPlayer({
+    x, y, id, texture,
+  }) {
+    const player = this.add.sprite(x, y, 'spaceshooter', texture);
     player.setTint(Math.random() * 0xffffff);
-    player.playerId = data.playerId;
-    if (data.playerId === socket.id) this.cameras.main.startFollow(player);
+    player.id = id;
+    if (id === socket.id) {
+      console.log('player pos', x, y);
+      this.cameras.main.startFollow(player);
+      this.physics.add.collider(player, this.lasers, (p, laser) => {
+        // laser.end();
+        this.sound.play('shieldDown');
+        player.hp -= laser.damage * 10;
+        // this.hpBar.displayWidth = Phaser.Math.Percent(this.player.hp, 0, this.registry.values.playerBody.maxHP) * (this.hpBox.displayWidth - 10);
+        if (player.hp <= 0 && this.state === 'running') this.gameOver('died');
+      });
+    }
     this.players.add(player);
   }
 
@@ -162,5 +169,10 @@ export default class ArenaScene extends Phaser.Scene {
         enter: this.enterKeyPressed,
       });
     }
+
+    if (this.hp <= 0) this.quit();
+    this.lasers.getChildren().forEach((laser) => {
+      if (laser.lifespan < 0) this.lasers.remove(laser, true, true);
+    });
   }
 }
