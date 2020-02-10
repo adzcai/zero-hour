@@ -23,8 +23,9 @@ module.exports = class Room {
     socket.emit('arenaBounds', ARENA_WIDTH, ARENA_HEIGHT);
     this.io.to(this.id).emit('newPlayer', player.repr());
 
-    socket.on('playerInput', (data) => {
-      this.players.find(p => p.id === socket.id).input = data;
+    socket.on('playerInput', (keys) => {
+      const pp = this.players.find(p => p.id === socket.id);
+      if (pp) player.keys = keys;
     });
     socket.on('leaveGame', this.removePlayer.bind(this, socket));
     socket.on('disconnect', this.removePlayer.bind(this, socket));
@@ -52,13 +53,13 @@ module.exports = class Room {
     this.lasers.push(new Laser(this, opts));
   }
 
-  findTarget(id, x, y) {
+  findTarget(id, { x, y }) {
     let target = null;
     let min = Infinity;
 
     this.players.forEach((p) => {
       if (p.id === id) return;
-      const dist = Math.sqrt((x-p.x)*(x-p.x), (y-p.y)*(y-p.y));
+      const dist = Math.sqrt(((x-p.pos.x)**2) + ((y-p.pos.y)**2));
       if (dist < min) {
         min = dist;
         target = p;

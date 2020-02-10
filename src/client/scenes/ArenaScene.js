@@ -2,8 +2,6 @@ import Laser from '../objects/Laser';
 import Powerup from '../objects/Powerup';
 import PlayerShip from '../objects/PlayerShip';
 
-const MAXIMUM_DISTANCE = 10;
-
 /**
  * This is the game's multiplayer scene, which allows the player to connect to the server via
  * their socket. It doesn't do much besides display the information that the server sends it.
@@ -58,14 +56,24 @@ export default class ArenaScene extends Phaser.Scene {
       .on('playerUpdates', (players) => {
         players.forEach((p) => { // For each player in the game
           const player = this.players.getChildren().find(ship => p.id === ship.id);
+          if (!player) return;
           player.keys = p.keys;
-          player.setPosition(p.x, p.y);
           player.setRotation(p.rotation);
+          player.body.x = p.x;
+          player.body.y = p.y;
+          player.x = p.x;
+          player.y = p.y;
         });
       })
       .on('laserUpdates', (lasers) => {
         // We create all of the new lasers
-        lasers.filter(({ id }) => !existingLaserIds.includes(id)).forEach((data) => {
+        lasers.forEach((data) => {
+          if (existingLaserIds.includes(data.id)) {
+            const laser = this.lasers.getChildren().find(l => l.id === data.id);
+            if (laser) laser.update(data);
+            return;
+          }
+
           const shooter = data.id.substring(0, data.id.lastIndexOf('-'));
           const { x, y } = this.players.getChildren().find(ship => ship.id === shooter);
           data.x = x || data.x;
@@ -90,6 +98,7 @@ export default class ArenaScene extends Phaser.Scene {
   }
 
   quit() {
+    this.players.clear(true, true);
     this.lasers.clear(true, true);
     socket.emit('leaveGame');
     ['currentGame', 'arenaBounds', 'newPlayer', 'leaveGame', 'playerUpdates', 'laserUpdates'].forEach(event => socket.off(event));
@@ -108,12 +117,13 @@ export default class ArenaScene extends Phaser.Scene {
       const player = new PlayerShip(this, x, y);
       player.id = id;
       this.cameras.main.startFollow(player);
-      this.physics.add.collider(player, this.lasers, (p, laser) => {
-        // laser.end();
+      this.physics.add.overlap(player, this.lasers, (p, laser) => {
+        if (laser.shooter === p.id) return;
+        laser.destroy();
         try { this.sound.play('shieldDown'); } catch (e) { console.error(e); }
         player.hp -= laser.damage * 10;
-        // this.hpBar.displayWidth = Phaser.Math.Percent(this.player.hp, 0, this.registry.values.playerBody.maxHP) * (this.hpBox.displayWidth - 10);
-        if (player.hp <= 0 && this.state === 'running') this.gameOver('died');
+        this.hpBar.displayWidth = Phaser.Math.Percent(player.hp, 0, this.registry.values.playerBody.maxHP) * (this.hpBox.displayWidth - 10);
+        if (player.hp <= 0) this.quit();
       });
       this.players.add(player);
     } else {
@@ -122,6 +132,22 @@ export default class ArenaScene extends Phaser.Scene {
       player.id = id;
       this.players.add(player);
     }
+  }
+
+  findTarget(shooter, x, y) {
+    let target = null;
+    let min = Infinity;
+
+    this.players.getChildren().forEach((ship) => {
+      if (ship.id === shooter) return;
+      const dist = Phaser.Math.Distance.Between(x, y, ship.x, ship.y);
+      if (dist < min) {
+        min = dist;
+        target = ship;
+      }
+    });
+
+    return target;
   }
 
   update(time, delta) {
@@ -135,8 +161,9 @@ export default class ArenaScene extends Phaser.Scene {
     });
     if (this.hp <= 0) this.quit();
     this.lasers.getChildren().forEach((laser) => {
+      console.log(laser.lifespan, laser.x, laser.y);
       if (laser.lifespan < 0) this.lasers.remove(laser, true, true);
     });
-    this.players.getChildren().forEach(player => player.update(time, delta));
+    // this.players.getChildren().forEach(player => player.update(time, delta, player.keys));
   }
 }

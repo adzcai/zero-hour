@@ -9,12 +9,12 @@ class Vector {
     this.y += vec.y;
   }
 
-  to(vec) {
-    return new Vector(vec.x - this.x, vec.y - this.y);
-  }
-
   normalize(r1) {
-    [this.x, this.y] = [this.x*r1/this.r, this.y*r1/this.r];
+    if (this.r === 0) return;
+    const x = this.x*r1/this.r;
+    const y = this.y*r1/this.r;
+    this.x = x;
+    this.y = y;
   }
 
   scale(k) {
@@ -28,6 +28,7 @@ class Vector {
 }
 
 // Using heading notation
-Vector.Polar = (r, theta) => new Vector(r*Math.sin(theta), -r*Math.cos(theta));
+Vector.Polar = (r=0, theta=0) => new Vector(r*Math.sin(theta), -r*Math.cos(theta));
+Vector.To = (vec1, vec2) => new Vector(vec2.x - vec1.x, vec2.y - vec1.y);
 
 module.exports = Vector;

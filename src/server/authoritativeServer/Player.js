@@ -20,7 +20,7 @@ module.exports = class Player {
     this.alive = true;
     this.laserCount = 0;
 
-    this.input = {
+    this.keys = {
       LEFT: { isDown: false },
       RIGHT: { isDown: false },
       UP: { isDown: false },
@@ -45,12 +45,12 @@ module.exports = class Player {
   }
 
   update(delta) {
-    const left = this.input.LEFT.isDown;
-    const right = this.input.RIGHT.isDown;
-    const up = this.input.UP.isDown;
-    const down = this.input.DOWN.isDown;
-    const space = this.input.SPACE.isDown;
-    const enter = this.input.ENTER.isDown;
+    const left = this.keys.LEFT.isDown;
+    const right = this.keys.RIGHT.isDown;
+    const up = this.keys.UP.isDown;
+    const down = this.keys.DOWN.isDown;
+    const space = this.keys.SPACE.isDown;
+    const enter = this.keys.ENTER.isDown;
 
     if (left && !right) {
       this.rotation -= SHIP_TURN_SPEED*delta/1000;
@@ -75,14 +75,17 @@ module.exports = class Player {
       this.fireLaser(this.attack.TYPES[this.attack.index]);
     }
     if (enter && Date.now() > this.nextMissile) {
-      this.nextMissile = new Date() + (this.powerups.spedUp
+      this.nextMissile = Date.now() + (this.powerups.spedUp
         ? this.attack.missile.delay / 2
         : this.attack.missile.delay);
       this.room.fire({
-        ship: this,
-        pos: new Vec(this.x, this.y),
+        id: `${this.id}-${this.laserCount++}`,
+        speed: this.attack.missile.speed,
+        damage: this.attack.missile.damage,
         isMissile: true,
         type: this.missileColor,
+        pos: new Vec(this.pos.x, this.pos.y),
+        theta: this.rotation,
       });
     }
 
@@ -141,7 +144,7 @@ module.exports = class Player {
       id: this.id,
       x: this.pos.x,
       y: this.pos.y,
-      keys: this.input,
+      keys: this.keys,
       rotation: this.rotation,
       texture: this.body.texture,
     };

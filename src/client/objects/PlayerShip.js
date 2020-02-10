@@ -28,6 +28,8 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
     this.body.setDrag(0.85);
     this.body.setMaxVelocity(650);
 
+    this.setDepth(this.depth+5);
+
     this.thrust = this.scene.add.particles('trace').setDepth(this.depth - 1).createEmitter({
       scale: { start: 0.2, end: 0 },
       blendMode: 'ADD',
@@ -49,6 +51,15 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
       speed: 500,
       on: false,
     }).startFollow(this);
+
+    this.keys = {
+      LEFT: { isDown: false },
+      RIGHT: { isDown: false },
+      UP: { isDown: false },
+      DOWN: { isDown: false },
+      SPACE: { isDown: false },
+      ENTER: { isDown: false },
+    };
   }
 
   update(time, delta, keys=this.keys) {
@@ -148,6 +159,7 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
       type: this.missileColor,
       x: this.x,
       y: this.y,
+      theta: this.rotation,
     });
   }
 

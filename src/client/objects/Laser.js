@@ -9,9 +9,6 @@ export default class Laser extends Phaser.GameObjects.Sprite {
     this.scene.add.existing(this);
     this.scene.physics.add.existing(this);
 
-    this.speed = this.scene.registry.values.playerAttack.laser.speed;
-    this.damage = this.scene.registry.values.playerAttack.laser.damage;
-
     this.lifespan = lifespan || 5000;
 
     this.setName(type);
@@ -24,21 +21,30 @@ export default class Laser extends Phaser.GameObjects.Sprite {
       if (obj.gameObject.id === this.id) this.lifespan = -1;
     });
 
-    if (this.name.startsWith('missile')) {
-      this.speed = this.scene.registry.values.playerAttack.missile.speed;
-      this.damage = this.scene.registry.values.playerAttack.missile.damage;
-      this.target = this.scene.findTarget(this.x, this.y);
-    } else {
-      this.setRotation(theta);
-    }
+    const { speed, damage } = this.scene.registry.values.playerAttack[this.name.startsWith('missile') ? 'missile' : 'laser'];
+    this.speed = speed;
+    this.damage = damage;
+    this.setRotation(theta);
+  }
+
+  update({
+    x, y, theta, lifespan, target,
+  }) {
+    console.log('UPDATING', x, y);
+    this.x = x;
+    this.y = y;
+    this.body.x = x;
+    this.body.y = y;
+    this.setRotation(theta);
+    this.lifespan = lifespan;
+    if (this.name.startsWith('missile') && target) this.target = this.scene.players.getChildren().find(p => p.id === target);
   }
 
   preUpdate(time, delta) {
     super.preUpdate(time, delta);
     if (this.name.startsWith('missile')) {
-      if (this.target === null) this.target = this.scene.findTarget(this.x, this.y);
-      else if (!this.target.body) this.target = null;
-      else this.scene.physics.moveToObject(this, this.target, this.speed);
+      if (!this.target) this.target = this.scene.findTarget(this.shooter, this.x, this.y);
+      if (this.target) this.scene.physics.moveToObject(this, this.target, this.speed);
     }
     this.lifespan -= delta;
   }
