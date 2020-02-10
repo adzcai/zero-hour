@@ -9,18 +9,21 @@ module.exports = {
     SharedArrayBuffer: 'readonly',
     Phaser: 'readonly',
     $: 'readonly',
-    socket: 'readonly',
-    io: 'readonly',
+    socket: 'readonly'
   },
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: 'module',
   },
   rules: {
-    'no-underscore-dangle': 'off',
+    'func-names': 'off',
     'max-len': 'warn',
     'no-console': 'off',
-    'no-restricted-syntax': 'off',
+    'no-multi-assign': 'off',
     'no-param-reassign': 'off',
+    'no-plusplus': 'off',
+    'no-restricted-syntax': 'off',
+    'no-underscore-dangle': 'off',
+    'space-infix-ops': 'off',
   },
 };

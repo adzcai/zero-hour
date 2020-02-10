@@ -21,7 +21,7 @@ export default class Button extends Phaser.GameObjects.Container {
 
     if (targetScene) {
       this.button.on('pointerup', () => {
-        this.scene.sound.play('select');
+        try { this.scene.sound.play('select'); } catch (e) { console.error(e); }
         if (typeof targetScene === 'string') this.scene.scene.start(targetScene);
         else if (typeof targetScene === 'function') targetScene.apply(this.scene);
       });

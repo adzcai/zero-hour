@@ -50,7 +50,7 @@ export default class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.enemies, (player, enemy) => {
       enemy.end();
 
-      this.sound.play('shieldDown');
+      try { this.sound.play('shieldDown'); } catch (e) { console.error(e); }
 
       this.player.hp -= enemy.value * 10;
       this.hpBar.displayWidth = Phaser.Math.Percent(this.player.hp, 0, this.registry.values.playerBody.maxHP) * (this.hpBox.displayWidth - 10);
@@ -126,8 +126,11 @@ export default class GameScene extends Phaser.Scene {
     if (this.state === 'landing' && this.player.getBottomLeft().y > this.cameras.main.height) this.showGameOverMessage('Game Over');
   }
 
-  fireLaser(type, x, y, theta) {
-    this.lasers.get().init(type).fire(x, y, theta);
+  fireLaser(opts) {
+    const laser = new Laser(this, opts);
+    this.lasers.add(laser);
+    this.physics.velocityFromRotation(opts.theta-Math.PI/2, laser.speed, laser.body.velocity);
+    laser.body.velocity.scale(2);
   }
 
   initSpawners() {
@@ -163,7 +166,7 @@ export default class GameScene extends Phaser.Scene {
     this.coins.destroy();
 
     if (type === 'died') {
-      this.sound.play('lose');
+      try { this.sound.play('lose'); } catch (e) { console.error(e); }
       this.player.play('sonicExplosionSlow').once('animationcomplete', () => this.player.destroy());
       this.showGameOverMessage('Game Over\n\nYou Died');
     } else if (type === 'won') {

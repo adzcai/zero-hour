@@ -39,9 +39,11 @@ export default class OptionsScene extends Phaser.Scene {
       const sure = confirm('Are you sure? This will clear all user data. This cannot be reversed.');
       if (!sure) return;
 
+      this.registry.reset();
+
       $.ajax({
         type: 'POST',
-        url: 'reset-upgrades',
+        url: 'reset-all',
         data: {
           refreshToken: getCookie('refreshJwt'),
         },
