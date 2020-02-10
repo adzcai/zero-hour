@@ -4,8 +4,6 @@ export default class Laser extends Phaser.GameObjects.Sprite {
   }) {
     super(scene, x, y);
 
-    console.log('new laser with', type, x, y, theta, id);
-
     this.shooter = id.substring(0, id.lastIndexOf('-'));
 
     this.scene.add.existing(this);

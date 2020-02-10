@@ -44,9 +44,14 @@ router.post('/submit-money', asyncMiddleware(async (req, res) => {
   res.status(200).json({ status: 'ok' });
 }));
 
-router.post('/reset-upgrades', asyncMiddleware(async (req, res) => {
+router.post('/reset-all', asyncMiddleware(async (req, res) => {
   const { email } = req.user;
-  const set = {};
+  const set = {
+    highScores: {},
+    highestLevel: 1,
+    shipTexture: '',
+    money: 0,
+  };
   Object.keys(UPGRADES).forEach((key) => {
     set[`upgrades.${key}`] = 0;
   });

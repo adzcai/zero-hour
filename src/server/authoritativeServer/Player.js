@@ -1,4 +1,3 @@
-const { v4 } = require('uuid');
 const {
   ARENA_WIDTH, ARENA_HEIGHT, SHIP_TURN_SPEED, SHIP_DRAG, SHIP_MAX_SPEED, SHIP_ACCEL, SHIP_RADIUS,
 } = require('./consts');
@@ -22,12 +21,12 @@ module.exports = class Player {
     this.laserCount = 0;
 
     this.input = {
-      left: false,
-      right: false,
-      up: false,
-      down: false,
-      space: false,
-      enter: false,
+      LEFT: { isDown: false },
+      RIGHT: { isDown: false },
+      UP: { isDown: false },
+      DOWN: { isDown: false },
+      SPACE: { isDown: false },
+      ENTER: { isDown: false },
     };
 
     this.nextLaser = Date.now();
@@ -46,15 +45,22 @@ module.exports = class Player {
   }
 
   update(delta) {
-    if (this.input.left && !this.input.right) {
+    const left = this.input.LEFT.isDown;
+    const right = this.input.RIGHT.isDown;
+    const up = this.input.UP.isDown;
+    const down = this.input.DOWN.isDown;
+    const space = this.input.SPACE.isDown;
+    const enter = this.input.ENTER.isDown;
+
+    if (left && !right) {
       this.rotation -= SHIP_TURN_SPEED*delta/1000;
-    } else if (this.input.right && !this.input.left) {
+    } else if (right && !left) {
       this.rotation += SHIP_TURN_SPEED*delta/1000;
     }
 
-    if (this.input.up && !this.input.down) {
+    if (up && !down) {
       this.accel = Vec.Polar(SHIP_ACCEL, this.rotation);
-    } else if (this.input.down && !this.input.up) {
+    } else if (down && !up) {
       this.accel = Vec.Polar(-SHIP_ACCEL, this.rotation);
     } else {
       this.accel.x = 0;
@@ -62,13 +68,13 @@ module.exports = class Player {
       this.vel.scale(SHIP_DRAG);
     }
 
-    if (this.input.space && Date.now() > this.nextLaser) {
+    if (space && Date.now() > this.nextLaser) {
       this.nextLaser = Date.now() + (this.powerups.spedUp
         ? this.attack.laser.delay / 2
         : this.attack.laser.delay);
       this.fireLaser(this.attack.TYPES[this.attack.index]);
     }
-    if (this.input.enter && Date.now() > this.nextMissile) {
+    if (enter && Date.now() > this.nextMissile) {
       this.nextMissile = new Date() + (this.powerups.spedUp
         ? this.attack.missile.delay / 2
         : this.attack.missile.delay);
@@ -135,6 +141,7 @@ module.exports = class Player {
       id: this.id,
       x: this.pos.x,
       y: this.pos.y,
+      keys: this.input,
       rotation: this.rotation,
       texture: this.body.texture,
     };

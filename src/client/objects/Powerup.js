@@ -14,12 +14,12 @@ export default class Powerup extends Phaser.GameObjects.Image {
   apply(player) {
     const type = this.frame.name;
 
-    this.scene.sound.play('powerup');
+    try { this.scene.sound.play('powerup'); } catch (e) { console.error(e); }
 
     if (type === 'bolt_gold') {
       player.powerups.spedUp = this.scene.time.now + 3000;
     } else if (type.endsWith('shield')) {
-      this.scene.sound.play('shieldUp');
+      try { this.scene.sound.play('shieldUp'); } catch (e) { console.error(e); }
       player.hp = Math.min(player.hp + 50, this.scene.registry.values.playerBody.maxHP);
     } else if (type.endsWith('star')) {
       player.powerups.scatter = this.scene.time.now + 3000;

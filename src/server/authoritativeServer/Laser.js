@@ -24,7 +24,7 @@ module.exports = class Laser {
   update(delta) {
     if (this.isMissile) {
       if (this.target === null) this.target = this.room.findTarget(this.pos);
-      this.vel = this.pos.to(this.target).normalize(MISSILE_SPEED);
+      if (this.target !== null) this.vel = this.pos.to(this.target).normalize(MISSILE_SPEED);
     }
     this.pos.add(this.vel);
     this.lifespan -= delta;

@@ -53,7 +53,7 @@ export default class Mob extends Phaser.GameObjects.Sprite {
     this.scene.score += this.value;
     this.scene.coins.emitParticleAt(this.x, this.y, this.numCoins);
 
-    this.scene.sound.play('explosion');
+    try { this.scene.sound.play('explosion'); } catch (e) { console.error(e); }
 
     this.hpBar.destroy();
     if (this.tween) this.tween.stop();

@@ -16,6 +16,7 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'func-names': 'off',
     'max-len': 'warn',
     'no-console': 'off',
     'no-multi-assign': 'off',

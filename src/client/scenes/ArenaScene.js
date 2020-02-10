@@ -1,5 +1,8 @@
 import Laser from '../objects/Laser';
 import Powerup from '../objects/Powerup';
+import PlayerShip from '../objects/PlayerShip';
+
+const MAXIMUM_DISTANCE = 10;
 
 /**
  * This is the game's multiplayer scene, which allows the player to connect to the server via
@@ -55,6 +58,7 @@ export default class ArenaScene extends Phaser.Scene {
       .on('playerUpdates', (players) => {
         players.forEach((p) => { // For each player in the game
           const player = this.players.getChildren().find(ship => p.id === ship.id);
+          player.keys = p.keys;
           player.setPosition(p.x, p.y);
           player.setRotation(p.rotation);
         });
@@ -74,7 +78,7 @@ export default class ArenaScene extends Phaser.Scene {
         });
       })
       .on('hit', (hp, maxHp) => {
-        this.sound.play('shieldDown');
+        try { this.sound.play('shieldDown'); } catch (e) { console.error(e); }
         this.hpBar.displayWidth = Phaser.Math.Percent(hp, 0, maxHp) * (this.hpBox.displayWidth-10);
       });
 
@@ -83,13 +87,6 @@ export default class ArenaScene extends Phaser.Scene {
     });
 
     this.keys = this.input.keyboard.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,SPACE,ENTER');
-
-    this.upKeyPressed = false;
-    this.downKeyPressed = false;
-    this.leftKeyPressed = false;
-    this.rightKeyPressed = false;
-    this.spaceKeyPressed = false;
-    this.enterKeyPressed = false;
   }
 
   quit() {
@@ -106,73 +103,40 @@ export default class ArenaScene extends Phaser.Scene {
   displayPlayer({
     x, y, id, texture,
   }) {
-    const player = this.add.sprite(x, y, 'spaceshooter', texture);
-    player.setTint(Math.random() * 0xffffff);
-    player.id = id;
     if (id === socket.id) {
       console.log('player pos', x, y);
+      const player = new PlayerShip(this, x, y);
+      player.id = id;
       this.cameras.main.startFollow(player);
       this.physics.add.collider(player, this.lasers, (p, laser) => {
         // laser.end();
-        this.sound.play('shieldDown');
+        try { this.sound.play('shieldDown'); } catch (e) { console.error(e); }
         player.hp -= laser.damage * 10;
         // this.hpBar.displayWidth = Phaser.Math.Percent(this.player.hp, 0, this.registry.values.playerBody.maxHP) * (this.hpBox.displayWidth - 10);
         if (player.hp <= 0 && this.state === 'running') this.gameOver('died');
       });
+      this.players.add(player);
+    } else {
+      const player = this.add.sprite(x, y, 'spaceshooter', texture);
+      player.setTint(Math.random() * 0xffffff);
+      player.id = id;
+      this.players.add(player);
     }
-    this.players.add(player);
   }
 
   update(time, delta) {
-    const left = this.leftKeyPressed;
-    const right = this.rightKeyPressed;
-    const up = this.upKeyPressed;
-    const down = this.downKeyPressed;
-    const space = this.spaceKeyPressed;
-    const enter = this.enterKeyPressed;
-
-    if (this.keys.LEFT.isDown || this.keys.A.isDown) {
-      this.leftKeyPressed = true;
-    } else if (this.keys.RIGHT.isDown || this.keys.D.isDown) {
-      this.rightKeyPressed = true;
-    } else {
-      this.leftKeyPressed = false;
-      this.rightKeyPressed = false;
-    }
-
-    if (this.keys.UP.isDown || this.keys.W.isDown) {
-      this.upKeyPressed = true;
-    } else if (this.keys.DOWN.isDown || this.keys.S.isDown) {
-      this.downKeyPressed = true;
-    } else {
-      this.upKeyPressed = false;
-      this.downKeyPressed = false;
-    }
-
-    this.spaceKeyPressed = this.keys.SPACE.isDown;
-    this.enterKeyPressed = this.keys.ENTER.isDown;
-
-    if (
-      left !== this.leftKeyPressed
-      || right !== this.rightKeyPressed
-      || up !== this.upKeyPressed
-      || down !== this.downKeyPressed
-      || space !== this.spaceKeyPressed
-      || enter !== this.enterKeyPressed
-    ) {
-      socket.emit('playerInput', {
-        left: this.leftKeyPressed,
-        right: this.rightKeyPressed,
-        up: this.upKeyPressed,
-        down: this.downKeyPressed,
-        space: this.spaceKeyPressed,
-        enter: this.enterKeyPressed,
-      });
-    }
-
+    socket.emit('playerInput', {
+      UP: { isDown: this.keys.UP.isDown },
+      DOWN: { isDown: this.keys.DOWN.isDown },
+      LEFT: { isDown: this.keys.LEFT.isDown },
+      RIGHT: { isDown: this.keys.RIGHT.isDown },
+      SPACE: { isDown: this.keys.SPACE.isDown },
+      ENTER: { isDown: this.keys.ENTER.isDown },
+    });
     if (this.hp <= 0) this.quit();
     this.lasers.getChildren().forEach((laser) => {
       if (laser.lifespan < 0) this.lasers.remove(laser, true, true);
     });
+    this.players.getChildren().forEach(player => player.update(time, delta));
   }
 }

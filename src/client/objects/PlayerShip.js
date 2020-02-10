@@ -51,35 +51,41 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
     }).startFollow(this);
   }
 
-  update(time, delta, keys) {
+  update(time, delta, keys=this.keys) {
+    console.log('updating');
     if (!this.body) return;
     if (this.body.speed > 5) this.thrust.emitParticle(8, this.x, this.y);
+
+    const left = keys.LEFT.isDown || (keys.A && keys.A.isDown);
+    const right = keys.RIGHT.isDown || (keys.D && keys.D.isDown);
+    const up = keys.UP.isDown || (keys.W && keys.W.isDown);
+    const down = keys.DOWN.isDown || (keys.S && keys.S.isDown);
 
     if (this.scene.state === 'running') {
       if (keys.SPACE.isDown && this.scene.time.now > this.nextShot) this.shoot();
       if (keys.ENTER.isDown && this.scene.time.now > this.nextMissile) this.shootMissile();
 
-      if (keys.LEFT.isDown || keys.A.isDown) this.body.setAccelerationX(-this.accel);
-      else if (keys.RIGHT.isDown || keys.D.isDown) this.body.setAccelerationX(this.accel);
-      else this.body.setAccelerationX(0);
+      if (left && !right) this.body.rotation -= 90*delta/1000;
+      else if (right && !left) this.body.rotation += 90*delta/1000;
 
-      if (keys.UP.isDown || keys.W.isDown) this.body.setAccelerationY(-this.accel);
-      else if (keys.DOWN.isDown || keys.S.isDown) this.body.setAccelerationY(this.accel);
-      else this.body.setAccelerationY(0);
+      if (up && !down) this.accelerate(1);
+      else if (down && !up) this.accelerate(-1);
+      else this.body.setAcceleration(0);
     } else if (this.scene.state === 'landing') {
-      if (keys.LEFT.isDown || keys.A.isDown) this.body.setAccelerationX(-this.accel);
-      else if (keys.RIGHT.isDown || keys.D.isDown) this.body.setAccelerationX(this.accel);
+      if (left && !right) this.body.setAccelerationX(-this.accel);
+      else if (right && !left) this.body.setAccelerationX(this.accel);
       else this.body.setAccelerationX(0);
-    }
-
-    const nextPoint = this.body.velocity.clone().add(this.body.position);
-    if (!nextPoint.equals(this.body.position)) {
-      const angle = Phaser.Math.Angle.BetweenPoints(this.body, nextPoint) + Math.PI / 2;
-      this.setRotation(angle);
     }
 
     if (this.powerups.scatter && this.scene.time.now > this.powerups.scatter) this.powerups.scatter = false;
     if (this.powerups.spedUp && this.scene.time.now > this.powerups.spedUp) this.powerups.spedUp = false;
+  }
+
+  accelerate(x) {
+    this.body.setAcceleration(
+      x*this.accel*Math.sin(this.body.rotation*Math.PI/180),
+      -x*this.accel*Math.cos(this.body.rotation*Math.PI/180),
+    );
   }
 
   shoot() {
@@ -91,7 +97,9 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
     const angle = this.rotation;
     const { x, y } = new Phaser.Math.Vector2().setToPolar(angle, this.displayWidth / 2);
 
-    this.scene.sound.play(Phaser.Math.RND.pick(['laser', 'laser1', 'laser2']));
+    try {
+      this.scene.sound.play(Phaser.Math.RND.pick(['laser', 'laser1', 'laser2']));
+    } catch (e) { console.error(e); }
 
     const addScatter = theta => (this.powerups.scatter
       ? (theta + Phaser.Math.FloatBetween(-Math.PI / 16, Math.PI / 16))
@@ -135,11 +143,12 @@ export default class PlayerShip extends Phaser.GameObjects.Sprite {
 
   shootMissile() {
     this.nextMissile = this.scene.time.now + (this.powerups.spedUp ? this.attack.missile.delay / 2 : this.attack.missile.delay);
-    this.scene.fireLaser(
-      this.missileColor,
-      this.x,
-      this.y,
-    );
+    this.scene.fireLaser({
+      id: `${socket.id}-${this.laserCount++}`,
+      type: this.missileColor,
+      x: this.x,
+      y: this.y,
+    });
   }
 
   get laserColor() {
