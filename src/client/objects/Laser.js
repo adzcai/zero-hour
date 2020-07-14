@@ -30,7 +30,6 @@ export default class Laser extends Phaser.GameObjects.Sprite {
   update({
     x, y, theta, lifespan, target,
   }) {
-    console.log('UPDATING', x, y);
     this.x = x;
     this.y = y;
     this.body.x = x;

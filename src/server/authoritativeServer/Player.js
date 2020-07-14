@@ -7,17 +7,15 @@ module.exports = class Player {
   constructor(room, id, pos, attack, body) {
     this.room = room;
     this.id = id;
+
     this.pos = pos;
-    console.log('player pos', pos.x, pos.y);
     this.vel = new Vec();
     this.accel = new Vec();
-
     this.rotation = 0;
+
     this.attack = attack;
     this.body = body;
     this.hp = body.maxHP;
-    this.rad = SHIP_RADIUS;
-    this.alive = true;
     this.laserCount = 0;
 
     this.keys = {
@@ -72,7 +70,7 @@ module.exports = class Player {
       this.nextLaser = Date.now() + (this.powerups.spedUp
         ? this.attack.laser.delay / 2
         : this.attack.laser.delay);
-      this.fireLaser(this.attack.TYPES[this.attack.index]);
+      this.fireLaser();
     }
     if (enter && Date.now() > this.nextMissile) {
       this.nextMissile = Date.now() + (this.powerups.spedUp
@@ -80,10 +78,9 @@ module.exports = class Player {
         : this.attack.missile.delay);
       this.room.fire({
         id: `${this.id}-${this.laserCount++}`,
-        speed: this.attack.missile.speed,
-        damage: this.attack.missile.damage,
-        isMissile: true,
         type: this.missileColor,
+        damage: this.attack.missile.damage,
+        speed: this.attack.missile.speed,
         pos: new Vec(this.pos.x, this.pos.y),
         theta: this.rotation,
       });
@@ -104,18 +101,19 @@ module.exports = class Player {
     else if (this.pos.y > ARENA_HEIGHT) this.pos.y -= ARENA_HEIGHT;
   }
 
-  fireLaser(type) {
+  fireLaser() {
+    const type = this.attack.TYPES[this.attack.index];
+    
     const shootLaser = (x, y, theta) => this.room.fire({
       id: `${this.id}-${this.laserCount++}`,
-      speed: this.attack.laser.speed,
-      damage: this.attack.laser.damage,
-      isMissile: false,
       type: this.laserColor,
+      damage: this.attack.laser.damage,
+      speed: this.attack.laser.speed,
       pos: new Vec(this.pos.x + x, this.pos.y + y),
       theta: this.powerups.scatter ? theta - Math.PI/16 + Math.random()*Math.PI/8 : theta,
     });
 
-    const { x, y } = Vec.Polar(this.rotation, this.rad / 2);
+    const { x, y } = Vec.Polar(this.rotation, SHIP_RADIUS / 2);
     const nLasers = this.attack.laser.numShots + this.powerups.numShots;
 
     if (type === 'Forward') {

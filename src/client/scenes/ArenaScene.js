@@ -32,6 +32,7 @@ export default class ArenaScene extends Phaser.Scene {
 
     socket
       .on('currentPlayers', (players) => {
+        console.log(players);
         players.forEach((p) => {
           this.displayPlayer(p);
         });
@@ -50,7 +51,7 @@ export default class ArenaScene extends Phaser.Scene {
       })
       .on('leaveGame', (id) => {
         this.players.getChildren().forEach((player) => {
-          if (id === player.id) player.destroy();
+          if (id === player.id) this.players.remove(player, true, true);
         });
       })
       .on('playerUpdates', (players) => {
@@ -67,13 +68,7 @@ export default class ArenaScene extends Phaser.Scene {
       })
       .on('laserUpdates', (lasers) => {
         // We create all of the new lasers
-        lasers.forEach((data) => {
-          if (existingLaserIds.includes(data.id)) {
-            const laser = this.lasers.getChildren().find(l => l.id === data.id);
-            if (laser) laser.update(data);
-            return;
-          }
-
+        lasers.filter(({ id }) => !existingLaserIds.includes(id)).forEach((data) => {
           const shooter = data.id.substring(0, data.id.lastIndexOf('-'));
           const { x, y } = this.players.getChildren().find(ship => ship.id === shooter);
           data.x = x || data.x;
@@ -95,9 +90,18 @@ export default class ArenaScene extends Phaser.Scene {
     });
 
     this.keys = this.input.keyboard.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,SPACE,ENTER');
+
+    this.coordsText = this.add.text(0, 0, '', {
+      align: 'center',
+      fontFamily: 'future',
+      fontSize: '14px',
+      fill: '#000',
+      padding: { x: 20, y: 10 },
+    });
   }
 
   quit() {
+    this.player.destroy();
     this.players.clear(true, true);
     this.lasers.clear(true, true);
     socket.emit('leaveGame');
@@ -125,6 +129,7 @@ export default class ArenaScene extends Phaser.Scene {
         this.hpBar.displayWidth = Phaser.Math.Percent(player.hp, 0, this.registry.values.playerBody.maxHP) * (this.hpBox.displayWidth - 10);
         if (player.hp <= 0) this.quit();
       });
+      this.player = player;
       this.players.add(player);
     } else {
       const player = this.add.sprite(x, y, 'spaceshooter', texture);
@@ -161,8 +166,9 @@ export default class ArenaScene extends Phaser.Scene {
     });
     if (this.hp <= 0) this.quit();
     this.lasers.getChildren().forEach((laser) => {
-      console.log(laser.lifespan, laser.x, laser.y);
-      if (laser.lifespan < 0) this.lasers.remove(laser, true, true);
+      if (laser.lifespan < 0 || !this.physics.world.bounds.contains(laser.x, laser.y)) {
+        this.lasers.remove(laser, true, true);
+      }
     });
     // this.players.getChildren().forEach(player => player.update(time, delta, player.keys));
   }

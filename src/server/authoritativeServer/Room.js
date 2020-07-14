@@ -40,12 +40,17 @@ module.exports = class Room {
     socket.leave(this.id);
   }
 
+  /**
+   * @emits playerUpdates
+   * @emits laserUpdates
+   */
   update(delta) {
     this.io.to(this.id).emit('playerUpdates', this.players.map(p => p.repr()));
     this.io.to(this.id).emit('laserUpdates', this.lasers.map(l => l.repr()));
 
     this.players.forEach(ship => ship.update(delta));
     this.lasers.forEach(laser => laser.update(delta));
+    this.players = this.players.filter(ship => ship.hp > 0);
     this.lasers = this.lasers.filter(laser => laser.lifespan > 0);
   }
 
